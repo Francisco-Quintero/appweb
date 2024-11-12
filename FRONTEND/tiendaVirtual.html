@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Cliente - Tienda de Barrio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Portal del Cliente</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="catalogo">Catálogo</button>
+            <button class="tab-button" data-tab="carrito">Carrito</button>
+            <button class="tab-button" data-tab="pedidos">Mis Pedidos</button>
+            <button class="tab-button" data-tab="pago">Pago</button>
+            <button class="tab-button" data-tab="seguimiento">Seguimiento</button>
+        </div>
+        <div class="tab-content">
+            <div id="catalogo" class="tab-pane active">
+                <h2>Catálogo de Productos</h2>
+                <p>Explora nuestros productos disponibles</p>
+                <div id="productos-lista"></div>
+            </div>
+            <div id="carrito" class="tab-pane">
+                <h2>Carrito de Compras</h2>
+                <p>Revisa y modifica tu pedido actual</p>
+                <div id="carrito-lista"></div>
+                <button id="proceder-pago">Proceder al pago</button>
+            </div>
+            <div id="pedidos" class="tab-pane">
+                <h2>Mis Pedidos</h2>
+                <p>Historial de tus pedidos y facturas</p>
+                <div id="pedidos-lista"></div>
+                <button id="ver-detalles">Ver detalles</button>
+            </div>
+            <div id="pago" class="tab-pane">
+                <h2>Pasarela de Pago</h2>
+                <p>Selecciona tu método de pago preferido</p>
+                <div id="opciones-pago"></div>
+                <button id="pagar-ahora">Pagar ahora</button>
+            </div>
+            <div id="seguimiento" class="tab-pane">
+                <h2>Seguimiento de Pedido</h2>
+                <p>Rastrea la ubicación de tu pedido en tiempo real</p>
+                <div id="mapa-seguimiento"></div>
+                <button id="actualizar-ubicacion">Actualizar ubicación</button>
+            </div>
+        </div>
+    </div>
+    <script src="tiendaVirtual.js"></script>
+</body>
+</html>

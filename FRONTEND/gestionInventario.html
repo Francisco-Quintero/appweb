@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Tienda de Barrio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Panel de Administración</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="catalogo">Gestión de Catálogo</button>
+            <button class="tab-button" data-tab="ventas">Resumen de Ventas</button>
+            <button class="tab-button" data-tab="facturas">Gestión de Facturas</button>
+        </div>
+        <div class="tab-content">
+            <div id="catalogo" class="tab-pane active">
+                <h2>Gestión de Catálogo</h2>
+                <p>Añade, edita o elimina productos del catálogo</p>
+                <div id="productos-admin-lista"></div>
+                <button id="anadir-producto">Añadir nuevo producto</button>
+            </div>
+            <div id="ventas" class="tab-pane">
+                <h2>Resumen de Ventas</h2>
+                <p>Visualiza el resumen diario e histórico de ventas</p>
+                <div id="graficos-ventas"></div>
+                <button id="generar-reporte">Generar reporte</button>
+            </div>
+            <div id="facturas" class="tab-pane">
+                <h2>Gestión de Facturas</h2>
+                <p>Genera y visualiza facturas de los pedidos</p>
+                <div id="facturas-lista"></div>
+                <button id="generar-factura">Generar nueva factura</button>
+            </div>
+        </div>
+    </div>
+    <script src="gestionInventario.js"></script>
+</body>
+</html>
