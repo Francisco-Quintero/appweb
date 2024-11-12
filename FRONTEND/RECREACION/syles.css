@@ -6,13 +6,61 @@ body {
     background-color: #f1f1f1;
 }
 
+/* Barra superior */
+.topbar {
+    background-color: #1f78c1;
+    padding: 10px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topbar .user-menu {
+    position: relative;
+}
+
+.topbar .user-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.topbar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    color: black;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    right: 0;
+    min-width: 160px;
+    z-index: 1;
+}
+
+.topbar .dropdown-content a {
+    padding: 12px 16px;
+    display: block;
+    text-decoration: none;
+    color: black;
+}
+
+.topbar .dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.topbar .user-menu:hover .dropdown-content {
+    display: block;
+}
+
 /* Estilo de la barra lateral */
 .sidebar {
     background-color: #202a44;
     width: 250px;
     height: 100vh;
     position: fixed;
-    top: 0;
+    top: 50px;
     left: 0;
     padding-top: 20px;
 }
@@ -27,6 +75,15 @@ body {
 
 .sidebar a:hover {
     background-color: #333c54;
+}
+
+/* Estilo de la sección de Mantenimiento */
+.mantenimiento-section h3 {
+    padding: 10px 20px;
+    color: #fff;
+    margin-top: 20px;
+    font-size: 16px;
+    text-transform: uppercase;
 }
 
 /* Estilo del contenido principal */

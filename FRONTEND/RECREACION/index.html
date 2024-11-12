@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="/FRONTEND/RECREACION/syles.css">
 </head>
 <body>
+    <!-- Barra superior -->
+    <div class="topbar">
+        <span>Sistema web de inventarios</span>
+        <div class="user-menu">
+            <button class="user-button">Tarea Completo &#9662;</button>
+            <div class="dropdown-content">
+                <a href="#">Cuenta de perfil</a>
+                <a href="#">Cerrar Sesión</a>
+            </div>
+        </div>
+    </div>
 
     <!-- Barra lateral -->
     <div class="sidebar">
@@ -16,16 +27,20 @@
         <a href="#">Devoluciones</a>
         <a href="#">Stocks</a>
         <a href="#">Ventas</a>
-        <a href="#">Proveedores</a>
-        <a href="#">Productos</a>
-        <a href="#">Usuarios</a>
-        <a href="#">Configuración</a>
+        <!-- Sección de Mantenimiento (visible solo para administradores) -->
+        <div id="mantenimiento-section" class="mantenimiento-section">
+            <h3>Mantenimiento</h3>
+            <a href="#">Proveedores</a>
+            <a href="#">Productos</a>
+            <a href="#">Usuarios</a>
+            <a href="#">Configuración</a>
+        </div>
     </div>
 
     <!-- Contenido principal -->
     <div class="content">
         <header>
-            <h1>Sistema web de inventarios</h1>
+            <h1>Bienvenido al Sistema de Inventarios</h1>
         </header>
 
         <!-- Sección del Dashboard -->
@@ -46,20 +61,9 @@
                 <h3>Ventas</h3>
                 <p>1</p>
             </div>
-            <div class="card">
-                <h3>Proveedores</h3>
-                <p>1</p>
-            </div>
-            <div class="card">
-                <h3>Productos</h3>
-                <p>2</p>
-            </div>
-            <div class="card">
-                <h3>Usuarios</h3>
-                <p>1</p>
-            </div>
         </div>
     </div>
 
+    <script src="/FRONTEND/RECREACION/script.js"></script>
 </body>
 </html>
