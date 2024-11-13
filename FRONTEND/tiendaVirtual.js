@@ -25,6 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
             precio: 4800,
             imagen: '/placeholder.svg',
             cantidad: 0
+        },
+        {
+            id: 3,
+            nombre: 'Carbon negro',
+            marca: 'Sin Marca',
+            precioGramo: 8.0,
+            precio: 2200,
+            imagen: '/placeholder.svg',
+            cantidad: 0
         }
     ];
 
@@ -190,6 +199,16 @@ function inicializarPedidos() {
             items: [
                 { nombre: 'Zanahoria Primera', cantidad: 2, precio: 4990 },
                 { nombre: 'Cebolla Cabezona Roja', cantidad: 3, precio: 4800 }
+            ]
+        },
+        {
+            numero: 'PED-002',
+            fecha: '2024-02-02',
+            estado: 'enviado',
+            total: 2000,
+            items: [
+                { nombre: 'Pan de queso', cantidad: 1, precio: 500 },
+                { nombre: 'Pan de mantequilla', cantidad: 3, precio: 1500 }
             ]
         }
         // Aquí irían más pedidos
