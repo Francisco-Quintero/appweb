@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal del Cliente - Tienda de Barrio</title>
-    <link rel="stylesheet" href="/FRONTEND/CSS/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -19,35 +19,44 @@
         <div class="tab-content">
             <div id="catalogo" class="tab-pane active">
                 <h2>Catálogo de Productos</h2>
-                <p>Explora nuestros productos disponibles</p>
-                <div id="productos-lista"></div>
+                <div id="productos-lista" class="productos-grid"></div>
             </div>
             <div id="carrito" class="tab-pane">
-                <h2>Carrito de Compras</h2>
-                <p>Revisa y modifica tu pedido actual</p>
-                <div id="carrito-lista"></div>
-                <button id="proceder-pago">Proceder al pago</button>
+                <div class="carrito-header">
+                    <h2>Carrito de compra</h2>
+                    <span id="items-count">0 items agregados</span>
+                </div>
+                <div id="carrito-lista" class="carrito-lista"></div>
+                <div class="carrito-resumen">
+                    <div class="resumen-item">
+                        <span>Subtotal</span>
+                        <span id="subtotal">$0</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span>Total</span>
+                        <span id="total">$0</span>
+                    </div>
+                    <p class="nota-envio">Tasas y fletes calculados en el carrito</p>
+                    <button id="ir-a-pagar" class="btn-pagar">Ir a pagar</button>
+                </div>
             </div>
             <div id="pedidos" class="tab-pane">
                 <h2>Mis Pedidos</h2>
-                <p>Historial de tus pedidos y facturas</p>
                 <div id="pedidos-lista"></div>
                 <button id="ver-detalles">Ver detalles</button>
             </div>
             <div id="pago" class="tab-pane">
                 <h2>Pasarela de Pago</h2>
-                <p>Selecciona tu método de pago preferido</p>
                 <div id="opciones-pago"></div>
                 <button id="pagar-ahora">Pagar ahora</button>
             </div>
             <div id="seguimiento" class="tab-pane">
                 <h2>Seguimiento de Pedido</h2>
-                <p>Rastrea la ubicación de tu pedido en tiempo real</p>
                 <div id="mapa-seguimiento"></div>
                 <button id="actualizar-ubicacion">Actualizar ubicación</button>
             </div>
         </div>
     </div>
-    <script src="/FRONTEND/JAVASCRIPT/tiendaVirtual.js"></script>
+    <script src="tiendaVirtual.js"></script>
 </body>
 </html>
