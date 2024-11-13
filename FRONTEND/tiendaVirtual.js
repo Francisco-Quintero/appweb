@@ -15,8 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             precioGramo: 4.99,
             precio: 4990,
             imagen: '/placeholder.svg',
-            enCarrito: false,
-            cantidad: 1
+            cantidad: 0
         },
         {
             id: 2,
@@ -25,8 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             precioGramo: 4.8,
             precio: 4800,
             imagen: '/placeholder.svg',
-            enCarrito: false,
-            cantidad: 1
+            cantidad: 0
         }
     ];
 
@@ -56,16 +54,23 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio-gramo">Gramo a $${producto.precioGramo}</div>
             <div class="producto-precio">$${producto.precio}</div>
-            ${enCarrito ? `
+            ${producto.cantidad === 0 ? `
+                <button class="btn-agregar" onclick="agregarAlCarrito(${producto.id})">Agregar al carrito</button>
+            ` : `
                 <div class="cantidad-control">
                     <button class="btn-cantidad" onclick="actualizarCantidad(${producto.id}, -1)">-</button>
-                    <input type="number" value="${producto.cantidad}" min="1" class="input-cantidad" 
+                    <input type="number" value="${producto.cantidad}" min="0" class="input-cantidad" 
                            onchange="actualizarCantidadDirecta(${producto.id}, this.value)">
                     <button class="btn-cantidad" onclick="actualizarCantidad(${producto.id}, 1)">+</button>
                 </div>
-            ` : `
-                <button class="btn-agregar" onclick="agregarAlCarrito(${producto.id})">Agregar</button>
             `}
+            ${enCarrito ? `
+                <button class="btn-eliminar" onclick="eliminarDelCarrito(${producto.id})">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                    </svg>
+                </button>
+            ` : ''}
         `;
         return productoElement;
     }
@@ -73,9 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderizarProductos() {
         productosLista.innerHTML = '';
         productos.forEach(producto => {
-            if (!producto.enCarrito) {
-                productosLista.appendChild(renderizarProducto(producto));
-            }
+            productosLista.appendChild(renderizarProducto(producto));
         });
     }
 
@@ -86,34 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let itemsTotal = 0;
         
         productos.forEach(producto => {
-            if (producto.enCarrito) {
+            if (producto.cantidad > 0) {
                 itemsTotal += producto.cantidad;
                 const itemTotal = producto.precio * producto.cantidad;
                 subtotal += itemTotal;
                 
-                const itemElement = document.createElement('div');
-                itemElement.className = 'carrito-item';
-                itemElement.innerHTML = `
-                    <img src="${producto.imagen}" alt="${producto.nombre}" class="item-imagen">
-                    <div class="item-detalles">
-                        <div class="item-nombre">${producto.nombre}</div>
-                        <div class="item-precio">$${itemTotal.toLocaleString()}</div>
-                        <div class="item-precio-gramo">Gramo a $${producto.precioGramo}</div>
-                        <div class="cantidad-controles">
-                            <button class="btn-cantidad" onclick="actualizarCantidad(${producto.id}, -1)">-</button>
-                            <input type="number" value="${producto.cantidad}" min="1" 
-                                   class="input-cantidad" 
-                                   onchange="actualizarCantidadDirecta(${producto.id}, this.value)">
-                            <button class="btn-cantidad" onclick="actualizarCantidad(${producto.id}, 1)">+</button>
-                            <button class="btn-eliminar" onclick="eliminarDelCarrito(${producto.id})">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                carritoLista.appendChild(itemElement);
+                carritoLista.appendChild(renderizarProducto(producto, true));
             }
         });
         
@@ -129,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.agregarAlCarrito = function(productoId) {
         const producto = productos.find(p => p.id === productoId);
         if (producto) {
-            producto.enCarrito = true;
             producto.cantidad = 1;
             actualizarCarrito();
             renderizarProductos();
@@ -140,14 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const producto = productos.find(p => p.id === productoId);
         if (producto) {
             const nuevaCantidad = producto.cantidad + cambio;
-            if (nuevaCantidad >= 1) {
+            if (nuevaCantidad >= 0) {
                 producto.cantidad = nuevaCantidad;
-            } else {
-                producto.enCarrito = false;
-                producto.cantidad = 1;
+                actualizarCarrito();
+                renderizarProductos();
             }
-            actualizarCarrito();
-            renderizarProductos();
         }
     };
 
@@ -155,22 +132,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const producto = productos.find(p => p.id === productoId);
         if (producto) {
             const cantidad = parseInt(nuevaCantidad);
-            if (cantidad >= 1) {
+            if (cantidad >= 0) {
                 producto.cantidad = cantidad;
-            } else {
-                producto.enCarrito = false;
-                producto.cantidad = 1;
+                actualizarCarrito();
+                renderizarProductos();
             }
-            actualizarCarrito();
-            renderizarProductos();
         }
     };
 
     window.eliminarDelCarrito = function(productoId) {
         const producto = productos.find(p => p.id === productoId);
         if (producto) {
-            producto.enCarrito = false;
-            producto.cantidad = 1;
+            producto.cantidad = 0;
             actualizarCarrito();
             renderizarProductos();
         }
@@ -197,4 +170,111 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('actualizar-ubicacion').addEventListener('click', () => {
         console.log('Actualizando ubicación del pedido');
     });
+});
+
+// Agregar estas funciones al archivo JavaScript existente
+
+function inicializarPedidos() {
+    const pedidosLista = document.getElementById('pedidos-lista');
+    const pedidosEmpty = document.getElementById('pedidos-empty');
+    const fechaDesde = document.getElementById('fecha-desde');
+    const fechaHasta = document.getElementById('fecha-hasta');
+    
+    // Ejemplo de pedidos (en una aplicación real, estos vendrían de una base de datos)
+    const pedidos = [
+        {
+            numero: 'PED-001',
+            fecha: '2024-01-15',
+            estado: 'pendiente',
+            total: 25000,
+            items: [
+                { nombre: 'Zanahoria Primera', cantidad: 2, precio: 4990 },
+                { nombre: 'Cebolla Cabezona Roja', cantidad: 3, precio: 4800 }
+            ]
+        }
+        // Aquí irían más pedidos
+    ];
+
+    function renderizarPedidos(pedidosFiltrados = pedidos) {
+        if (pedidosFiltrados.length === 0) {
+            pedidosLista.style.display = 'none';
+            pedidosEmpty.style.display = 'block';
+        } else {
+            pedidosLista.style.display = 'block';
+            pedidosEmpty.style.display = 'none';
+            
+            pedidosLista.innerHTML = pedidosFiltrados.map(pedido => `
+                <div class="pedido-item">
+                    <div class="pedido-header">
+                        <span class="pedido-numero">Pedido ${pedido.numero}</span>
+                        <span class="pedido-fecha">${formatearFecha(pedido.fecha)}</span>
+                        <span class="pedido-estado estado-${pedido.estado}">${
+                            pedido.estado.charAt(0).toUpperCase() + pedido.estado.slice(1)
+                        }</span>
+                    </div>
+                    <div class="pedido-items">
+                        ${pedido.items.map(item => `
+                            <div class="pedido-item-detalle">
+                                <span>${item.nombre} x ${item.cantidad}</span>
+                                <span>$${(item.precio * item.cantidad).toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="pedido-total">
+                        <strong>Total: $${pedido.total.toLocaleString()}</strong>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function formatearFecha(fecha) {
+        return new Date(fecha).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Eventos para los filtros
+    fechaDesde.addEventListener('change', filtrarPedidos);
+    fechaHasta.addEventListener('change', filtrarPedidos);
+    document.querySelector('.estado-select').addEventListener('change', filtrarPedidos);
+    document.querySelector('.busqueda-input').addEventListener('input', filtrarPedidos);
+
+    function filtrarPedidos() {
+        const desde = fechaDesde.value;
+        const hasta = fechaHasta.value;
+        const estado = document.querySelector('.estado-select').value;
+        const busqueda = document.querySelector('.busqueda-input').value.toLowerCase();
+
+        const pedidosFiltrados = pedidos.filter(pedido => {
+            const cumpleFecha = (!desde || pedido.fecha >= desde) && 
+                              (!hasta || pedido.fecha <= hasta);
+            const cumpleEstado = estado === 'todos' || pedido.estado === estado;
+            const cumpleBusqueda = pedido.numero.toLowerCase().includes(busqueda) ||
+                                 pedido.items.some(item => 
+                                     item.nombre.toLowerCase().includes(busqueda)
+                                 );
+
+            return cumpleFecha && cumpleEstado && cumpleBusqueda;
+        });
+
+        renderizarPedidos(pedidosFiltrados);
+    }
+
+    // Inicializar la vista
+    renderizarPedidos();
+
+    // Evento para el botón "Ver categorías"
+    document.querySelector('.btn-ver-categorias').addEventListener('click', () => {
+        // Cambiar a la pestaña de catálogo
+        document.querySelector('[data-tab="catalogo"]').click();
+    });
+}
+
+// Agregar la inicialización de pedidos al DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    // ... código existente ...
+    inicializarPedidos();
 });

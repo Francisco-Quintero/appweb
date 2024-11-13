@@ -40,11 +40,52 @@
                     <button id="ir-a-pagar" class="btn-pagar">Ir a pagar</button>
                 </div>
             </div>
-            <div id="pedidos" class="tab-pane">
-                <h2>Mis Pedidos</h2>
-                <div id="pedidos-lista"></div>
-                <button id="ver-detalles">Ver detalles</button>
-            </div>
+            <!-- Actualizar la sección de pedidos en el HTML existente -->
+<div id="pedidos" class="tab-pane">
+    <div class="pedidos-header">
+        <div class="pedidos-titulo">
+            <h2>Mis pedidos</h2>
+            <p class="pedidos-subtitulo">Aquí encontrarás la información y estado de todos tus pedidos.</p>
+        </div>
+        <div class="pedidos-busqueda">
+            <input type="text" placeholder="Busca por número de pedido..." class="busqueda-input">
+            <button class="btn-buscar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="pedidos-filtros">
+        <div class="filtros-fecha">
+            <span>Filtra por fechas:</span>
+            <input type="date" class="fecha-input" id="fecha-desde">
+            <span>Hasta:</span>
+            <input type="date" class="fecha-input" id="fecha-hasta">
+        </div>
+        <div class="filtros-estado">
+            <span>Filtrar por:</span>
+            <select class="estado-select">
+                <option value="todos">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="enviado">Enviado</option>
+                <option value="entregado">Entregado</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="pedidos-lista" class="pedidos-lista">
+        <!-- El contenido se llenará dinámicamente -->
+    </div>
+
+    <div id="pedidos-empty" class="pedidos-empty">
+        <h3>¡Aún no has realizado ningún pedido!</h3>
+        <p>Explora nuestros productos y descuentos, escoge tus favoritos y agregalos a tu carrito de compra.</p>
+        <button class="btn-ver-categorias">Ver categorías</button>
+    </div>
+</div>
             <div id="pago" class="tab-pane">
                 <h2>Pasarela de Pago</h2>
                 <div id="opciones-pago"></div>
