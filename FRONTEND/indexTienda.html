@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Barrio</title>
+    <link rel="stylesheet" href="stylesTienda.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Tienda de Barrio</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="catalogo">
+                <i data-lucide="package"></i>Catálogo
+            </button>
+            <button class="tab-button" data-tab="carrito">
+                <i data-lucide="shopping-cart"></i>Carrito
+            </button>
+            <button class="tab-button" data-tab="usuario">
+                <i data-lucide="user"></i>Usuario
+            </button>
+            <button class="tab-button" data-tab="facturas">
+                <i data-lucide="file-text"></i>Facturas
+            </button>
+            <button class="tab-button" data-tab="pedidos">
+                <i data-lucide="package"></i>Mis Pedidos
+            </button>
+            <button class="tab-button" data-tab="ruta">
+                <i data-lucide="map-pin"></i>Ruta de Entrega
+            </button>
+            <button class="tab-button" data-tab="resumen">
+                <i data-lucide="bar-chart"></i>Resumen Diario
+            </button>
+        </div>
+<!-- Modificar la sección del catálogo en index.html -->
+    <div class="tab-content active" id="catalogo">
+        <div class="card">
+          <div class="card-header">
+               <h2 class="card-title">Catálogo de Productos</h2>
+         </div>
+         <div class="card-content">
+             <div class="productos-grid" id="catalogo-productos">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+             </div>
+        </div>
+        </div>
+    </div>
+    <div class="tab-content" id="carrito">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    Carrito de compra
+                    <span id="carrito-contador" class="carrito-contador"></span>
+                </h2>
+            </div>
+            <div class="card-content">
+                <div id="carrito-items" class="carrito-items">
+                    <!-- Los items se cargarán dinámicamente -->
+                </div>
+                <div class="carrito-resumen">
+                    <div class="carrito-subtotal">
+                        <span>Subtotal</span>
+                        <span id="subtotal">$0</span>
+                    </div>
+                    <div class="carrito-total">
+                        <span>Total</span>
+                        <span id="total">$0</span>
+                    </div>
+                    <p class="carrito-nota">Tasas y fletes calculados en el carrito</p>
+                    <button class="btn-pagar" onclick="irAPagar()">Ir a pagar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="tab-content" id="usuario">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Registro de Usuario</h2>
+                </div>
+                <div class="card-content">
+                    <input type="text" id="nombre-usuario" placeholder="Nombre" class="input">
+                    <input type="email" id="email-usuario" placeholder="Email" class="input">
+                    <button class="button" onclick="registrarUsuario()">Registrar</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="facturas">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Facturas</h2>
+                </div>
+                <div class="card-content" id="lista-facturas">
+                    <!-- Las facturas se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="pedidos">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Mis Pedidos</h2>
+                    <p class="card-subtitle">Aquí encontrarás la información y estado de todos tus pedidos.</p>
+                </div>
+                <div class="card-content">
+                    <div class="pedidos-busqueda">
+                        <input type="text" placeholder="Busca por número de pedido..." class="input busqueda-input" id="busqueda-pedido">
+                        <button class="button btn-buscar">
+                            <i data-lucide="search"></i>
+                        </button>
+                    </div>
+                    <div class="pedidos-filtros">
+                        <div class="filtros-fecha">
+                            <span>Filtra por fechas:</span>
+                            <input type="date" class="input fecha-input" id="fecha-desde">
+                            <span>Hasta:</span>
+                            <input type="date" class="input fecha-input" id="fecha-hasta">
+                        </div>
+                        <div class="filtros-estado">
+                            <span>Filtrar por:</span>
+                            <select class="input estado-select" id="estado-filtro">
+                                <option value="todos">Todos</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="enviado">Enviado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="pedidos-lista" class="pedidos-lista">
+                        <!-- El contenido se llenará dinámicamente -->
+                    </div>
+                    <div id="pedidos-empty" class="pedidos-empty">
+                        <h3>¡Aún no has realizado ningún pedido!</h3>
+                        <p>Explora nuestros productos y descuentos, escoge tus favoritos y agrégalos a tu carrito de compra.</p>
+                        <button class="button btn-ver-categorias">Ver categorías</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="ruta">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Ruta de Entrega</h2>
+                </div>
+                <div class="card-content">
+                    <p>Aquí se mostraría un mapa con la ruta del domiciliario</p>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="resumen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Resumen Diario</h2>
+                </div>
+                <div class="card-content">
+                    <p>Aquí se mostrarían gráficos y estadísticas de las ventas diarias</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scriptTienda.js"></script>
+</body>
+</html>

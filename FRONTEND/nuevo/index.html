@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Barrio</title>
+    <link rel="stylesheet" href="/FRONTEND/nuevo/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Tienda de Barrio</h1>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="catalogo">
+                <i data-lucide="package"></i>Catálogo
+            </button>
+            <button class="tab-button" data-tab="carrito">
+                <i data-lucide="shopping-cart"></i>Carrito
+            </button>
+            <button class="tab-button" data-tab="pedidos">
+                <i data-lucide="list"></i>Mis Pedidos
+            </button>
+            <button class="tab-button" data-tab="usuario">
+                <i data-lucide="user"></i>Usuario
+            </button>
+            <button class="tab-button" data-tab="pago">
+                <i data-lucide="credit-card"></i>Pago
+            </button>
+        </div>
+        <div class="tab-content">
+            <div id="catalogo" class="tab-pane active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Catálogo de Productos</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="productos-lista" class="productos-grid"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="carrito" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Carrito de Compras</h2>
+                        <span id="items-count">0 items agregados</span>
+                    </div>
+                    <div class="card-content">
+                        <div id="carrito-lista"></div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="resumen-item">
+                            <span>Subtotal</span>
+                            <span id="subtotal">$0</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span>Total</span>
+                            <span id="total">$0</span>
+                        </div>
+                        <p class="nota-envio">Tasas y fletes calculados en el carrito</p>
+                        <button id="ir-a-pagar" class="button">Ir a pagar</button>
+                    </div>
+                </div>
+            </div>
+            <div id="pedidos" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Mis Pedidos</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="pedidos-busqueda">
+                            <input type="text" placeholder="Busca por número de pedido..." class="input">
+                            <button class="button icon-button">
+                                <i data-lucide="search"></i>
+                            </button>
+                        </div>
+                        <div class="pedidos-filtros">
+                            <div class="filtros-fecha">
+                                <span>Filtra por fechas:</span>
+                                <input type="date" class="input" id="fecha-desde">
+                                <span>Hasta:</span>
+                                <input type="date" class="input" id="fecha-hasta">
+                            </div>
+                            <div class="filtros-estado">
+                                <span>Filtrar por:</span>
+                                <select class="input">
+                                    <option value="todos">Todos</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="enviado">Enviado</option>
+                                    <option value="entregado">Entregado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="pedidos-lista"></div>
+                        <div id="pedidos-empty" class="pedidos-empty">
+                            <h3>¡Aún no has realizado ningún pedido!</h3>
+                            <p>Explora nuestros productos y descuentos, escoge tus favoritos y agrégalos a tu carrito de compra.</p>
+                            <button class="button btn-ver-categorias">Ver categorías</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="usuario" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Registro de Usuario</h2>
+                    </div>
+                    <div class="card-content">
+                        <input type="text" id="nombre-usuario" placeholder="Nombre" class="input">
+                        <input type="email" id="email-usuario" placeholder="Email" class="input">
+                        <button class="button" onclick="registrarUsuario()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+            <div id="pago" class="tab-pane">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Pasarela de Pago</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="opciones-pago"></div>
+                        <button id="pagar-ahora" class="button">Pagar ahora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/FRONTEND/nuevo/scripts.js"></script>
+</body>
+</html>
