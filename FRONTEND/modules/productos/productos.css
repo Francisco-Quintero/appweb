@@ -1,9 +1,9 @@
-/* En modules/proveedores/proveedores.css */
-.proveedores-container {
+/* En modules/productos/productos.css */
+.productos-container {
     padding: 20px;
 }
 
-.acciones-proveedores {
+.acciones-productos {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -14,14 +14,14 @@
     align-items: center;
 }
 
-#busquedaProveedor {
+#busquedaProducto {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-right: 8px;
 }
 
-.tabla-proveedores {
+.tabla-productos {
     width: 100%;
     border-collapse: collapse;
     background-color: #fff;
@@ -30,14 +30,14 @@
     overflow: hidden;
 }
 
-.tabla-proveedores th,
-.tabla-proveedores td {
+.tabla-productos th,
+.tabla-productos td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
 }
 
-.tabla-proveedores th {
+.tabla-productos th {
     background-color: #f5f5f5;
     font-weight: bold;
 }
@@ -97,7 +97,8 @@
     margin-bottom: 5px;
 }
 
-.grupo-formulario input {
+.grupo-formulario input,
+.grupo-formulario textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -109,4 +110,4 @@
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
-} 
+}
