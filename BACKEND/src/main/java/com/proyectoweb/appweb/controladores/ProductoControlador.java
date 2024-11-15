@@ -2,7 +2,6 @@ package com.proyectoweb.appweb.controladores;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.proyectoweb.appweb.entidades.Producto;
 import com.proyectoweb.appweb.servicios.ProductoServicio;
 
