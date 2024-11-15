@@ -1,9 +1,7 @@
 // En js/main.js
-document.addEventListener('DOMContentLoaded', function() {
-    const mainContainer = document.getElementById('main-container');
-    
     // Función para cargar módulos
-    function loadModule(moduleName) {
+    export function loadModule(moduleName) {
+        const mainContainer = document.getElementById('main-container');
         fetch(`modules/${moduleName}/${moduleName}.html`)
             .then(response => response.text())
             .then(html => {
@@ -26,6 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error(`Error al cargar el módulo ${moduleName}:`, error));
     }
+document.addEventListener('DOMContentLoaded', function() {
+
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+
+
 
     // Manejar clics en los enlaces de navegación
     document.querySelectorAll('[data-module]').forEach(link => {
@@ -35,6 +39,18 @@ document.addEventListener('DOMContentLoaded', function() {
             loadModule(moduleName);
         });
     });
+
+    //menu lateral 
+    userMenuButton.addEventListener('click', function() {
+        userDropdown.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.remove('show');
+        }
+    });
+
 
     // Cargar el dashboard por defecto
     loadModule('dashboard');
