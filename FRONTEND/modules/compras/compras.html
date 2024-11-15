@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Compras</title>
+    <link rel="stylesheet" href="/FRONTEND/modules/compras/compras.css">
+</head>
+<body>
+    <div class="compras-container">
+        <h2>Gestión de Compras</h2>
+        
+        <div class="acciones-compras">
+            <button id="btnNuevaCompra" class="btn btn-primario">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nueva Compra
+            </button>
+            <div class="contenedor-busqueda">
+                <input type="text" id="busquedaCompra" placeholder="Buscar compra...">
+                <button id="btnBuscar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <table class="tabla-compras">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTablaCompras">
+                <!-- Las compras se cargarán aquí dinámicamente -->
+            </tbody>
+        </table>
+
+        <div id="modalCompra" class="modal">
+            <div class="contenido-modal">
+                <h3 id="tituloModal">Detalles de la Compra</h3>
+                <div id="detallesCompra">
+                    <!-- Los detalles de la compra se cargarán aquí dinámicamente -->
+                </div>
+                <div class="acciones-formulario">
+                    <button type="button" class="btn btn-secundario" id="btnCerrarModal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/FRONTEND/modules/compras/compras.js"></script>
+</body>
+</html>
