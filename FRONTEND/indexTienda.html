@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Barrio</title>
-    <link rel="stylesheet" href="stylesTienda.css">
+    <link rel="stylesheet" href="/FRONTEND/CSS/stylesTienda.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -46,6 +46,8 @@
         </div>
         </div>
     </div>
+
+
     <div class="tab-content" id="carrito">
         <div class="card">
             <div class="card-header">
@@ -63,16 +65,41 @@
                         <span>Subtotal</span>
                         <span id="subtotal">$0</span>
                     </div>
+                    <div class="carrito-envio">
+                        <span>Costo de envío</span>
+                        <span id="costo-envio">$2.000</span>
+                    </div>
                     <div class="carrito-total">
                         <span>Total</span>
                         <span id="total">$0</span>
                     </div>
+                    <div class="metodo-pago">
+                        <h3>Método de pago</h3>
+                        <div class="metodo-pago-opciones">
+                            <label class="opcion-pago">
+                                <input type="radio" name="metodoPago" value="contraentrega" checked>
+                                <span class="opcion-pago-detalle">
+                                    <i data-lucide="wallet"></i>
+                                    Pago contra entrega
+                                </span>
+                            </label>
+                            <label class="opcion-pago">
+                                <input type="radio" name="metodoPago" value="pse">
+                                <span class="opcion-pago-detalle">
+                                    <i data-lucide="credit-card"></i>
+                                    PSE
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                     <p class="carrito-nota">Tasas y fletes calculados en el carrito</p>
-                    <button class="btn-pagar" onclick="irAPagar()">Ir a pagar</button>
+                    <button class="btn-hacer-pedido" onclick="generarPedido()">Hacer pedido</button>
                 </div>
             </div>
         </div>
     </div>
+
+
         <div class="tab-content" id="usuario">
             <div class="card">
                 <div class="card-header">
@@ -157,6 +184,6 @@
             </div>
         </div>
     </div>
-    <script src="scriptTienda.js"></script>
+    <script src="/FRONTEND/JS/scriptTienda.js"></script>
 </body>
 </html>
