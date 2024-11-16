@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "BACKEND"
+		},
+		{
+			"path": "FRONTEND"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"liveServer.settings.multiRootWorkspaceName": "FRONTEND"
+	}
+}

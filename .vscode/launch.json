@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AppwebApplication<BACKEND>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.proyectoweb.appweb.AppwebApplication",
+            "projectName": "BACKEND",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
