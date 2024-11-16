@@ -1,50 +1,106 @@
-(function() {
-    // En modules/compras/compras.js
-console.log('Iniciando carga del módulo de compras');
 
-const comprasData = [
-    { id: 1, fecha: '2023-05-15', proveedor: 'Proveedor A', total: 1500.00, estado: 'Completada' },
-    { id: 2, fecha: '2023-05-16', proveedor: 'Proveedor B', total: 2000.00, estado: 'Pendiente' },
+// En modules/compras/compras.js
+(function() {
+    console.log('Iniciando carga del módulo de compras');
+
+    const comprasData = [
+        { id: 1, fecha: '2023-05-15', proveedor: 'Proveedor A', total: 1500.00, estado: 'Completada' },
+        { id: 2, fecha: '2023-05-16', proveedor: 'Proveedor B', total: 2000.00, estado: 'Pendiente' },
     ];
 
-const proveedores = [
-    { id: 1, nombre: 'Alqueria' },
-    { id: 2, nombre: 'Colanta' },
-];
+    const proveedores = [
+        { id: 1, nombre: 'Alqueria' },
+        { id: 2, nombre: 'Colanta' },
+    ];
 
-const productos = [
-    { id: 1, nombre: 'Leche', descripcion: '900ml', precioUnitario: 20000, unidad: 'und' },
-    { id: 2, nombre: 'Queso crema', descripcion: '70g', precioUnitario: 15900, unidad: 'und' },
-];
+    const productos = [
+        { id: 1, nombre: 'Leche', descripcion: '900ml', precioUnitario: 20000, unidad: 'und' },
+        { id: 2, nombre: 'Queso crema', descripcion: '70g', precioUnitario: 15900, unidad: 'und' },
+    ];
 
-let productosCompra = [];
-let indiceEditando = null;
+    let productosCompra = [];
+    let indiceEditando = null;
 
-// Función principal para cargar el módulo de compras
-function cargarModuloCompras() {
-    console.log('Inicializando módulo de compras');
-    initCompras();
-    console.log('Módulo de compras cargado completamente');
+    function cargarModuloCompras() {
+        console.log('Inicializando módulo de compras');
+        
+        // Asegurarse de que el DOM esté cargado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCompras);
+        } else {
+            initCompras();
+        }
+        
+        console.log('Módulo de compras cargado completamente');
     }
 
-// Inicialización del módulo
-function initCompras() {
-    console.log('Inicializando módulo de compras');
-    
-    // Configurar event listeners
-    document.getElementById('btnNuevaCompra')?.addEventListener('click', mostrarFormularioCompra);
-    document.getElementById('btnBuscar')?.addEventListener('click', buscarCompras);
-    document.getElementById('btnCerrarModal')?.addEventListener('click', cerrarModal);
-    document.getElementById('btnCerrarFormulario')?.addEventListener('click', cerrarFormularioCompra);
-    document.getElementById('btnAgregarProducto')?.addEventListener('click', agregarOEditarProducto);
-    document.getElementById('btnGuardarCompra')?.addEventListener('click', guardarCompra);
-    document.getElementById('busquedaProducto')?.addEventListener('input', buscarProductos);
-    document.getElementById('impuesto')?.addEventListener('input', calcularTotales);
+    function initCompras() {
+        console.log('Inicializando módulo de compras');
+        
+        // Configurar event listeners
+        document.getElementById('btnNuevaCompra')?.addEventListener('click', mostrarFormularioCompra);
+        document.getElementById('btnBuscar')?.addEventListener('click', buscarCompras);
+        document.getElementById('btnCerrarModal')?.addEventListener('click', cerrarModal);
+        document.getElementById('btnCerrarFormulario')?.addEventListener('click', cerrarFormularioCompra);
+        document.getElementById('btnAgregarProducto')?.addEventListener('click', agregarOEditarProducto);
+        document.getElementById('btnGuardarCompra')?.addEventListener('click', guardarCompra);
+        document.getElementById('busquedaProducto')?.addEventListener('input', buscarProductos);
+        document.getElementById('impuesto')?.addEventListener('input', calcularTotales);
 
-    // Cargar datos iniciales
-    cargarCompras();
-    cargarProveedores();
-}
+        // Cargar datos iniciales
+        cargarCompras();
+        cargarProveedores();
+    }
+
+    function cargarCompras() {
+        console.log('Cargando compras en la tabla');
+        const cuerpoTabla = document.getElementById('cuerpoTablaCompras');
+        const comprasEmpty = document.getElementById('compras-empty');
+        
+        if (!cuerpoTabla) {
+            console.error('No se encontró el elemento cuerpoTablaCompras');
+            return;
+        }
+
+        if (comprasData.length === 0) {
+            cuerpoTabla.innerHTML = '';
+            if (comprasEmpty) {
+                comprasEmpty.style.display = 'block';
+            }
+            return;
+        }
+
+        if (comprasEmpty) {
+            comprasEmpty.style.display = 'none';
+        }
+
+        cuerpoTabla.innerHTML = comprasData.map(compra => `
+            <tr>
+                <td>${compra.id}</td>
+                <td>${compra.fecha}</td>
+                <td>${compra.proveedor}</td>
+                <td>$${compra.total.toFixed(2)}</td>
+                <td>
+                    <span class="estado-compra estado-${compra.estado.toLowerCase()}">
+                        ${compra.estado}
+                    </span>
+                </td>
+                <td>
+                    <button onclick="window.verDetallesCompra(${compra.id})" class="btn btn-secundario">
+                        <i data-lucide="eye"></i>
+                        Ver más
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Reinicializar los iconos de Lucide
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        
+        console.log('Compras cargadas en la tabla');
+    }
 
 // Cargar compras en la tabla
 function cargarCompras() {
@@ -342,10 +398,22 @@ function eliminarProducto(indice) {
 // Iniciar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', cargarModuloCompras);
 
-console.log('Archivo compras.js cargado completamente');
 
-window.cargarModuloCompras = cargarModuloCompras;
-window.verDetallesCompra = verDetallesCompra;
-window.editarProducto = editarProducto;
-window.eliminarProducto = eliminarProducto;
-  })();
+    // Asegurarse de que las funciones estén disponibles globalmente
+    window.cargarModuloCompras = cargarModuloCompras;
+    window.verDetallesCompra = verDetallesCompra;
+    window.editarProducto = editarProducto;
+    window.eliminarProducto = eliminarProducto;
+
+    // Iniciar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', cargarModuloCompras);
+    } else {
+        cargarModuloCompras();
+    }
+
+    console.log('Archivo compras.js cargado completamente');
+})();
+
+
+
