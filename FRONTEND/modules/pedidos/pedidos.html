@@ -1,0 +1,47 @@
+<!-- En /FRONTEND/modules/pedidos/pedidos.html -->
+<div class="pedidos-container">
+    <h2>Mis Pedidos</h2>
+    
+    <!-- Filtros -->
+    <div class="pedidos-filtros">
+        <div class="filtro-grupo">
+            <label for="busqueda-pedido">Buscar pedido:</label>
+            <input type="text" id="busqueda-pedido" placeholder="Buscar por número de pedido o producto">
+        </div>
+        
+        <div class="filtro-grupo">
+            <label for="fecha-desde">Desde:</label>
+            <input type="date" id="fecha-desde">
+        </div>
+        
+        <div class="filtro-grupo">
+            <label for="fecha-hasta">Hasta:</label>
+            <input type="date" id="fecha-hasta">
+        </div>
+        
+        <div class="filtro-grupo">
+            <label for="estado-filtro">Estado:</label>
+            <select id="estado-filtro">
+                <option value="todos">Todos</option>
+                <option value="en espera">En espera</option>
+                <option value="procesando">Procesando</option>
+                <option value="enviado">Enviado</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+            </select>
+        </div>
+        
+        <button id="btn-aplicar-filtros" class="btn-primario">Aplicar Filtros</button>
+    </div>
+
+    <!-- Lista de Pedidos -->
+    <div id="pedidos-lista" class="pedidos-lista">
+        <!-- Los pedidos se cargarán aquí dinámicamente -->
+    </div>
+
+    <!-- Mensaje cuando no hay pedidos -->
+    <div id="pedidos-empty" class="pedidos-empty">
+        <p>No hay pedidos disponibles</p>
+        <button class="btn-ver-categorias">Volver al Catálogo</button>
+    </div>
+</div>

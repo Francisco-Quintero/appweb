@@ -1,0 +1,158 @@
+/* En /FRONTEND/modules/usuario/usuario.css */
+.usuario-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.usuario-info {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.usuario-info h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.usuario-info p {
+    margin: 0.5rem 0;
+}
+
+.usuario-acciones {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.historial-pedidos {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.historial-pedidos h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.pedido-item {
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+}
+
+.pedido-item:last-child {
+    border-bottom: none;
+}
+
+.pedido-fecha {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.pedido-detalles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pedido-estado {
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+}
+
+.pedido-estado.pendiente {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.pedido-estado.enviado {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.pedido-estado.entregado {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-contenido {
+    background-color: var(--background);
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: var(--radius);
+    max-width: 500px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.form-grupo {
+    margin-bottom: 1rem;
+}
+
+.form-grupo label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-grupo input,
+.form-grupo textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.form-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-primario {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primario:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secundario {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+}
+
+.btn-secundario:hover {
+    background-color: var(--secondary-hover);
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- En /FRONTEND/modules/carrito/carrito.html -->
+<div class="carrito-container">
+    <h2>Carrito de Compras</h2>
+    <div id="carrito-items" class="carrito-items">
+        <!-- Los items del carrito se cargarán aquí dinámicamente -->
+    </div>
+    <div class="carrito-resumen">
+        <div class="carrito-subtotal">
+            <span>Subtotal</span>
+            <span id="subtotal">$0</span>
+        </div>
+        <div class="carrito-envio">
+            <span>Costo de envío</span>
+            <span id="costo-envio">$2.000</span>
+        </div>
+        <div class="carrito-total">
+            <span>Total</span>
+            <span id="total">$0</span>
+        </div>
+        <div class="metodo-pago">
+            <h3>Método de pago</h3>
+            <div class="metodo-pago-opciones">
+                <label class="opcion-pago">
+                    <input type="radio" name="metodoPago" value="contraentrega" checked>
+                    <span class="opcion-pago-detalle">
+                        <i data-lucide="wallet"></i>
+                        Pago contra entrega
+                    </span>
+                </label>
+                <label class="opcion-pago">
+                    <input type="radio" name="metodoPago" value="pse">
+                    <span class="opcion-pago-detalle">
+                        <i data-lucide="credit-card"></i>
+                        PSE
+                    </span>
+                </label>
+            </div>
+        </div>
+        <p class="carrito-nota">Tasas y fletes calculados en el carrito</p>
+        <button class="btn-hacer-pedido" onclick="generarPedido()">Hacer pedido</button>
+    </div>
+</div>
+</body>
+</html>

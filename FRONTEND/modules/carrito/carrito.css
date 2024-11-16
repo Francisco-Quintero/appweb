@@ -1,0 +1,187 @@
+/* En /FRONTEND/modules/carrito/carrito.css */
+.carrito-container {
+    padding: 1rem;
+}
+
+.carrito-items {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.carrito-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+}
+
+.carrito-item-imagen {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+
+.carrito-item-detalles {
+    flex-grow: 1;
+}
+
+.carrito-item-nombre {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.carrito-item-precio {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.carrito-item-precio-unitario {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.carrito-item-controles {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.btn-cantidad {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cantidad:hover {
+    background-color: var(--primary-hover);
+}
+
+.input-cantidad {
+    width: 40px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.btn-eliminar {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0.5rem;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
+
+.btn-eliminar:hover {
+    color: #dc2626;
+}
+
+.carrito-resumen {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.carrito-subtotal,
+.carrito-envio,
+.carrito-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.carrito-total {
+    font-weight: 600;
+    font-size: 1.25rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+}
+
+.metodo-pago {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+}
+
+.metodo-pago h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.metodo-pago-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.opcion-pago {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.opcion-pago:hover {
+    border-color: var(--primary);
+}
+
+.opcion-pago input[type="radio"] {
+    margin-right: 0.75rem;
+}
+
+.opcion-pago-detalle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.opcion-pago-detalle i {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.carrito-nota {
+    text-align: center;
+    color: #666;
+    font-size: 0.875rem;
+    margin: 1rem 0;
+}
+
+.btn-hacer-pedido {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-hacer-pedido:hover {
+    background-color: var(--primary-hover);
+}
