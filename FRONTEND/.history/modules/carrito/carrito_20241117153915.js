@@ -345,7 +345,6 @@
 
     // Exponer la función de inicialización al objeto global window
     window.inicializarModuloCarrito = inicializarModuloCarrito;
-    window.generarPedido = generarPedido;
 
     console.log('Módulo de Carrito cargado completamente');
 })();

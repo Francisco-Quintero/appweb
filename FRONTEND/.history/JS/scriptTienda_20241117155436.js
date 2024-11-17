@@ -87,17 +87,6 @@
                     document.body.appendChild(script);
                 })
                 .catch(error => console.error(`Error al cargar el módulo ${moduleName}:`, error));
-
-
-                script.onload = () => {
-                    const initFunctionName = `inicializarModulo${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`;
-                    if (typeof window[initFunctionName] === 'function') {
-                        this.loadedModules[moduleName] = window[initFunctionName](appState);
-                        console.log(`Módulo ${moduleName} inicializado con estado:`, appState);
-                    } else {
-                        console.error(`Función de inicialización ${initFunctionName} no encontrada para el módulo ${moduleName}`);
-                    }
-                };
         }
         
     };

@@ -1,0 +1,15 @@
+.lista-pedidos-pendientes {
+    list-style-type: none;
+    padding: 0;
+}
+
+.lista-pedidos-pendientes li {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#mapa-ruta {
+    margin-bottom: 20px;
+}
