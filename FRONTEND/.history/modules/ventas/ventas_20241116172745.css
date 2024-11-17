@@ -5,8 +5,7 @@
 
 .acciones-ventas {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-end;
     margin-bottom: 20px;
 }
 
@@ -34,20 +33,19 @@
     overflow-x: auto;
 }
 
-.tabla-ventas, .tabla-productos {
+.tabla-ventas {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
 }
 
-.tabla-ventas th, .tabla-ventas td,
-.tabla-productos th, .tabla-productos td {
+.tabla-ventas th, .tabla-ventas td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-.tabla-ventas th, .tabla-productos th {
+.tabla-ventas th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
@@ -77,11 +75,6 @@
 
 .btn-secundario {
     background-color: #6c757d;
-    color: white;
-}
-
-.btn-success {
-    background-color: #28a745;
     color: white;
 }
 
@@ -145,24 +138,4 @@
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-}
-
-#historialVentas {
-    margin-top: 20px;
-}
-
-#btnVolverActivas {
-    margin-bottom: 10px;
-}
-
-.tabla-productos {
-    margin-top: 15px;
-}
-
-.tabla-productos th, .tabla-productos td {
-    text-align: right;
-}
-
-.tabla-productos th:first-child, .tabla-productos td:first-child {
-    text-align: left;
 }

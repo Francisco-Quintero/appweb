@@ -25,7 +25,6 @@
     }
 
     function renderizarCatalogo(appState) {
-        console.log('Renderizando catálogo');
         const catalogoContainer = document.getElementById('catalogo-productos');
         if (!catalogoContainer) {
             console.error('No se encontró el contenedor del catálogo');
@@ -134,7 +133,6 @@
     }
 
     function configurarEventListeners(appState) {
-        console.log('Configurando event listeners del catálogo');
         const catalogoContainer = document.getElementById('catalogo-productos');
         
         addEventListenerWithCleanup(catalogoContainer, 'click', (event) => {
@@ -169,7 +167,6 @@
         };
     }
 
-    // Exponer la función de inicialización al objeto global window
     window.inicializarModuloCatalogo = inicializarModuloCatalogo;
 
     console.log('Módulo de Catálogo cargado completamente');

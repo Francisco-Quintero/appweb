@@ -1,53 +1,18 @@
 (function() {
     console.log('Iniciando carga del módulo de ventas');
 
-    // Datos de ejemplo para ventas activas con productos
+    // Datos de ejemplo para ventas activas
     let ventasActivas = [
-        { 
-            id: 1, 
-            fecha: '2023-05-20', 
-            cliente: 'Juan Pérez', 
-            total: 50000, 
-            estado: 'Pendiente', 
-            domiciliario: null,
-            productos: [
-                { nombre: 'Hamburguesa', cantidad: 2, precio: 15000 },
-                { nombre: 'Papas fritas', cantidad: 1, precio: 5000 },
-                { nombre: 'Refresco', cantidad: 2, precio: 7500 }
-            ]
-        },
-        { 
-            id: 2, 
-            fecha: '2023-05-21', 
-            cliente: 'María García', 
-            total: 75000, 
-            estado: 'En proceso', 
-            domiciliario: 'Carlos Rodríguez',
-            productos: [
-                { nombre: 'Pizza familiar', cantidad: 1, precio: 45000 },
-                { nombre: 'Alitas de pollo', cantidad: 2, precio: 15000 }
-            ]
-        },
+        { id: 1, fecha: '2023-05-20', cliente: 'Juan Pérez', total: 50000, estado: 'Pendiente', domiciliario: null },
+        { id: 2, fecha: '2023-05-21', cliente: 'María García', total: 75000, estado: 'En proceso', domiciliario: 'Carlos Rodríguez' },
     ];
 
-    // Nuevo array para el historial de ventas con productos
+    // Nuevo array para el historial de ventas
     let historialVentas = [
-        { 
-            id: 3, 
-            fecha: '2023-05-22', 
-            cliente: 'Pedro López', 
-            total: 100000, 
-            estado: 'Completada', 
-            domiciliario: 'Ana Martínez',
-            productos: [
-                { nombre: 'Ensalada César', cantidad: 1, precio: 25000 },
-                { nombre: 'Pollo a la parrilla', cantidad: 2, precio: 35000 },
-                { nombre: 'Postre del día', cantidad: 2, precio: 5000 }
-            ]
-        },
+        { id: 3, fecha: '2023-05-22', cliente: 'Pedro López', total: 100000, estado: 'Completada', domiciliario: 'Ana Martínez' },
     ];
 
-    // Datos de ejemplo para domiciliarios (sin cambios)
+    // Datos de ejemplo para domiciliarios
     const domiciliarios = [
         { id: 1, nombre: 'Carlos Rodríguez' },
         { id: 2, nombre: 'Ana Martínez' },
@@ -234,27 +199,6 @@
                 <p><strong>Total:</strong> $${venta.total.toFixed(2)}</p>
                 <p><strong>Estado:</strong> ${venta.estado}</p>
                 <p><strong>Domiciliario:</strong> ${venta.domiciliario || 'No asignado'}</p>
-                <h4>Productos:</h4>
-                <table class="tabla-productos">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${venta.productos.map(producto => `
-                            <tr>
-                                <td>${producto.nombre}</td>
-                                <td>${producto.cantidad}</td>
-                                <td>$${producto.precio.toFixed(2)}</td>
-                                <td>$${(producto.cantidad * producto.precio).toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
             `;
             modalVenta.style.display = 'block';
         }

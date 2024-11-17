@@ -1,53 +1,15 @@
+// En modules/ventas/ventas.js
 (function() {
     console.log('Iniciando carga del módulo de ventas');
 
-    // Datos de ejemplo para ventas activas con productos
-    let ventasActivas = [
-        { 
-            id: 1, 
-            fecha: '2023-05-20', 
-            cliente: 'Juan Pérez', 
-            total: 50000, 
-            estado: 'Pendiente', 
-            domiciliario: null,
-            productos: [
-                { nombre: 'Hamburguesa', cantidad: 2, precio: 15000 },
-                { nombre: 'Papas fritas', cantidad: 1, precio: 5000 },
-                { nombre: 'Refresco', cantidad: 2, precio: 7500 }
-            ]
-        },
-        { 
-            id: 2, 
-            fecha: '2023-05-21', 
-            cliente: 'María García', 
-            total: 75000, 
-            estado: 'En proceso', 
-            domiciliario: 'Carlos Rodríguez',
-            productos: [
-                { nombre: 'Pizza familiar', cantidad: 1, precio: 45000 },
-                { nombre: 'Alitas de pollo', cantidad: 2, precio: 15000 }
-            ]
-        },
+    // Datos de ejemplo para ventas
+    const ventasData = [
+        { id: 1, fecha: '2023-05-20', cliente: 'Juan Pérez', total: 50000, estado: 'Pendiente', domiciliario: null },
+        { id: 2, fecha: '2023-05-21', cliente: 'María García', total: 75000, estado: 'En proceso', domiciliario: 'Carlos Rodríguez' },
+        { id: 3, fecha: '2023-05-22', cliente: 'Pedro López', total: 100000, estado: 'Completada', domiciliario: 'Ana Martínez' },
     ];
 
-    // Nuevo array para el historial de ventas con productos
-    let historialVentas = [
-        { 
-            id: 3, 
-            fecha: '2023-05-22', 
-            cliente: 'Pedro López', 
-            total: 100000, 
-            estado: 'Completada', 
-            domiciliario: 'Ana Martínez',
-            productos: [
-                { nombre: 'Ensalada César', cantidad: 1, precio: 25000 },
-                { nombre: 'Pollo a la parrilla', cantidad: 2, precio: 35000 },
-                { nombre: 'Postre del día', cantidad: 2, precio: 5000 }
-            ]
-        },
-    ];
-
-    // Datos de ejemplo para domiciliarios (sin cambios)
+    // Datos de ejemplo para domiciliarios
     const domiciliarios = [
         { id: 1, nombre: 'Carlos Rodríguez' },
         { id: 2, nombre: 'Ana Martínez' },
@@ -57,6 +19,7 @@
     function cargarModuloVentas() {
         console.log('Inicializando módulo de ventas');
         
+        // Asegurarse de que el DOM esté cargado
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initVentas);
         } else {
@@ -69,13 +32,13 @@
     function initVentas() {
         console.log('Inicializando módulo de ventas');
         
+        // Configurar event listeners
         document.getElementById('btnBuscar')?.addEventListener('click', buscarVentas);
         document.getElementById('btnCerrarModal')?.addEventListener('click', cerrarModal);
         document.getElementById('btnCerrarModalAsignar')?.addEventListener('click', cerrarModalAsignar);
         document.getElementById('formAsignarDomiciliario')?.addEventListener('submit', asignarDomiciliario);
-        document.getElementById('btnVerHistorial')?.addEventListener('click', mostrarHistorial);
-        document.getElementById('btnVolverActivas')?.addEventListener('click', mostrarVentasActivas);
 
+        // Cargar datos iniciales
         cargarVentas();
         cargarDomiciliarios();
     }
@@ -90,7 +53,7 @@
             return;
         }
 
-        if (ventasActivas.length === 0) {
+        if (ventasData.length === 0) {
             cuerpoTabla.innerHTML = '';
             if (ventasEmpty) {
                 ventasEmpty.style.display = 'block';
@@ -102,7 +65,7 @@
             ventasEmpty.style.display = 'none';
         }
 
-        cuerpoTabla.innerHTML = ventasActivas.map(venta => `
+        cuerpoTabla.innerHTML = ventasData.map(venta => `
             <tr>
                 <td>${venta.id}</td>
                 <td>${venta.fecha}</td>
@@ -125,66 +88,16 @@
                             Asignar Domiciliario
                         </button>
                     ` : ''}
-                    ${venta.estado === 'En proceso' ? `
-                        <button onclick="window.completarVenta(${venta.id})" class="btn btn-success">
-                            <i data-lucide="check"></i>
-                            Completar
-                        </button>
-                    ` : ''}
                 </td>
             </tr>
         `).join('');
 
+        // Reinicializar los iconos de Lucide
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
         
         console.log('Ventas cargadas en la tabla');
-    }
-
-    function cargarHistorial() {
-        console.log('Cargando historial de ventas');
-        const cuerpoTabla = document.getElementById('cuerpoTablaHistorial');
-        const historialEmpty = document.getElementById('historial-empty');
-        
-        if (!cuerpoTabla) {
-            console.error('No se encontró el elemento cuerpoTablaHistorial');
-            return;
-        }
-
-        if (historialVentas.length === 0) {
-            cuerpoTabla.innerHTML = '';
-            if (historialEmpty) {
-                historialEmpty.style.display = 'block';
-            }
-            return;
-        }
-
-        if (historialEmpty) {
-            historialEmpty.style.display = 'none';
-        }
-
-        cuerpoTabla.innerHTML = historialVentas.map(venta => `
-            <tr>
-                <td>${venta.id}</td>
-                <td>${venta.fecha}</td>
-                <td>${venta.cliente}</td>
-                <td>$${venta.total.toFixed(2)}</td>
-                <td>${venta.domiciliario}</td>
-                <td>
-                    <button onclick="window.verDetallesVenta(${venta.id}, true)" class="btn btn-secundario">
-                        <i data-lucide="eye"></i>
-                        Ver más
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-        
-        console.log('Historial de ventas cargado en la tabla');
     }
 
     function cargarDomiciliarios() {
@@ -199,7 +112,7 @@
 
     function buscarVentas() {
         const busqueda = document.getElementById('busquedaVenta').value.toLowerCase();
-        const ventasFiltradas = ventasActivas.filter(venta => 
+        const ventasFiltradas = ventasData.filter(venta => 
             venta.cliente.toLowerCase().includes(busqueda) ||
             venta.id.toString().includes(busqueda) ||
             venta.fecha.includes(busqueda)
@@ -220,10 +133,8 @@
         }
     }
 
-    function verDetallesVenta(id, esHistorial = false) {
-        const venta = esHistorial 
-            ? historialVentas.find(v => v.id === id)
-            : ventasActivas.find(v => v.id === id);
+    function verDetallesVenta(id) {
+        const venta = ventasData.find(v => v.id === id);
         if (venta) {
             const modalVenta = document.getElementById('modalVenta');
             const detallesVenta = document.getElementById('detallesVenta');
@@ -234,27 +145,6 @@
                 <p><strong>Total:</strong> $${venta.total.toFixed(2)}</p>
                 <p><strong>Estado:</strong> ${venta.estado}</p>
                 <p><strong>Domiciliario:</strong> ${venta.domiciliario || 'No asignado'}</p>
-                <h4>Productos:</h4>
-                <table class="tabla-productos">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${venta.productos.map(producto => `
-                            <tr>
-                                <td>${producto.nombre}</td>
-                                <td>${producto.cantidad}</td>
-                                <td>$${producto.precio.toFixed(2)}</td>
-                                <td>$${(producto.cantidad * producto.precio).toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
             `;
             modalVenta.style.display = 'block';
         }
@@ -282,45 +172,23 @@
 
         if (domiciliarioId) {
             const domiciliario = domiciliarios.find(d => d.id === parseInt(domiciliarioId));
-            const ventaIndex = ventasActivas.findIndex(v => v.id === ventaId);
+            const ventaIndex = ventasData.findIndex(v => v.id === ventaId);
 
             if (ventaIndex !== -1 && domiciliario) {
-                ventasActivas[ventaIndex].domiciliario = domiciliario.nombre;
-                ventasActivas[ventaIndex].estado = 'En proceso';
+                ventasData[ventaIndex].domiciliario = domiciliario.nombre;
+                ventasData[ventaIndex].estado = 'En proceso';
                 cargarVentas();
                 cerrarModalAsignar();
             }
         }
     }
 
-    function completarVenta(id) {
-        const ventaIndex = ventasActivas.findIndex(v => v.id === id);
-        if (ventaIndex !== -1) {
-            const venta = ventasActivas[ventaIndex];
-            venta.estado = 'Completada';
-            historialVentas.push(venta);
-            ventasActivas.splice(ventaIndex, 1);
-            cargarVentas();
-        }
-    }
-
-    function mostrarHistorial() {
-        document.getElementById('ventasActivas').style.display = 'none';
-        document.getElementById('historialVentas').style.display = 'block';
-        cargarHistorial();
-    }
-
-    function mostrarVentasActivas() {
-        document.getElementById('historialVentas').style.display = 'none';
-        document.getElementById('ventasActivas').style.display = 'block';
-        cargarVentas();
-    }
-
+    // Asegurarse de que las funciones estén disponibles globalmente
     window.cargarModuloVentas = cargarModuloVentas;
     window.verDetallesVenta = verDetallesVenta;
     window.asignarDomiciliarioModal = asignarDomiciliarioModal;
-    window.completarVenta = completarVenta;
 
+    // Iniciar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', cargarModuloVentas);
     } else {

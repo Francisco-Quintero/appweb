@@ -17,61 +17,30 @@
                     <i data-lucide="search"></i>
                 </button>
             </div>
-            <button id="btnVerHistorial" class="btn btn-secundario">Ver Historial</button>
         </div>
 
-        <div id="ventasActivas">
-            <h3>Ventas Activas</h3>
-            <div class="tabla-container">
-                <table class="tabla-ventas">
-                    <thead>
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Total</th>
-                            <th>Estado</th>
-                            <th>Domiciliario</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTablaVentas">
-                        <!-- Las ventas se cargarán aquí dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mensaje cuando no hay ventas -->
-            <div id="ventas-empty" class="ventas-empty" style="display: none;">
-                <p>No hay ventas activas</p>
-            </div>
+        <div class="tabla-container">
+            <table class="tabla-ventas">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Domiciliario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaVentas">
+                    <!-- Las ventas se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
         </div>
 
-        <div id="historialVentas" style="display: none;">
-            <h3>Historial de Ventas</h3>
-            <button id="btnVolverActivas" class="btn btn-secundario">Volver a Ventas Activas</button>
-            <div class="tabla-container">
-                <table class="tabla-ventas">
-                    <thead>
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Total</th>
-                            <th>Domiciliario</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTablaHistorial">
-                        <!-- El historial de ventas se cargará aquí dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mensaje cuando no hay historial -->
-            <div id="historial-empty" class="ventas-empty" style="display: none;">
-                <p>No hay ventas en el historial</p>
-            </div>
+        <!-- Mensaje cuando no hay ventas -->
+        <div id="ventas-empty" class="ventas-empty" style="display: none;">
+            <p>No hay ventas registradas</p>
         </div>
 
         <!-- Modal de detalles -->

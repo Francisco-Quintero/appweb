@@ -26,8 +26,7 @@
     }
 
     function cargarInformacionUsuario(appState) {
-        if (!appState) return;
-        
+        // Asumimos que la información del usuario está en appState
         const usuario = appState.usuario || {
             id: 1,
             nombre: 'Juan Pérez',
@@ -48,82 +47,44 @@
         }
     }
 
-    function formatearEstadoPedido(estado) {
-        if (!estado || typeof estado !== 'string') return '';
-        return estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase();
-    }
-
     function cargarHistorialPedidos(appState) {
-        if (!appState) return;
+        const pedidos = appState.pedidos || [
+            { id: 1, fecha: '2024-01-15', total: 50000, estado: 'entregado' },
+            { id: 2, fecha: '2024-02-01', total: 75000, estado: 'enviado' },
+            { id: 3, fecha: '2024-02-10', total: 100000, estado: 'pendiente' }
+        ];
 
-        const pedidos = appState.pedidos || [];
         const listaPedidos = document.getElementById('lista-pedidos');
-        
-        if (!listaPedidos) {
-            console.error('No se encontró el elemento lista-pedidos');
-            return;
-        }
-
-        if (pedidos.length === 0) {
-            listaPedidos.innerHTML = `
-                <div class="pedido-empty">
-                    <p>No hay pedidos en tu historial</p>
-                </div>
-            `;
-            return;
-        }
-
-        listaPedidos.innerHTML = pedidos.map(pedido => {
-            if (!pedido) return '';
-            
-            const fecha = pedido.fecha ? new Date(pedido.fecha).toLocaleDateString() : 'Fecha no disponible';
-            const total = pedido.total ? pedido.total.toLocaleString() : '0';
-            const estado = formatearEstadoPedido(pedido.estado);
-            
-            return `
+        if (listaPedidos) {
+            listaPedidos.innerHTML = pedidos.map(pedido => `
                 <div class="pedido-item">
-                    <div class="pedido-fecha">Pedido #${pedido.id || 'N/A'} - ${fecha}</div>
+                    <div class="pedido-fecha">Pedido #${pedido.id} - ${pedido.fecha}</div>
                     <div class="pedido-detalles">
-                        <span>Total: $${total}</span>
-                        <span class="pedido-estado ${pedido.estado || ''}">${estado}</span>
+                        <span>Total: $${pedido.total.toLocaleString()}</span>
+                        <span class="pedido-estado ${pedido.estado}">${pedido.estado.charAt(0).toUpperCase() + pedido.estado.slice(1)}</span>
                     </div>
                 </div>
-            `;
-        }).join('');
+            `).join('');
+        }
     }
 
     function configurarEventListeners() {
-        addEventListenerWithCleanup(
-            document.getElementById('btn-editar-perfil'),
-            'click',
-            () => abrirModal('modal-editar-perfil')
-        );
-        
-        addEventListenerWithCleanup(
-            document.getElementById('btn-cambiar-contrasena'),
-            'click',
-            () => abrirModal('modal-cambiar-contrasena')
-        );
+        addEventListenerWithCleanup(document.getElementById('btn-editar-perfil'), 'click', () => abrirModal('modal-editar-perfil'));
+        addEventListenerWithCleanup(document.getElementById('btn-cambiar-contrasena'), 'click', () => abrirModal('modal-cambiar-contrasena'));
 
-        addEventListenerWithCleanup(
-            document.getElementById('form-editar-perfil'),
-            'submit',
-            (e) => {
-                e.preventDefault();
-                console.log('Perfil actualizado');
-                cerrarModal('modal-editar-perfil');
-            }
-        );
+        addEventListenerWithCleanup(document.getElementById('form-editar-perfil'), 'submit', (e) => {
+            e.preventDefault();
+            // Aquí iría la lógica para actualizar el perfil
+            console.log('Perfil actualizado');
+            cerrarModal('modal-editar-perfil');
+        });
 
-        addEventListenerWithCleanup(
-            document.getElementById('form-cambiar-contrasena'),
-            'submit',
-            (e) => {
-                e.preventDefault();
-                console.log('Contraseña cambiada');
-                cerrarModal('modal-cambiar-contrasena');
-            }
-        );
+        addEventListenerWithCleanup(document.getElementById('form-cambiar-contrasena'), 'submit', (e) => {
+            e.preventDefault();
+            // Aquí iría la lógica para cambiar la contraseña
+            console.log('Contraseña cambiada');
+            cerrarModal('modal-cambiar-contrasena');
+        });
     }
 
     function abrirModal(modalId) {
@@ -142,17 +103,11 @@
 
     function inicializarModuloUsuario(appState) {
         console.log('Inicializando módulo de Usuario');
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-        
         usuarioState.appStateRef = appState;
         cargarInformacionUsuario(appState);
         cargarHistorialPedidos(appState);
         configurarEventListeners();
         window.cerrarModal = cerrarModal;
-        
         return {
             cleanup: cleanup
         };

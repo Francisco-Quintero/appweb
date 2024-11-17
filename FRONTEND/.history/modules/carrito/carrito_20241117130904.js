@@ -1,9 +1,8 @@
 (function() {
     console.log('Iniciando carga del módulo de Carrito');
 
-    let carritoState = {
-        eventListeners: [],
-        appStateRef: null // Referencia al appState para uso en funciones expuestas globalmente
+    const carritoState = {
+        eventListeners: []
     };
 
     function addEventListenerWithCleanup(element, event, handler) {
@@ -21,9 +20,6 @@
             }
         });
         carritoState.eventListeners = [];
-        // Limpiar las funciones globales
-        window.generarPedido = undefined;
-        carritoState.appStateRef = null;
     }
 
     function renderizarCarrito(appState) {
@@ -58,12 +54,12 @@
                     </div>
                 </div>
                 <div class="carrito-item-controles">
-                    <button class="btn-cantidad" data-id="${item.id}" data-action="restar" aria-label="Disminuir cantidad">-</button>
+                    <button class="btn-cantidad" data-action="restar" data-id="${item.id}" aria-label="Disminuir cantidad">-</button>
                     <input type="number" value="${item.cantidad}" 
                            class="input-cantidad" 
                            data-id="${item.id}"
                            aria-label="Cantidad del producto">
-                    <button class="btn-cantidad" data-id="${item.id}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
+                    <button class="btn-cantidad" data-action="sumar" data-id="${item.id}" aria-label="Aumentar cantidad">+</button>
                 </div>
                 <button class="btn-eliminar" data-id="${item.id}" aria-label="Eliminar del carrito">
                     <i data-lucide="trash-2"></i>
@@ -77,7 +73,7 @@
     }
 
     function actualizarTotales(appState) {
-        const subtotal = calcularSubtotal(appState);
+        const subtotal = calcularSubtotal(appState.carrito);
         const costoEnvio = appState.carrito.length > 0 ? 2000 : 0;
         const total = subtotal + costoEnvio;
         
@@ -86,8 +82,8 @@
         document.getElementById('total').textContent = `$${total.toLocaleString()}`;
     }
 
-    function calcularSubtotal(appState) {
-        return appState.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    function calcularSubtotal(carrito) {
+        return carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
     }
 
     function actualizarCantidad(appState, productoId, operacion) {
@@ -137,7 +133,7 @@
 
         const metodoPago = document.querySelector('input[name="metodoPago"]:checked').value;
         const costoEnvio = 2000; // Valor fijo para este ejemplo
-        const subtotal = calcularSubtotal(appState);
+        const subtotal = calcularSubtotal(appState.carrito);
         const total = subtotal + costoEnvio;
 
         const pedido = {
@@ -190,7 +186,7 @@
     }
 
     function calcularImpuestos(subtotal) {
-        return subtotal * 0.19; // 19% de impuestos
+        return subtotal * 0.19; // 19% de IVA
     }
 
     function configurarEventListeners(appState) {
@@ -218,123 +214,11 @@
             }
         });
 
-        if (btnGenerarPedido) {
-            addEventListenerWithCleanup(btnGenerarPedido, 'click', () => generarPedido(appState));
-        }
+        addEventListenerWithCleanup(btnGenerarPedido, 'click', () => generarPedido(appState));
     }
 
-    // Función de inicialización del módulo
     function inicializarModuloCarrito(appState) {
         console.log('Inicializando módulo de Carrito');
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-        configurarEventListeners(appState);
-        return {
-            cleanup: cleanup
-        };
-    }
-
-    function generarPedidoHandler() {
-        if (!carritoState.appStateRef) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
-        const appState = carritoState.appStateRef;
-        
-        if (appState.carrito.length === 0) {
-            alert('El carrito está vacío');
-            return;
-        }
-
-        const metodoPagoElement = document.querySelector('input[name="metodoPago"]:checked');
-        if (!metodoPagoElement) {
-            alert('Por favor seleccione un método de pago');
-            return;
-        }
-
-        const metodoPago = metodoPagoElement.value;
-        const costoEnvio = 2000;
-        const subtotal = calcularSubtotal(appState);
-        const total = subtotal + costoEnvio;
-
-        const pedido = {
-            idPedido: generarIdUnico(),
-            fechaPedido: new Date(),
-            estadoPedido: 'en espera',
-            horaCreacion: new Date(),
-            costoEnvio: costoEnvio,
-            items: appState.carrito.map(item => ({
-                idProducto: item.id,
-                cantidad: item.cantidad,
-                precioUnitario: item.precio,
-                total: item.precio * item.cantidad,
-                descuento: 0
-            })),
-            subtotal: subtotal,
-            total: total
-        };
-
-        const factura = {
-            idFactura: generarIdUnico(),
-            fechaEmision: new Date(),
-            idPedido: pedido.idPedido,
-            subtotal: subtotal,
-            impuestos: calcularImpuestos(subtotal),
-            total: total,
-            estadoFactura: 'pendiente',
-            pago: {
-                idPago: generarIdUnico(),
-                metodoPago: metodoPago,
-                estadoPago: metodoPago === 'contraentrega' ? 'pendiente' : 'procesando',
-                monto: total,
-                fechaPago: null
-            }
-        };
-
-        appState.pedidos.push(pedido);
-        appState.facturas.push(factura);
-
-        // Limpiar el carrito
-        appState.carrito = [];
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-
-        alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
-    }
-
-    function configurarEventListeners(appState) {
-        const carritoContainer = document.getElementById('carrito-items');
-        
-        // En lugar de configurar el botón aquí, exponemos la función globalmente
-        window.generarPedido = generarPedidoHandler;
-        
-        addEventListenerWithCleanup(carritoContainer, 'click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('btn-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const accion = target.dataset.action;
-                actualizarCantidad(appState, productoId, accion);
-            } else if (target.classList.contains('btn-eliminar')) {
-                const productoId = parseInt(target.dataset.id);
-                eliminarDelCarrito(appState, productoId);
-            }
-        });
-
-        addEventListenerWithCleanup(carritoContainer, 'change', (event) => {
-            const target = event.target;
-            if (target.classList.contains('input-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const nuevaCantidad = parseInt(target.value);
-                actualizarCantidadDirecta(appState, productoId, nuevaCantidad);
-            }
-        });
-    }
-
-    // Función de inicialización del módulo
-    function inicializarModuloCarrito(appState) {
-        console.log('Inicializando módulo de Carrito');
-        carritoState.appStateRef = appState; // Guardamos la referencia al appState
         renderizarCarrito(appState);
         actualizarTotales(appState);
         configurarEventListeners(appState);

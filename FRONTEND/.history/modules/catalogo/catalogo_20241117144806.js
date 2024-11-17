@@ -25,7 +25,6 @@
     }
 
     function renderizarCatalogo(appState) {
-        console.log('Renderizando catálogo');
         const catalogoContainer = document.getElementById('catalogo-productos');
         if (!catalogoContainer) {
             console.error('No se encontró el contenedor del catálogo');
@@ -70,7 +69,11 @@
         });
         
         // Reinicializar los iconos de Lucide
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        } else {
+            console.warn('Lucide no está disponible para crear iconos');
+        }
     }
 
     function obtenerCantidadEnCarrito(appState, productoId) {
@@ -91,8 +94,9 @@
                 }
             }
             renderizarCatalogo(appState);
-            // Aquí deberías llamar a una función para actualizar el carrito en la interfaz
-            // Por ejemplo: actualizarInterfazCarrito(appState);
+            if (typeof actualizarInterfazCarrito === 'function') {
+                actualizarInterfazCarrito(appState);
+            }
         }
     }
 
@@ -114,8 +118,9 @@
             }
         }
         renderizarCatalogo(appState);
-        // Aquí deberías llamar a una función para actualizar el carrito en la interfaz
-        // Por ejemplo: actualizarInterfazCarrito(appState);
+        if (typeof actualizarInterfazCarrito === 'function') {
+            actualizarInterfazCarrito(appState);
+        }
     }
 
     function agregarAlCarrito(appState, productoId) {
@@ -128,13 +133,13 @@
                 appState.carrito.push({...producto, cantidad: 1});
             }
             renderizarCatalogo(appState);
-            // Aquí deberías llamar a una función para actualizar el carrito en la interfaz
-            // Por ejemplo: actualizarInterfazCarrito(appState);
+            if (typeof actualizarInterfazCarrito === 'function') {
+                actualizarInterfazCarrito(appState);
+            }
         }
     }
 
     function configurarEventListeners(appState) {
-        console.log('Configurando event listeners del catálogo');
         const catalogoContainer = document.getElementById('catalogo-productos');
         
         addEventListenerWithCleanup(catalogoContainer, 'click', (event) => {

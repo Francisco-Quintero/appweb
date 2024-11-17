@@ -6,26 +6,7 @@
         carrito: [],
         pedidos: [],
         facturas: [],
-        inventario: [
-            {
-                id: 1,
-                nombre: 'Zanahoria Primera',
-                marca: 'Sin Marca',
-                precio: 4990,
-                precioGramo: 4.99,
-                stock: 100,
-                imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48L3N2Zz4='
-            },
-            {
-                id: 2,
-                nombre: 'Cebolla Cabezona Roja',
-                marca: 'Sin Marca',
-                precio: 4800,
-                precioGramo: 4.8,
-                stock: 50,
-                imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48L3N2Zz4='
-            }
-        ],
+        inventario: [],
         usuario: null
     };
 
@@ -67,8 +48,6 @@
                         const initFunctionName = `inicializarModulo${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`;
                         if (typeof window[initFunctionName] === 'function') {
                             this.loadedModules[moduleName] = window[initFunctionName](appState);
-                        } else {
-                            console.error(`Función de inicialización ${initFunctionName} no encontrada para el módulo ${moduleName}`);
                         }
                     };
                     document.body.appendChild(script);
@@ -76,6 +55,41 @@
                 .catch(error => console.error(`Error al cargar el módulo ${moduleName}:`, error));
         }
     };
+
+    // Función para actualizar el estado global
+    window.actualizarEstadoGlobal = function(nuevoEstado) {
+        console.log('Actualizando estado global', nuevoEstado);
+        // Actualizar el estado global
+        Object.assign(appState, nuevoEstado);
+
+        // Actualizar la interfaz de usuario
+        actualizarUI();
+    };
+
+    // Función para actualizar la interfaz de usuario
+    function actualizarUI() {
+        // Actualizar el contador del carrito en el header
+        const carritoCounter = document.getElementById('carrito-counter');
+        if (carritoCounter) {
+            const totalItems = appState.carrito.reduce((total, item) => total + item.cantidad, 0);
+            carritoCounter.textContent = totalItems;
+        }
+
+        // Actualizar otros elementos de la UI que dependen del estado global
+        // Por ejemplo, podrías actualizar un resumen del carrito si está visible
+        const resumenCarrito = document.getElementById('resumen-carrito');
+        if (resumenCarrito) {
+            resumenCarrito.innerHTML = appState.carrito.map(item => `
+                <div>${item.nombre} x ${item.cantidad}</div>
+            `).join('');
+        }
+
+        // Si el módulo actual tiene una función de actualización, llámala
+        const moduloActual = document.querySelector('.nav-item.active')?.dataset.module;
+        if (moduloActual && ModuleManager.loadedModules[moduloActual] && typeof ModuleManager.loadedModules[moduloActual].actualizar === 'function') {
+            ModuleManager.loadedModules[moduloActual].actualizar(appState);
+        }
+    }
 
     // Funciones globales
     window.generarIdUnico = function() {

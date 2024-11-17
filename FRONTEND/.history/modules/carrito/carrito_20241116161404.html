@@ -25,15 +25,24 @@
             <span>Total</span>
             <span id="total">$0</span>
         </div>
-        <div class="metodos-pago">
-            <label>
-                <input type="radio" name="metodoPago" value="efectivo" checked>
-                Efectivo
-            </label>
-            <label>
-                <input type="radio" name="metodoPago" value="contraentrega">
-                Pago contra entrega
-            </label>
+        <div class="metodo-pago">
+            <h3>Método de pago</h3>
+            <div class="metodo-pago-opciones">
+                <label class="opcion-pago">
+                    <input type="radio" name="metodoPago" value="contraentrega" checked>
+                    <span class="opcion-pago-detalle">
+                        <i data-lucide="wallet"></i>
+                        Pago contra entrega
+                    </span>
+                </label>
+                <label class="opcion-pago">
+                    <input type="radio" name="metodoPago" value="pse">
+                    <span class="opcion-pago-detalle">
+                        <i data-lucide="credit-card"></i>
+                        PSE
+                    </span>
+                </label>
+            </div>
         </div>
         <p class="carrito-nota">Tasas y fletes calculados en el carrito</p>
         <button class="btn-hacer-pedido" onclick="generarPedido()">Hacer pedido</button>

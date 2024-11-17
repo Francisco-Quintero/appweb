@@ -6,26 +6,7 @@
         carrito: [],
         pedidos: [],
         facturas: [],
-        inventario: [
-            {
-                id: 1,
-                nombre: 'Zanahoria Primera',
-                marca: 'Sin Marca',
-                precio: 4990,
-                precioGramo: 4.99,
-                stock: 100,
-                imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48L3N2Zz4='
-            },
-            {
-                id: 2,
-                nombre: 'Cebolla Cabezona Roja',
-                marca: 'Sin Marca',
-                precio: 4800,
-                precioGramo: 4.8,
-                stock: 50,
-                imagen: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48L3N2Zz4='
-            }
-        ],
+        inventario: [],
         usuario: null
     };
 
@@ -67,8 +48,6 @@
                         const initFunctionName = `inicializarModulo${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`;
                         if (typeof window[initFunctionName] === 'function') {
                             this.loadedModules[moduleName] = window[initFunctionName](appState);
-                        } else {
-                            console.error(`Función de inicialización ${initFunctionName} no encontrada para el módulo ${moduleName}`);
                         }
                     };
                     document.body.appendChild(script);
@@ -109,4 +88,14 @@
     lucide.createIcons();
 
     console.log('Script principal de la Tienda de Barrio cargado completamente');
+
+
+    
 })();
+
+ModuleManager.loadModule('catalogo', (appState) => {
+    const modulo = window.inicializarModuloCatalogo(appState, (nuevoEstado) => {
+        // Aquí puedes manejar los cambios de estado
+        // Por ejemplo, actualizar otros módulos o el estado global
+    });
+});

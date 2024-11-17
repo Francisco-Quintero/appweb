@@ -1,9 +1,8 @@
 (function() {
     console.log('Iniciando carga del módulo de Facturas');
 
-    let facturasState = {
-        eventListeners: [],
-        appStateRef: null
+    const facturasState = {
+        eventListeners: []
     };
 
     function addEventListenerWithCleanup(element, event, handler) {
@@ -21,8 +20,6 @@
             }
         });
         facturasState.eventListeners = [];
-        window.procesarPago = undefined;
-        facturasState.appStateRef = null;
     }
 
     function renderizarFacturas(appState) {
@@ -92,14 +89,6 @@
                 </div>
             `;
         }).join('');
-
-        // Agregar event listeners a los botones de pago
-        document.querySelectorAll('.btn-pagar').forEach(btn => {
-            addEventListenerWithCleanup(btn, 'click', (e) => {
-                const idFactura = e.target.getAttribute('data-id-factura');
-                procesarPago(idFactura);
-            });
-        });
     }
 
     function formatearFecha(fecha) {
@@ -115,13 +104,7 @@
         }
     }
 
-    function procesarPago(idFactura) {
-        const appState = facturasState.appStateRef;
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
+    function procesarPago(appState, idFactura) {
         const factura = appState.facturas.find(f => f.idFactura === idFactura);
         if (!factura) return;
 
@@ -135,13 +118,7 @@
         renderizarFacturas(appState);
     }
 
-    function filtrarFacturas() {
-        const appState = facturasState.appStateRef;
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
+    function filtrarFacturas(appState) {
         const estado = document.getElementById('filtro-estado')?.value || 'todos';
         const fecha = document.getElementById('filtro-fecha')?.value || '';
 
@@ -157,23 +134,34 @@
         renderizarFacturas({ ...appState, facturas: facturasFiltradas });
     }
 
-    function configurarEventListeners() {
-        addEventListenerWithCleanup(document.getElementById('filtro-estado'), 'change', filtrarFacturas);
-        addEventListenerWithCleanup(document.getElementById('filtro-fecha'), 'change', filtrarFacturas);
-        addEventListenerWithCleanup(document.getElementById('btn-aplicar-filtros'), 'click', filtrarFacturas);
+    function configurarEventListeners(appState) {
+        const facturasContainer = document.getElementById('lista-facturas');
+        const filtroEstado = document.getElementById('filtro-estado');
+        const filtroFecha = document.getElementById('filtro-fecha');
+        const btnAplicarFiltros = document.getElementById('btn-aplicar-filtros');
+
+        addEventListenerWithCleanup(facturasContainer, 'click', (event) => {
+            if (event.target.classList.contains('btn-pagar')) {
+                const idFactura = event.target.dataset.idFactura;
+                procesarPago(appState, idFactura);
+            }
+        });
+
+        addEventListenerWithCleanup(filtroEstado, 'change', () => filtrarFacturas(appState));
+        addEventListenerWithCleanup(filtroFecha, 'change', () => filtrarFacturas(appState));
+        addEventListenerWithCleanup(btnAplicarFiltros, 'click', () => filtrarFacturas(appState));
     }
 
     function inicializarModuloFacturas(appState) {
         console.log('Inicializando módulo de Facturas');
-        facturasState.appStateRef = appState;
         renderizarFacturas(appState);
-        configurarEventListeners();
-        window.procesarPago = procesarPago;
+        configurarEventListeners(appState);
         return {
             cleanup: cleanup
         };
     }
 
+    // Exponer la función de inicialización al objeto global window
     window.inicializarModuloFacturas = inicializarModuloFacturas;
 
     console.log('Módulo de Facturas cargado completamente');

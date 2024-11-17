@@ -2,8 +2,7 @@
     console.log('Iniciando carga del módulo de Carrito');
 
     let carritoState = {
-        eventListeners: [],
-        appStateRef: null // Referencia al appState para uso en funciones expuestas globalmente
+        eventListeners: []
     };
 
     function addEventListenerWithCleanup(element, event, handler) {
@@ -21,9 +20,6 @@
             }
         });
         carritoState.eventListeners = [];
-        // Limpiar las funciones globales
-        window.generarPedido = undefined;
-        carritoState.appStateRef = null;
     }
 
     function renderizarCarrito(appState) {
@@ -226,115 +222,6 @@
     // Función de inicialización del módulo
     function inicializarModuloCarrito(appState) {
         console.log('Inicializando módulo de Carrito');
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-        configurarEventListeners(appState);
-        return {
-            cleanup: cleanup
-        };
-    }
-
-    function generarPedidoHandler() {
-        if (!carritoState.appStateRef) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
-        const appState = carritoState.appStateRef;
-        
-        if (appState.carrito.length === 0) {
-            alert('El carrito está vacío');
-            return;
-        }
-
-        const metodoPagoElement = document.querySelector('input[name="metodoPago"]:checked');
-        if (!metodoPagoElement) {
-            alert('Por favor seleccione un método de pago');
-            return;
-        }
-
-        const metodoPago = metodoPagoElement.value;
-        const costoEnvio = 2000;
-        const subtotal = calcularSubtotal(appState);
-        const total = subtotal + costoEnvio;
-
-        const pedido = {
-            idPedido: generarIdUnico(),
-            fechaPedido: new Date(),
-            estadoPedido: 'en espera',
-            horaCreacion: new Date(),
-            costoEnvio: costoEnvio,
-            items: appState.carrito.map(item => ({
-                idProducto: item.id,
-                cantidad: item.cantidad,
-                precioUnitario: item.precio,
-                total: item.precio * item.cantidad,
-                descuento: 0
-            })),
-            subtotal: subtotal,
-            total: total
-        };
-
-        const factura = {
-            idFactura: generarIdUnico(),
-            fechaEmision: new Date(),
-            idPedido: pedido.idPedido,
-            subtotal: subtotal,
-            impuestos: calcularImpuestos(subtotal),
-            total: total,
-            estadoFactura: 'pendiente',
-            pago: {
-                idPago: generarIdUnico(),
-                metodoPago: metodoPago,
-                estadoPago: metodoPago === 'contraentrega' ? 'pendiente' : 'procesando',
-                monto: total,
-                fechaPago: null
-            }
-        };
-
-        appState.pedidos.push(pedido);
-        appState.facturas.push(factura);
-
-        // Limpiar el carrito
-        appState.carrito = [];
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-
-        alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
-    }
-
-    function configurarEventListeners(appState) {
-        const carritoContainer = document.getElementById('carrito-items');
-        
-        // En lugar de configurar el botón aquí, exponemos la función globalmente
-        window.generarPedido = generarPedidoHandler;
-        
-        addEventListenerWithCleanup(carritoContainer, 'click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('btn-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const accion = target.dataset.action;
-                actualizarCantidad(appState, productoId, accion);
-            } else if (target.classList.contains('btn-eliminar')) {
-                const productoId = parseInt(target.dataset.id);
-                eliminarDelCarrito(appState, productoId);
-            }
-        });
-
-        addEventListenerWithCleanup(carritoContainer, 'change', (event) => {
-            const target = event.target;
-            if (target.classList.contains('input-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const nuevaCantidad = parseInt(target.value);
-                actualizarCantidadDirecta(appState, productoId, nuevaCantidad);
-            }
-        });
-    }
-
-    // Función de inicialización del módulo
-    function inicializarModuloCarrito(appState) {
-        console.log('Inicializando módulo de Carrito');
-        carritoState.appStateRef = appState; // Guardamos la referencia al appState
         renderizarCarrito(appState);
         actualizarTotales(appState);
         configurarEventListeners(appState);
