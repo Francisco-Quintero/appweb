@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="historial-entregas-container">
+        <h2>Historial de Entregas</h2>
+        <div class="filtros">
+            <input type="date" id="fecha-inicio" name="fecha-inicio">
+            <input type="date" id="fecha-fin" name="fecha-fin">
+            <select id="filtro-estado">
+                <option value="todos">Todos los estados</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+            </select>
+            <button id="btn-filtrar">Filtrar</button>
+        </div>
+        <div class="tabla-container">
+            <table id="tabla-historial">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Dirección</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-tabla-historial">
+                    <!-- Las entregas se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        <div id="paginacion" class="paginacion">
+            <!-- Los controles de paginación se generarán aquí -->
+        </div>
+    </div>
+    
+    <div id="modal-detalles" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar-modal">&times;</span>
+            <h3>Detalles de la Entrega</h3>
+            <div id="detalles-entrega">
+                <!-- Los detalles de la entrega se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

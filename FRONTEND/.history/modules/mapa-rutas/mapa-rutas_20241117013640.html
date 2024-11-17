@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="mapas-rutas-container">
+        <h2>Mapas y Rutas</h2>
+        <div class="controles-mapa">
+            <select id="selector-ruta">
+                <option value="">Seleccione una ruta</option>
+                <!-- Las opciones se cargarán dinámicamente -->
+            </select>
+            <button id="btn-optimizar-ruta">Optimizar Ruta</button>
+        </div>
+        <div id="mapa" class="mapa"></div>
+        <div class="info-ruta">
+            <h3>Información de la Ruta</h3>
+            <p>Distancia total: <span id="distancia-total">0 km</span></p>
+            <p>Tiempo estimado: <span id="tiempo-estimado">0 min</span></p>
+        </div>
+        <div class="lista-paradas">
+            <h3>Lista de Paradas</h3>
+            <ul id="lista-paradas">
+                <!-- Las paradas se cargarán dinámicamente -->
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

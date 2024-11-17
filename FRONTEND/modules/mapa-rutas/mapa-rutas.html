@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Rutas</title>
+</head>
+<body>
+    <div class="mapa-rutas-container">
+        <h2>Mapa de Rutas</h2>
+        <div class="controles-mapa">
+            <select id="selector-ruta">
+                <option value="">Seleccionar ruta</option>
+                <!-- Las rutas se cargarán dinámicamente aquí -->
+            </select>
+            <button id="btn-iniciar-ruta">Iniciar Ruta</button>
+        </div>
+        <div id="mapa" class="mapa"></div>
+        <div id="info-ruta" class="info-ruta">
+            <h3>Información de la Ruta</h3>
+            <p>Distancia: <span id="distancia-ruta">-</span></p>
+            <p>Tiempo estimado: <span id="tiempo-ruta">-</span></p>
+        </div>
+    </div>
+</body>
+</html>
