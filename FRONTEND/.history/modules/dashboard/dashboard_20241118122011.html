@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <link rel="stylesheet" href="modules/dashboard/dashboard.css">
+</head>
+<body>
+    <!-- En modules/dashboard/dashboard.html -->
+<div class="dashboard-container">
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Órdenes de Compra</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        </div>
+        <div class="card-content">
+          <div class="card-value">3</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Órdenes Recibidas</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-box"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
+        <div class="card-content">
+          <div class="card-value">2</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Ventas</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-store"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>
+        </div>
+        <div class="card-content">
+          <div class="card-value">1</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Proveedores</h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="card-content">
+          <div class="card-value">5</div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="chart-container">
+      <h3>Ventas mensuales</h3>
+      <canvas id="sales-chart"></canvas>
+    </div>
+  
+    <div class="table-container">
+      <h3>Actividades recientes</h3>
+      <table class="activity-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Actividad</th>
+            <th>Usuario</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2023-05-15</td>
+            <td>Orden de compra #1234</td>
+            <td>Juan Pérez</td>
+            <td><span class="status-badge status-completed">Completada</span></td>
+          </tr>
+          <tr>
+            <td>2023-05-14</td>
+            <td>Venta #5678</td>
+            <td>María García</td>
+            <td><span class="status-badge status-pending">Pendiente</span></td>
+          </tr>
+          <tr>
+            <td>2023-05-13</td>
+            <td>Actualización de inventario</td>
+            <td>Carlos Rodríguez</td>
+            <td><span class="status-badge status-completed">Completada</span></td>
+          </tr>
+          <tr>
+            <td>2023-05-12</td>
+            <td>Nuevo proveedor añadido</td>
+            <td>Ana Martínez</td>
+            <td><span class="status-badge status-completed">Completada</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

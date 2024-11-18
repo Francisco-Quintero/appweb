@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="modules/dashboard/dashboard.css">
+    <!-- Incluir Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="card-grid">
+            <!-- ... (el contenido de las tarjetas permanece sin cambios) ... -->
+        </div>
+  
+        <div class="chart-container">
+            <h3>Ventas mensuales</h3>
+            <canvas id="sales-chart"></canvas>
+        </div>
+  
+        <div class="table-container">
+            <!-- ... (el contenido de la tabla permanece sin cambios) ... -->
+        </div>
+    </div>
+
+    <!-- Incluir el script del módulo de dashboard -->
+    <script src="modules/dashboard/dashboard.js"></script>
+    <script>
+        // Inicializar el módulo de dashboard cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.moduloDashboard !== 'undefined' && typeof window.moduloDashboard.init === 'function') {
+                window.moduloDashboard.init();
+            } else {
+                console.error('El módulo de dashboard no se ha cargado correctamente');
+            }
+        });
+    </script>
+</body>
+</html>

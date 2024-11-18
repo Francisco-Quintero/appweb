@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Tienda de Barrio</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #viewContainer {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #viewSelector {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <select id="viewSelector">
+        <option value="indexGestion.html">Vista Gestión</option>
+        <option value="indexTienda.html">Vista Tienda</option>
+        <option value="indexDomiciliario.html">Vista Domiciliario</option>
+    </select>
+    <iframe id="viewContainer" src="indexGestion.html"></iframe>
+
+    <script>
+        const viewSelector = document.getElementById('viewSelector');
+        const viewContainer = document.getElementById('viewContainer');
+
+        viewSelector.addEventListener('change', (e) => {
+            viewContainer.src = e.target.value;
+        });
+    </script>
+</body>
+</html>
