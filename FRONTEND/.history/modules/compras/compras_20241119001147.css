@@ -1,0 +1,345 @@
+/* Estilos generales */
+:root {
+    --color-primario: #3498db;
+    --color-secundario: #2ecc71;
+    --color-fondo: #f4f4f4;
+    --color-texto: #333;
+    --color-borde: #ddd;
+    --sombra: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    margin: 0;
+    padding: 20px;
+}
+
+.compras-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+}
+
+.formulario-compra {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.campo label {
+    font-weight: bold;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    padding: 8px;
+    border: 1px solid var(--color-borde);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Estilos para la búsqueda de productos */
+.busqueda-container {
+    position: relative;
+}
+
+.resultados-busqueda {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid var(--color-borde);
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.producto-resultado {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.producto-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.categoria {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.variantes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.variante-item {
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.variante-item:hover {
+    background-color: #e9e9e9;
+}
+
+
+h1 {
+    color: var(--color-primario);
+    margin-bottom: 20px;
+}
+
+/* Estilos para botones y acciones */
+.acciones-compras {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primario {
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.btn-primario:hover {
+    background-color: #2980b9;
+}
+
+.btn-secundario {
+    background-color: var(--color-secundario);
+    color: white;
+}
+
+.btn-secundario:hover {
+    background-color: #27ae60;
+}
+
+.contenedor-busqueda {
+    display: flex;
+    gap: 10px;
+}
+
+#busquedaCompra {
+    padding: 10px;
+    border: 1px solid var(--color-borde);
+    border-radius: 4px;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+/* Estilos para la tabla */
+.tabla-container {
+    overflow-x: auto;
+}
+
+.tabla-compras {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-compras th,
+.tabla-compras td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.tabla-compras th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: var(--color-primario);
+}
+
+.tabla-compras tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Estilos para el estado de la compra */
+.estado-compra {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.estado-pendiente {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.estado-completada {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.estado-cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.contenido-modal {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-cerrar {
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cerrar:hover {
+    color: #000;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .acciones-compras {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .contenedor-busqueda {
+        margin-top: 10px;
+    }
+
+    .contenido-modal {
+        width: 95%;
+        margin: 10% auto;
+    }
+}
+
+/* Iconos */
+.icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Agregar estos estilos al CSS existente */
+.busqueda-container {
+    position: relative;
+}
+
+.resultados-busqueda {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.producto-resultado {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.producto-resultado:hover {
+    background-color: #f5f5f5;
+}
+
+.producto-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.variante-item {
+    padding: 4px 8px;
+    margin: 2px 0;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.variante-item:hover {
+    background-color: #e9e9e9;
+}
+
+.categoria {
+    font-size: 0.8em;
+    color: #666;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}

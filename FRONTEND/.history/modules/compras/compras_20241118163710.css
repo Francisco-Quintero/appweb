@@ -1,0 +1,227 @@
+/* Estilos generales */
+.compras-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Secciones del formulario */
+.seccion-formulario {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.seccion-formulario h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Campo de búsqueda mejorado */
+.campo-busqueda {
+    margin-bottom: 15px;
+}
+
+.busqueda-container {
+    display: flex;
+    gap: 8px;
+}
+
+.busqueda-container input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-buscar {
+    padding: 8px;
+    background: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-buscar:hover {
+    background: #0056b3;
+}
+
+/* Resultados de búsqueda */
+.resultados-busqueda {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resultados-busqueda div {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.resultados-busqueda div:hover {
+    background-color: #f5f5f5;
+}
+
+/* Información seleccionada */
+.info-seleccionada {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.info-seleccionada h5 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Filtros de producto */
+.filtros-producto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Sección de variantes */
+.seccion-variantes {
+    margin-top: 15px;
+}
+
+.lista-variantes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.variante-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variante-item:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+}
+
+.variante-item.seleccionado {
+    background: #e7f1ff;
+    border-color: #007bff;
+}
+
+/* Formulario de variante */
+.formulario-variante {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.campos-variante {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Tabla de productos */
+.tabla-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.tabla-productos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabla-productos th,
+.tabla-productos td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-productos th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Footer del formulario */
+.form-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.totales {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.totales p {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+/* Botones */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primario {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primario:hover {
+    background-color: #0056b3;
+}
+
+.btn-guardar {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filtros-producto,
+    .campos-variante {
+        grid-template-columns: 1fr;
+    }
+
+    .lista-variantes {
+        grid-template-columns: 1fr;
+    }
+}
