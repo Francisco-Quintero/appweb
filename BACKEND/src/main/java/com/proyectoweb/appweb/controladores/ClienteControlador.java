@@ -40,4 +40,3 @@ public class ClienteControlador {
         clienteServicio.eliminar(id);
     }
 }
-

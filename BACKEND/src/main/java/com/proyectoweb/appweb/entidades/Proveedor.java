@@ -19,4 +19,3 @@ public class Proveedor {
     private Double numeroContacto;
     private String frecuenciaAbastecimiento;
 }
-
