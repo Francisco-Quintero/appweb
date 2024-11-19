@@ -1,3 +1,4 @@
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -16,7 +17,6 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--muted) / 0.5);
 }
-
 :root {
     --primary: 225 14% 33%;    /* #594F4F */
     --primary-foreground: 0 0% 100%;
@@ -31,17 +31,17 @@
     --border: 178 43% 47%;     /* #45ADA8 */
     --input: 194 19% 41%;      /* #547980 */
     --ring: 225 14% 33%;       /* #594F4F */
-    --background: 0 0% 100%;   /* Blanco */
+    --background: 0 0% 100%;   /* Cambiado a blanco */
     --radius: 0.5rem;
 }
 
-.proveedores-container {
+.productos-container {
     padding: 20px;
     background-color: hsl(var(--background));
     color: hsl(var(--primary));
 }
 
-.acciones-proveedores {
+.acciones-productos {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -52,7 +52,7 @@
     align-items: center;
 }
 
-#busquedaProveedor {
+#busquedaProducto {
     padding: 0.75rem;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
@@ -61,7 +61,13 @@
     color: hsl(var(--primary));
 }
 
-.tabla-proveedores {
+#busquedaProducto:focus {
+    outline: none;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+}
+
+.tabla-productos {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -71,25 +77,25 @@
     overflow: hidden;
 }
 
-.tabla-proveedores th,
-.tabla-proveedores td {
+.tabla-productos th,
+.tabla-productos td {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid hsl(var(--border));
 }
 
-.tabla-proveedores th {
-    background-color: hsl(var(--secondary));
-    color: hsl(var(--secondary-foreground));
+.tabla-productos th {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
     font-weight: 600;
 }
 
-.tabla-proveedores tr:last-child td {
+.tabla-productos tr:last-child td {
     border-bottom: none;
 }
 
-.tabla-proveedores tr:nth-child(even) {
-    background-color: hsl(var(--accent) / 0.1);
+.tabla-productos tr:nth-child(even) {
+    background-color: hsl(var(--muted) / 0.1);
 }
 
 .btn {
@@ -101,6 +107,12 @@
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-icon {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
 }
 
 .btn-primario {
@@ -130,6 +142,27 @@
     background-color: hsl(var(--destructive) / 0.8);
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: hsl(var(--primary) / 0.7);
+}
+
+.contenido-modal {
+    background-color: hsl(var(--background));
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+}
+
 .grupo-formulario {
     margin-bottom: 1.5rem;
 }
@@ -137,16 +170,26 @@
 .grupo-formulario label {
     display: block;
     margin-bottom: 0.5rem;
+    font-weight: 500;
     color: hsl(var(--primary));
 }
 
-.grupo-formulario input {
+.grupo-formulario input,
+.grupo-formulario textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
     background-color: hsl(var(--background));
     color: hsl(var(--primary));
+    transition: border-color 0.3s ease;
+}
+
+.grupo-formulario input:focus,
+.grupo-formulario textarea:focus {
+    outline: none;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
 }
 
 .acciones-formulario {
@@ -156,11 +199,39 @@
     margin-top: 20px;
 }
 
+.btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.productos-container h2 {
+    color: hsl(var(--primary));
+    margin-bottom: 1.5rem;
+}
+
+.tabla-productos td {
+    vertical-align: middle;
+}
+
+.tabla-productos .acciones {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.productos-empty {
+    text-align: center;
+    padding: 2rem;
+    background-color: hsl(var(--background));
+    border-radius: var(--radius);
+    color: hsl(var(--muted));
+}
+
 .acciones-tabla {
     display: flex;
     gap: 0.5rem;
     justify-content: flex-start;
     align-items: center;
+    position: relative;
 }
 
 .btn-icono {
@@ -179,7 +250,7 @@
 }
 
 .btn-icono:hover {
-    background-color: hsl(var(--accent));
+    background-color: hsl(var(--muted) / 0.2);
     color: hsl(var(--accent-foreground));
     transform: translateY(-1px);
 }
@@ -198,69 +269,18 @@
     color: hsl(var(--destructive-foreground));
 }
 
-/* Modificar las clases existentes */
-.dashboard {
-    display: grid;
-    min-height: 100vh;
-    width: 100%;
-    grid-template-columns: 240px 1fr;
-    background-color: hsl(var(--background));
-    overflow: hidden; /* Previene scroll en el contenedor principal */
-}
-
-.main-content {
-    display: flex;
-    flex-direction: column;
-    background-color: hsl(var(--background));
-    overflow: hidden; /* Cambiado de auto a hidden */
-    height: 100vh;
-}
-
-.dashboard-content {
-    flex: 1;
-    padding: 1.5rem;
-    background-color: hsl(var(--background));
-    overflow-y: auto; /* Permite scroll solo en el contenido */
-    scrollbar-gutter: stable; /* Reserva espacio para el scrollbar */
-}
-
-/* Para los modales */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: hsl(var(--primary) / 0.4);
-    overflow: hidden; /* Cambiado de auto a hidden */
-}
-
-.contenido-modal {
-    background-color: hsl(var(--background));
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid hsl(var(--border));
-    width: 90%;
-    max-width: 800px;
+.btn-icono[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-size: 0.75rem;
     border-radius: var(--radius);
-    max-height: calc(100vh - 4rem); /* Altura máxima ajustada */
-    overflow-y: auto; /* Permite scroll solo en el contenido */
-    position: relative;
-    scrollbar-gutter: stable;
-}
-
-/* Para las tablas con scroll horizontal */
-.tabla-container {
-    overflow-x: auto;
-    margin: 1rem 0;
-    scrollbar-gutter: stable;
-}
-
-/* Para los resultados de búsqueda */
-.resultados-busqueda {
-    max-height: 200px;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
 }

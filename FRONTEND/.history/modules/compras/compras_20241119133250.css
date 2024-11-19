@@ -1,3 +1,4 @@
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -16,7 +17,6 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--muted) / 0.5);
 }
-
 :root {
     --primary: 225 14% 33%;    /* #594F4F */
     --primary-foreground: 0 0% 100%;
@@ -33,42 +33,42 @@
     --ring: 225 14% 33%;       /* #594F4F */
     --background: 0 0% 100%;   /* Blanco */
     --radius: 0.5rem;
-}
-
-body {
+  }
+  
+  body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: hsl(var(--primary));
     background-color: hsl(var(--background));
-}
-
-.compras-container {
+  }
+  
+  .compras-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}
-
-.acciones-compras {
+  }
+  
+  .acciones-compras {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-}
-
-.contenedor-busqueda {
+  }
+  
+  .contenedor-busqueda {
     display: flex;
     align-items: center;
-}
-
-#busquedaCompra {
+  }
+  
+  #busquedaCompra {
     padding: 8px;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
     margin-right: 8px;
     background-color: hsl(var(--background));
     color: hsl(var(--primary));
-}
-
-.tabla-compras {
+  }
+  
+  .tabla-compras {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -76,22 +76,22 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: var(--radius);
     overflow: hidden;
-}
-
-.tabla-compras th,
-.tabla-compras td {
+  }
+  
+  .tabla-compras th,
+  .tabla-compras td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid hsl(var(--border));
-}
-
-.tabla-compras th {
+  }
+  
+  .tabla-compras th {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
     font-weight: bold;
-}
-
-.btn {
+  }
+  
+  .btn {
     padding: 8px 16px;
     border: none;
     border-radius: var(--radius);
@@ -100,340 +100,321 @@ body {
     align-items: center;
     gap: 8px;
     transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-primario {
+  }
+  
+  .btn-primario {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
-}
-
-.btn-primario:hover {
+  }
+  
+  .btn-primario:hover {
     background-color: hsl(var(--primary) / 0.8);
-}
-
-.btn-secundario {
+  }
+  
+  .btn-secundario {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
-}
-
-.btn-secundario:hover {
+  }
+  
+  .btn-secundario:hover {
     background-color: hsl(var(--secondary) / 0.8);
-}
-
-.btn-peligro {
+  }
+  
+  .btn-peligro {
     background-color: hsl(var(--destructive));
     color: hsl(var(--destructive-foreground));
-}
-
-.btn-peligro:hover {
+  }
+  
+  .btn-peligro:hover {
     background-color: hsl(var(--destructive) / 0.8);
-}
-
+  }
+  
+/* Modificar las clases existentes */
 .dashboard {
-    display: grid;
-    min-height: 100vh;
-    width: 100%;
-    grid-template-columns: 240px 1fr;
-    background-color: hsl(var(--background));
-    overflow: hidden;
+  display: grid;
+  min-height: 100vh;
+  width: 100%;
+  grid-template-columns: 240px 1fr;
+  background-color: hsl(var(--background));
+  overflow: hidden; /* Previene scroll en el contenedor principal */
 }
 
 .main-content {
-    display: flex;
-    flex-direction: column;
-    background-color: hsl(var(--background));
-    overflow: hidden;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: hsl(var(--background));
+  overflow: hidden; /* Cambiado de auto a hidden */
+  height: 100vh;
 }
 
 .dashboard-content {
-    flex: 1;
-    padding: 1.5rem;
-    background-color: hsl(var(--background));
-    overflow-y: auto;
-    scrollbar-gutter: stable;
+  flex: 1;
+  padding: 1.5rem;
+  background-color: hsl(var(--background));
+  overflow-y: auto; /* Permite scroll solo en el contenido */
+  scrollbar-gutter: stable; /* Reserva espacio para el scrollbar */
 }
 
+/* Para los modales */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: hsl(var(--primary) / 0.4);
-    overflow: hidden;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(var(--primary) / 0.4);
+  overflow: hidden; /* Cambiado de auto a hidden */
 }
 
 .contenido-modal {
-    background-color: hsl(var(--background));
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid hsl(var(--border));
-    width: 95%;
-    max-width: 1200px;
-    border-radius: var(--radius);
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-    position: relative;
-    scrollbar-gutter: stable;
+  background-color: hsl(var(--background));
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid hsl(var(--border));
+  width: 90%;
+  max-width: 800px;
+  border-radius: var(--radius);
+  max-height: calc(100vh - 4rem); /* Altura máxima ajustada */
+  overflow-y: auto; /* Permite scroll solo en el contenido */
+  position: relative;
+  scrollbar-gutter: stable;
 }
 
+/* Para las tablas con scroll horizontal */
 .tabla-container {
-    overflow-x: auto;
-    margin: 1rem 0;
-    scrollbar-gutter: stable;
+  overflow-x: auto;
+  margin: 1rem 0;
+  scrollbar-gutter: stable;
 }
 
+/* Para los resultados de búsqueda */
 .resultados-busqueda {
-    max-height: 200px;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
-
-.detalles-compra {
+  .detalles-compra {
     margin-top: 20px;
-}
-
-.detalles-compra h4 {
+  }
+  
+  .detalles-compra h4 {
     margin-bottom: 10px;
     color: hsl(var(--primary));
-}
-
-.detalles-compra table {
+  }
+  
+  .detalles-compra table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-}
-
-.detalles-compra th,
-.detalles-compra td {
+  }
+  
+  .detalles-compra th,
+  .detalles-compra td {
     padding: 8px;
     border-bottom: 1px solid hsl(var(--border));
     text-align: left;
-}
-
-.acciones-formulario {
+  }
+  
+  .acciones-formulario {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--border));
-}
-
-.campo {
-    margin-bottom: 1rem;
-}
-
-.campo label {
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .campo {
+    margin-bottom: 15px;
+  }
+  
+  .campo label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    margin-bottom: 5px;
     color: hsl(var(--primary));
-}
-
-.campo input,
-.campo select,
-.campo textarea {
+  }
+  
+  .campo input,
+  .campo select,
+  .campo textarea {
     width: 100%;
-    padding: 0.75rem;
+    padding: 8px;
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
     background-color: hsl(var(--background));
     color: hsl(var(--primary));
-}
-
-#tablaProductos {
+  }
+  
+  #tablaProductos {
     width: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
-}
-
-.totales {
-    background-color: hsl(var(--accent) / 0.1);
-    padding: 1.5rem;
-    border-radius: var(--radius);
+  }
+  
+  .totales {
     margin-top: 20px;
-}
-
-.totales p {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid hsl(var(--border) / 0.2);
-}
-
-.totales p:last-child {
-    border-bottom: none;
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 2px solid hsl(var(--border));
-}
-
-#modalFormulario .contenido-modal {
-    max-width: 1200px;
-}
-
-#resultadosBusqueda {
+    font-weight: bold;
+    color: hsl(var(--primary));
+  }
+  
+  #modalFormulario .contenido-modal {
+    max-width: 800px;
+  }
+  
+  #resultadosBusqueda {
     position: absolute;
     background-color: hsl(var(--background));
     border: 1px solid hsl(var(--border));
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
-}
-
-#resultadosBusqueda div {
+  }
+  
+  #resultadosBusqueda div {
     padding: 10px;
     cursor: pointer;
     color: hsl(var(--primary));
-}
-
-#resultadosBusqueda div:hover {
+  }
+  
+  #resultadosBusqueda div:hover {
     background-color: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
-}
-
-.modal-header {
+  }
+  
+  .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid hsl(var(--border));
-}
-
-.modal-header h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: hsl(var(--primary));
-}
-
-.btn-cerrar {
+    margin-bottom: 20px;
+  }
+  
+  .btn-cerrar {
     font-size: 28px;
     font-weight: bold;
     color: hsl(var(--muted));
     background: none;
     border: none;
     cursor: pointer;
-}
-
-.btn-cerrar:hover {
+  }
+  
+  .btn-cerrar:hover {
     color: hsl(var(--primary));
-}
-
-.formulario-compra {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 2rem;
-}
-
-.area-productos {
+  }
+  
+  .formulario-compra {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-grid {
+    gap: 20px;
+  }
+  
+  .form-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.campo-completo {
-    grid-column: 1 / -1;
-}
-
-.area-totales {
-    background-color: hsl(var(--accent) / 0.1);
-    padding: 1.5rem;
-    border-radius: var(--radius);
-    height: fit-content;
-}
-
-.tabla-productos {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .busqueda-container {
+    position: relative;
+  }
+  
+  
+  .tabla-productos {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     margin-top: 20px;
-}
-
-.tabla-productos th,
-.tabla-productos td {
+  }
+  
+  .tabla-productos th,
+  .tabla-productos td {
     padding: 10px;
     border: 1px solid hsl(var(--border));
     text-align: left;
-}
-
-.tabla-productos th {
+  }
+  
+  .tabla-productos th {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
     font-weight: bold;
-}
-
-.btn-guardar {
+  }
+  
+  .btn-guardar {
     align-self: flex-end;
     margin-top: 20px;
-}
-
-.btn-agregar {
-    padding: 10px 1rem;
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    border: none;
+  }
+  
+  .totales {
+    background-color: hsl(var(--accent) / 0.1);
+    padding: 15px;
     border-radius: var(--radius);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem; 
-}
+    margin-top: 20px;
+  }
+  
+  .totales p {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .contenido-modal {
+      width: 95%;
+      margin: 2% auto;
+    }
+  
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-.btn-agregar:hover {
-    background-color: hsl(var(--primary) / 0.9);
-}
-
-.modal-titulo {
+  /* Estilos para el modal de detalles de compra */
+.contenido-modal {
+    background-color: hsl(var(--background));
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 600px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+  
+  .modal-titulo {
     font-size: 1.75rem;
     font-weight: 700;
     color: hsl(var(--primary));
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid hsl(var(--border));
-}
-
-.compra-numero {
+  }
+  
+  .compra-numero {
     font-size: 1.25rem;
     font-weight: 600;
     color: hsl(var(--secondary));
     margin-bottom: 1.5rem;
-}
-
-.detalles-grupo {
+  }
+  
+  .detalles-grupo {
     margin-bottom: 1.5rem;
-}
-
-.detalles-label {
+  }
+  
+  .detalles-label {
     font-size: 0.875rem;
     font-weight: 500;
     color: hsl(var(--muted));
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
-}
-
-.detalles-valor {
+  }
+  
+  .detalles-valor {
     font-size: 1rem;
     color: hsl(var(--primary));
     margin-bottom: 0.75rem;
-}
-
-.estado-compra {
+  }
+  
+  .estado-compra {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius);
@@ -441,103 +422,79 @@ body {
     font-weight: 600;
     background-color: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
-}
-
-.productos-titulo {
+  }
+  
+  .productos-titulo {
     font-size: 1.25rem;
     font-weight: 600;
     color: hsl(var(--primary));
     margin: 1.5rem 0 1rem;
-}
-
-.productos-lista {
+  }
+  
+  .productos-lista {
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-.producto-item {
+  }
+  
+  .producto-item {
     display: flex;
     justify-content: space-between;
     padding: 0.75rem 0;
     border-bottom: 1px solid hsl(var(--border) / 0.2);
-}
-
-.producto-item:last-child {
+  }
+  
+  .producto-item:last-child {
     border-bottom: none;
-}
-
-.producto-descripcion {
+  }
+  
+  .producto-descripcion {
     font-size: 1rem;
     color: hsl(var(--primary));
-}
-
-.producto-precio {
+  }
+  
+  .producto-precio {
     font-size: 1rem;
     font-weight: 600;
     color: hsl(var(--primary));
-}
-
-.observaciones {
+  }
+  
+  .observaciones {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid hsl(var(--border) / 0.2);
-}
-
-.observaciones-titulo {
+  }
+  
+  .observaciones-titulo {
     font-size: 1rem;
     font-weight: 600;
     color: hsl(var(--primary));
     margin-bottom: 0.5rem;
-}
-
-.observaciones-texto {
+  }
+  
+  .observaciones-texto {
     font-size: 0.875rem;
     color: hsl(var(--primary) / 0.8);
     line-height: 1.5;
-}
-
-.total-compra {
+  }
+  
+  .total-compra {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 2px solid hsl(var(--border));
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.total-label {
+  }
+  
+  .total-label {
     font-size: 1.125rem;
     font-weight: 600;
     color: hsl(var(--primary));
-}
-
-.total-valor {
+  }
+  
+  .total-valor {
     font-size: 1.5rem;
     font-weight: 700;
     color: hsl(var(--primary));
-}
-
-@media (max-width: 1024px) {
-    .formulario-compra {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 640px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .contenido-modal {
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-        height: 100vh;
-        max-height: none;
-    }
-}
+  }

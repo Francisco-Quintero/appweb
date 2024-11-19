@@ -383,7 +383,7 @@ body {
 }
 
 .btn-agregar {
-    padding: 10px 1rem;
+    padding: 0.5rem 1rem;
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     border: none;
