@@ -24,6 +24,11 @@ public class PedidoControlador {
         return pedidoServicio.obtenerPorId(id);
     }
 
+    @GetMapping("/clientes/{id}")
+    public List<Pedido> obtenerPorIdCliente(@PathVariable Long id) {
+        return pedidoServicio.listarPorCliente(id);
+    }
+    
     @PostMapping
     public Pedido guardar(@RequestBody Pedido pedido) {
         return pedidoServicio.guardar(pedido);

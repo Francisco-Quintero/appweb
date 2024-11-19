@@ -11,6 +11,11 @@ import java.util.List;
 @RequestMapping("/api/productos")
 public class ProductoControlador {
 
+    /*@GetMapping("/api/productos")
+    public String obtenerProductos() {
+        return "¡Hola! Aquí están los productos disponibles.";
+    } */
+
     @Autowired
     private ProductoServicio productoServicio;
 
