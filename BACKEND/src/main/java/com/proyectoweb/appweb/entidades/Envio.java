@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class Envio {
     private Long idEnvio;
 
     @Column(name = "hora_envio")
-    private Date horaInicio;
+    private Date horaEnvio;
 
     @Column(name = "estado_envio")
     private String estadoEnvio;
@@ -33,7 +34,7 @@ public class Envio {
     private int tiempoEstimado;
 
     @ManyToOne
-    @Column(name = "id_pedido")
+    @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 }
 
