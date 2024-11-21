@@ -1,0 +1,200 @@
+:root {
+    --primary: 225 14% 33%;    /* #594F4F */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 194 19% 41%;   /* #547980 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 178 43% 47%;      /* #45ADA8 */
+    --muted-foreground: 0 0% 100%;
+    --accent: 146 55% 75%;     /* #9DE0AD */
+    --accent-foreground: 225 14% 33%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 178 43% 47%;     /* #45ADA8 */
+    --input: 194 19% 41%;      /* #547980 */
+    --ring: 225 14% 33%;       /* #594F4F */
+    --background: 0 0% 100%;   /* Blanco */
+    --radius: 0.5rem;
+}
+
+
+#resultadosBusqueda {
+    position: absolute;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+#resultadosBusqueda div {
+    padding: 10px;
+    cursor: pointer;
+    color: hsl(var(--primary));
+}
+
+#resultadosBusqueda div:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+}
+.stock-container {
+    padding: 20px;
+    background-color: hsl(var(--background));
+    color: hsl(var(--primary));
+}
+
+.acciones-stock {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.contenedor-busqueda {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    max-width: 400px;
+}
+
+.contenedor-busqueda input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background-color: hsl(var(--background));
+    color: hsl(var(--primary));
+}
+
+.tabla-stock {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background-color: hsl(var(--background));
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.tabla-stock th,
+.tabla-stock td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+}
+
+.tabla-stock th {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    font-weight: 600;
+}
+
+.tabla-stock tr:last-child td {
+    border-bottom: none;
+}
+
+.alerta-stock {
+    background-color: hsl(var(--destructive) / 0.1);
+}
+
+.estado-stock {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    font-size: 0.9em;
+}
+
+.estado-stock.normal {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+}
+
+.estado-stock.bajo-stock {
+    background-color: hsl(var(--destructive));
+    color: hsl(var(--destructive-foreground));
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: hsl(var(--primary) / 0.7);
+}
+
+.contenido-modal {
+    position: relative;
+    background-color: hsl(var(--background));
+    margin: 10% auto;
+    padding: 2rem;
+    width: 80%;
+    max-width: 500px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.campo {
+    margin-bottom: 1.5rem;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: hsl(var(--primary));
+}
+
+.campo input,
+.campo textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    background-color: hsl(var(--background));
+    color: hsl(var(--primary));
+}
+
+.btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primario {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+.btn-primario:hover {
+    background-color: hsl(var(--primary) / 0.8);
+}
+
+.btn-secundario {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+}
+
+.btn-secundario:hover {
+    background-color: hsl(var(--secondary) / 0.8);
+}
+
+.btn-fantasma {
+    background: none;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--primary));
+}
+
+.btn-fantasma:hover {
+    background-color: hsl(var(--accent) / 0.1);
+}
+
+.btn svg {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
