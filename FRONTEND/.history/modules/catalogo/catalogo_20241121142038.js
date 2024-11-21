@@ -53,6 +53,7 @@
         const fragment = document.createDocumentFragment();
     
         inventario.forEach(itemInventario => {
+            console.log(itemInventario);
             if (itemInventario.stock > 0) {
                 const producto = productosMap.get(itemInventario.idProducto);
                 

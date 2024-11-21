@@ -7,14 +7,15 @@
     width: 100%;
     margin: 0;
 }
- 
+/* 
 .catalogo-container h2 {
     font-size: 2rem;
     color: #333;
     margin-bottom: 1rem;
     text-align: center;
     background-color: #059669;
-}
+} */
+/* 
 .productos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -22,7 +23,7 @@
     padding: 1rem;
     width: 100%;
     background-color: #1d4ed8;
-} 
+} */
 
 .producto-card {
     width: 100%;
@@ -33,7 +34,7 @@
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column;
+    flex-direction: flow;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 

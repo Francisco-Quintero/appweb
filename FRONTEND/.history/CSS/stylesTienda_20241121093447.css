@@ -1,4 +1,3 @@
-/* General Styles */
 :root {
     --primary: 0 100% 50%;    /* Rojo */
     --primary-foreground: 0 0% 100%;
@@ -166,7 +165,7 @@ body {
 }
 
 .products-area {
-    flex-grow: 1;
+    width: 100%;
 }
 
 .products-header {

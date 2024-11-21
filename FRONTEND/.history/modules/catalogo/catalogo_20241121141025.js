@@ -42,7 +42,7 @@
 
     function renderizarCatalogo() {
         console.log('Renderizando catálogo');
-        console.log(inventario);
+        console.log(productos);
         const catalogoContainer = document.getElementById('catalogo-productos');
         if (!catalogoContainer) {
             console.error('No se encontró el contenedor del catálogo');
@@ -53,7 +53,7 @@
         const fragment = document.createDocumentFragment();
     
         inventario.forEach(itemInventario => {
-            if (itemInventario.stock > 0) {
+            if (itemInventario.cantidad > 0) {
                 const producto = productosMap.get(itemInventario.idProducto);
                 
                 if (producto) {
@@ -73,8 +73,8 @@
                             </button>
                         </div>
                         <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
-                        <div class="producto-precio">$${producto.precioUnitario}</div>
-                        <div class="producto-inventario">Disponible: ${itemInventario.stock}</div>
+                        <div class="producto-precio">$${producto.precioUnitario.toLocaleString()}</div>
+                        <div class="producto-inventario">Disponible: ${itemInventario.cantidad}</div>
                         ${cantidadEnCarrito > 0 ? `
                             <div class="producto-cantidad">
                                 <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>

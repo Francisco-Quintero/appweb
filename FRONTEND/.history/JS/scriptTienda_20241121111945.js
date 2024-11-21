@@ -39,6 +39,7 @@ function inicializarTienda() {
             e.preventDefault();
             const nombreModulo = this.getAttribute('data-module');
             cargarModulo(nombreModulo);
+            document.getElementById('section-title').textContent = this.textContent;
         });
     });
     // Cargar el módulo inicial

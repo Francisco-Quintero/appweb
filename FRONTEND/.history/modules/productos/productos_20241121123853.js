@@ -111,7 +111,7 @@
 
 
     function configurarEventListeners() {
-            document.getElementById('btnAgregarProducto').addEventListener('click', () => {
+        document.getElementById('btnAgregarProducto').addEventListener('click', () => {
             document.getElementById('formularioProducto').reset();
             document.getElementById('idProducto').value = '';
             document.getElementById('modalProducto').style.display = 'block';

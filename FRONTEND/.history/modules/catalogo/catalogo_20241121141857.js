@@ -53,6 +53,7 @@
         const fragment = document.createDocumentFragment();
     
         inventario.forEach(itemInventario => {
+            console.log(itemInventario);
             if (itemInventario.stock > 0) {
                 const producto = productosMap.get(itemInventario.idProducto);
                 
@@ -73,7 +74,7 @@
                             </button>
                         </div>
                         <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
-                        <div class="producto-precio">$${producto.precioUnitario}</div>
+                        <div class="producto-precio">$${producto.precioUnitario.toLocaleString()}</div>
                         <div class="producto-inventario">Disponible: ${itemInventario.stock}</div>
                         ${cantidadEnCarrito > 0 ? `
                             <div class="producto-cantidad">

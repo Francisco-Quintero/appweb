@@ -1,3 +1,4 @@
+
 (function() {
     console.log('Iniciando carga del módulo de stock');
 
@@ -26,7 +27,7 @@
         }
     }
 
-    function guardarInventario(e) {
+    function guardarInventario(e){
         e.preventDefault();
         const nombre = document.getElementById('busquedaProducto').value;
         const producto = productos.find(p => p.Nombre === nombre);
@@ -35,17 +36,14 @@
             return;
         }
         const idInventario = document.getElementById('idInventario').value;
-        const stockActual = parseInt(document.getElementById('stockActual').value);
-        const puntoReorden = parseInt(document.getElementById('puntoReorden').value);
 
         const inventarioNuevo = {
             idInventario: idInventario ? parseInt(idInventario) : Date.now(),
-            stock: stockActual,
-            idProducto: producto.idProducto,
+            stock: parseInt(document.getElementById('stockActual').value),
             nombreProducto: producto.Nombre,
-            puntoReorden: puntoReorden,
+            puntoReorden: parseInt(document.getElementById('puntoReorden').value),
             fechaActualizacion: new Date().toISOString().split('T')[0],
-            estado: stockActual <= puntoReorden ? 'Bajo stock' : 'Normal'
+           estado: stockActual <= puntoReorden ? 'Normal':'Bajo stock'
         };
 
         if (idInventario) {
@@ -84,6 +82,7 @@
             console.error('No se encontró el elemento cuerpoTablaStock');
             return;
         }
+
 
         const contenidoTabla = inventario.length === 0
             ? '<tr><td colspan="7" class="text-center">No hay inventario registrados. </td></tr>'
@@ -175,6 +174,7 @@
             document.getElementById('modalStock').style.display = 'block';
         });
 
+
         document.getElementById('btnCerrarModal')?.addEventListener('click', () => {
             document.getElementById('modalStock').style.display = 'none';
         });
@@ -185,6 +185,7 @@
 
         document.getElementById('btnBuscar')?.addEventListener('click', buscarInventario);
         document.getElementById('formularioStock').addEventListener('submit', guardarInventario);
+
     }
 
     function initStock() {
@@ -199,6 +200,7 @@
         if (window.datosGlobales) {
             sincronizarConDatosGlobales();
         }
+
 
         console.log('Módulo de stock cargado completamente');
     }
@@ -219,17 +221,17 @@
 
     function buscarProductos(termino) {
         console.log('Buscando productos:', termino);
-        return productos.filter(producto => {
+        return productos.filter(producto =>{
             try {
-                return (
-                    (producto.Nombre && producto.Nombre.toLowerCase().includes(termino.toLowerCase())) ||
-                    (producto.Descripcion && producto.Descripcion.toLowerCase().includes(termino.toLowerCase()))
-                );
-            } catch (error) {
-                console.error('Error en el producto:', producto, error);
-                return false;
-            }
-        });
+            return (
+                (producto.Nombre && producto.Nombre.toLowerCase().includes(termino.toLowerCase())) ||
+                (producto.Descripcion && producto.Descripcion.toLowerCase().includes(termino.toLowerCase()))
+            );
+        } catch (error) {
+            console.error('Error en el producto:', producto, error);
+            return false;
+        }
+    });
     }
 
     function mostrarResultadosBusqueda(resultados) {
@@ -252,4 +254,3 @@
 
     console.log('Archivo stock.js cargado completamente');
 })();
-

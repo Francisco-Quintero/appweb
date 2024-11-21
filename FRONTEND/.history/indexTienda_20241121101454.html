@@ -81,17 +81,35 @@
                     <div class="filter-section">
                         <h4>Marca</h4>
                         <div class="filter-options">
-                             Opciones de marcas 
+                            <!-- Opciones de marcas -->
                         </div>
                     </div>
-                </aside> 
+                </aside>
 
                 <!-- Área de Productos -->
-                
-                    <div class="products-grid" id="main-container">
+                <section class="products-area">
+                    <div class="products-header">
+                        <h2>Productos</h2>
+                        <div class="products-controls">
+                            <select class="sort-select">
+                                <option value="relevancia">Relevancia</option>
+                                <option value="precio-bajo">Menor precio</option>
+                                <option value="precio-alto">Mayor precio</option>
+                            </select>
+                            <div class="view-options">
+                                <button class="view-button active">
+                                    <i data-lucide="grid"></i>
+                                </button>
+                                <button class="view-button">
+                                    <i data-lucide="list"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="products-grid" id="catalogo-productos">
                         <!-- Los productos se cargarán dinámicamente aquí -->
                     </div>
-                
+                </section>
             </div>
         </main>
     </div>
@@ -102,3 +120,4 @@
     <script type="module" src="JS/scriptTienda.js"></script>
 </body>
 </html>
+

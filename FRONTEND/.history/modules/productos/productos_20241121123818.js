@@ -111,7 +111,7 @@
 
 
     function configurarEventListeners() {
-            document.getElementById('btnAgregarProducto').addEventListener('click', () => {
+        document.getElementById('btnAgregarProducto').addEventListener('click', () => {
             document.getElementById('formularioProducto').reset();
             document.getElementById('idProducto').value = '';
             document.getElementById('modalProducto').style.display = 'block';
@@ -157,7 +157,6 @@
             if (producto) {
                 document.getElementById('idProducto').value = producto.idProducto;
                 document.getElementById('nombreProducto').value = producto.Nombre;
-                document.getElementById('categoriaProducto').value = producto.precioUnitario;
                 document.getElementById('descripcionProducto').value = producto.Descripcion;
                 document.getElementById('categoriaProducto').value = producto.categoria;
                 document.getElementById('imagenProducto').value = producto.imagenProducto;

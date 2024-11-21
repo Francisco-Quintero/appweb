@@ -6,15 +6,17 @@
 .catalogo-container {
     width: 100%;
     margin: 0;
+    display: flex;
 }
- 
+/* 
 .catalogo-container h2 {
     font-size: 2rem;
     color: #333;
     margin-bottom: 1rem;
     text-align: center;
     background-color: #059669;
-}
+} */
+/* 
 .productos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -22,7 +24,7 @@
     padding: 1rem;
     width: 100%;
     background-color: #1d4ed8;
-} 
+} */
 
 .producto-card {
     width: 100%;

@@ -213,26 +213,3 @@ datosGlobales.inicializar();
 // Exponer datosGlobales al ámbito global
 window.datosGlobales = datosGlobales;
 
-// function verDatosLocalStorage() {
-//     // Obtener los datos almacenados bajo la clave 'datosGlobales'
-//     const datos = localStorage.getItem('datosGlobales');
-
-//     if (datos) {
-//         // Parsear el string JSON para convertirlo en un objeto
-//         const datosObj = JSON.parse(datos);
-
-//         // Formatear y ordenar el JSON para mostrarlo
-//         const datosFormateados = JSON.stringify(datosObj, null, 4);
-
-//         // Mostrar los datos ordenados en la consola o en un alert
-//         console.log(datosFormateados);
-
-//         // Opcional: Insertar los datos en el DOM para visualizarlos
-//         document.getElementById('visualizacion').textContent = datosFormateados;
-//     } else {
-//         console.log('No hay datos en localStorage bajo la clave "datosGlobales".');
-//     }
-// }
-
-// verDatosLocalStorage();
-

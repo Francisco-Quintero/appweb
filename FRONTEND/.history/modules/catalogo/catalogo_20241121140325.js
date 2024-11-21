@@ -1,6 +1,11 @@
 (function() {
     console.log('Iniciando carga del módulo de Catálogo');
 
+    // let catalogoState = {
+    //     eventListeners: [],
+    //     appStateRef: null
+    // };
+
     let inventario = [];
     let productos = [];
     let carrito = [];
@@ -9,19 +14,17 @@
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             inventario = datosGuardados.inventario || [];
-            productos = datosGuardados.productos || [];
-            carrito = datosGuardados.carrito || [];
-            console.log('Datos cargados desde localStorage');
+            productos = datosGuardados.productos || [] ; 
+            carrito = datosGuardados.carrito || [];          
+             console.log('Inventario cargado desde localStorage');
         } catch (error) {
             console.error('Error al cargar datos desde localStorage:', error);
         }
     }
 
-    function guardarEnLocalStorage() {
+     function guardarEnLocalStorage() {
         try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.productos = productos;
-            datosActuales.inventario = inventario;
+             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             datosActuales.carrito = carrito;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos guardados en localStorage');
@@ -32,17 +35,37 @@
 
     function sincronizarConDatosGlobales() {
         if (window.datosGlobales) {
-            inventario = Array.isArray(window.datosGlobales.inventario) ? window.datosGlobales.inventario : [];
-            productos = Array.isArray(window.datosGlobales.productos) ? window.datosGlobales.productos : [];
-            carrito = Array.isArray(window.datosGlobales.carrito) ? window.datosGlobales.carrito : [];
+            if (Array.isArray(window.datosGlobales.inventario)) {
+                inventario = window.datosGlobales.inventario;
+            }
+            if (Array.isArray(window.datosGlobales.productos)) {
+                productos = window.datosGlobales.productos;
+            }
+            if (Array.isArray(window.datosGlobales.carrito)) {
+                carrito = window.datosGlobales.carrito;
+            }
             renderizarCatalogo();
             console.log('Datos sincronizados con datosGlobales');
         }
     }
 
+
+
+  
+
+    // function cleanup() {
+    //     console.log('Limpiando módulo de Catálogo');
+    //     catalogoState.eventListeners.forEach(({ element, event, handler }) => {
+    //         if (element) {
+    //             element.removeEventListener(event, handler);
+    //         }
+    //     });
+    //     catalogoState.eventListeners = [];
+    //     catalogoState.appStateRef = null;
+    // }
+
     function renderizarCatalogo() {
         console.log('Renderizando catálogo');
-        console.log(inventario);
         const catalogoContainer = document.getElementById('catalogo-productos');
         if (!catalogoContainer) {
             console.error('No se encontró el contenedor del catálogo');
@@ -50,10 +73,11 @@
         }
     
         const productosMap = new Map(productos.map(p => [p.idProducto, p]));
+    
         const fragment = document.createDocumentFragment();
     
         inventario.forEach(itemInventario => {
-            if (itemInventario.stock > 0) {
+            if (itemInventario.cantidad > 0) {
                 const producto = productosMap.get(itemInventario.idProducto);
                 
                 if (producto) {
@@ -73,8 +97,8 @@
                             </button>
                         </div>
                         <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
-                        <div class="producto-precio">$${producto.precioUnitario}</div>
-                        <div class="producto-inventario">Disponible: ${itemInventario.stock}</div>
+                        <div class="producto-precio">$${producto.precioUnitario.toLocaleString()}</div>
+                        <div class="producto-inventario">Disponible: ${itemInventario.cantidad}</div>
                         ${cantidadEnCarrito > 0 ? `
                             <div class="producto-cantidad">
                                 <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
@@ -98,6 +122,7 @@
         catalogoContainer.innerHTML = '';
         catalogoContainer.appendChild(fragment);
     
+        // Reinicializar los iconos de Lucide
         lucide.createIcons();
     }
     
@@ -106,6 +131,7 @@
         return productoEnCarrito ? productoEnCarrito.cantidad : 0;
     }
     
+
     function actualizarCantidadDesdeProducto(productoId, operacion) {
         const itemIndex = carrito.findIndex(item => item.idProducto === productoId);
         if (itemIndex !== -1) {
@@ -118,11 +144,14 @@
                     carrito.splice(itemIndex, 1);
                 }
             }
-            actualizarCarrito();
+            guardarEnLocalStorage();
+            renderizarCatalogo();
+            // Aquí deberías llamar a una función para actualizar el carrito en la interfaz
+            // Por ejemplo: actualizarInterfazCarrito(appState);
         }
     }
 
-    function actualizarCantidadDirectaDesdeProducto(productoId, nuevaCantidad) {
+    function actualizarCantidadDirectaDesdeProducto( productoId, nuevaCantidad) {
         nuevaCantidad = parseInt(nuevaCantidad);
         if (isNaN(nuevaCantidad) || nuevaCantidad < 0) nuevaCantidad = 0;
 
@@ -139,10 +168,11 @@
                 }
             }
         }
-        actualizarCarrito();
+        guardarEnLocalStorage();
+        renderizarCatalogo();
     }
 
-    function agregarAlCarrito(productoId) {
+    function agregarAlCarrito( productoId) {
         const producto = productos.find(p => p.idProducto === productoId);
         if (producto) {
             const itemExistente = carrito.find(item => item.idProducto === productoId);
@@ -151,25 +181,18 @@
             } else {
                 carrito.push({...producto, cantidad: 1});
             }
-            actualizarCarrito();
+            guardarEnLocalStorage();
+            renderizarCatalogo();
+            // Aquí deberías llamar a una función para actualizar el carrito en la interfaz
+            // Por ejemplo: actualizarInterfazCarrito(appState);
         }
-    }
-
-    function actualizarCarrito() {
-        guardarEnLocalStorage();
-        renderizarCatalogo();
-        if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
-            window.datosGlobales.actualizarCarrito(carrito);
-        }
-        // Aquí puedes agregar código para actualizar la interfaz del carrito si es necesario
-        console.log('Carrito actualizado:', carrito);
     }
 
     function configurarEventListeners() {
         console.log('Configurando event listeners del catálogo');
         const catalogoContainer = document.getElementById('catalogo-productos');
 
-        catalogoContainer.addEventListener('click', (event) => {
+        addEventListenerWithCleanup(catalogoContainer, 'click', (event) => {
             const target = event.target;
             if (target.classList.contains('btn-cantidad')) {
                 const productoId = parseInt(target.dataset.id);
@@ -181,12 +204,12 @@
             }
         });
 
-        catalogoContainer.addEventListener('change', (event) => {
+        addEventListenerWithCleanup(catalogoContainer, 'change', (event) => {
             const target = event.target;
             if (target.classList.contains('input-cantidad')) {
                 const productoId = parseInt(target.dataset.id);
                 const nuevaCantidad = parseInt(target.value);
-                actualizarCantidadDirectaDesdeProducto(productoId, nuevaCantidad);
+                actualizarCantidadDirectaDesdeProducto( productoId, nuevaCantidad);
             }
         });
     }
@@ -206,11 +229,27 @@
         console.log('Módulo de catalogo cargado completamente');
     }
 
+
+
+    // function inicializarModuloCatalogo(appState) {
+    //     console.log('Inicializando módulo de Catálogo');
+    //     catalogoState.appStateRef = appState;
+    //     renderizarCatalogo(appState);
+    //     configurarEventListeners(appState);
+    //     return {
+       
+    // cleanup: cleanup
+    //     };
+    // }
+
+
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initCatalogo);
     } else {
         initCatalogo();
     }
 
-    window.addEventListener('load', renderizarCatalogo);
+
+    window.onload = renderizarCatalogo;
 })();

@@ -41,7 +41,6 @@
         const inventarioNuevo = {
             idInventario: idInventario ? parseInt(idInventario) : Date.now(),
             stock: stockActual,
-            idProducto: producto.idProducto,
             nombreProducto: producto.Nombre,
             puntoReorden: puntoReorden,
             fechaActualizacion: new Date().toISOString().split('T')[0],
@@ -113,6 +112,7 @@
         inventario.forEach(item => {
             if (item.stock <= item.puntoReorden) {
                 console.log(`Alerta: Stock bajo para ${item.nombreProducto}`);
+                // You can add more actions here, like sending notifications
             }
         });
     }

@@ -204,11 +204,7 @@ body {
     border-radius: var(--radius);
 }
 
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-}
+
 
 /* Estilos para el scrollbar */
 ::-webkit-scrollbar {
@@ -267,4 +263,3 @@ body {
         align-items: flex-start;
     }
 }
-

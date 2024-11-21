@@ -1,5 +1,6 @@
 function inicializarTienda() {
-
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
 
     // Función para cargar módulos
     function cargarModulo(nombreModulo) {
@@ -39,8 +40,23 @@ function inicializarTienda() {
             e.preventDefault();
             const nombreModulo = this.getAttribute('data-module');
             cargarModulo(nombreModulo);
+            document.getElementById('section-title').textContent = this.textContent;
         });
     });
+
+    // Configurar menú de usuario
+    if (userMenuButton && userDropdown) {
+        userMenuButton.addEventListener('click', function() {
+            userDropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+    }
+
     // Cargar el módulo inicial
     cargarModulo('catalogo');
 }
