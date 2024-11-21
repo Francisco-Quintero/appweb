@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Producto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
     private Long idProducto;
 
@@ -30,8 +30,8 @@ public class Producto {
     private String descripcion;
 
     @Column(name = "unidad_medida")
-    private int unidadMedida;
+    private String unidadMedida;
 
     @Column(name = "cantidad_medida")
-    private String cantidadMedida;
+    private int cantidadMedida;
 }
