@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar QR</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+    <button id="btnGenerarQR">Generar QR</button>
+    <div id="qrcode"></div>
+
+    <script>
+        document.getElementById('btnGenerarQR').addEventListener('click', async () => {
+            // 1. Generar un código de verificación
+            const codigoVerificacion = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            // 2. Información oculta en el QR (correo y código)
+            const correoOculto = "correo_oculto@ejemplo.com";
+            const datosQR = JSON.stringify({
+                correo: correoOculto,
+                codigo: codigoVerificacion
+            });
+
+            // 3. Generar QR y mostrarlo en el div
+            const qrCodeDiv = document.getElementById('qrcode');
+            qrCodeDiv.innerHTML = ""; // Limpiar el QR anterior
+            QRCode.toCanvas(qrCodeDiv, datosQR, (error) => {
+                if (error) console.error(error);
+                console.log("Código QR generado");
+            });
+
+            // 4. Enviar correo con el código de verificación
+            await enviarCorreo(correoOculto, codigoVerificacion);
+        });
+
+        async function enviarCorreo(correo, codigo) {
+            try {
+                // Aquí usas una API como EmailJS, SendGrid o un backend con NodeMailer
+                console.log(`Correo enviado a: ${correo} con el código: ${codigo}`);
+                // Nota: Implementar el envío de correo en el backend para ocultar lógica sensible
+            } catch (error) {
+                console.error('Error al enviar el correo:', error);
+            }
+        }
+    </script>
+</body>
+</html>

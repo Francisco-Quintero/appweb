@@ -1,54 +1,59 @@
-// Función para cargar módulos
-function loadModule(moduleName) {
-    const mainContainer = document.getElementById('main-container');
-    
-    // Primero, eliminar cualquier script y estilo previo del módulo
-    document.querySelectorAll(`script[data-module="${moduleName}"]`).forEach(el => el.remove());
-    document.querySelectorAll(`link[data-module="${moduleName}"]`).forEach(el => el.remove());
-
-    fetch(`modules/${moduleName}/${moduleName}.html`)
-        .then(response => response.text())
-        .then(html => {
-            mainContainer.innerHTML = html;
-            
-            // Cargar el CSS del módulo
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = `modules/${moduleName}/${moduleName}.css`;
-            link.setAttribute('data-module', moduleName);
-            document.head.appendChild(link);
-            
-            // Cargar el script del módulo
-            const script = document.createElement('script');
-            script.src = `modules/${moduleName}/${moduleName}.js`;
-            script.setAttribute('data-module', moduleName);
-            script.onload = function() {
-                // Llamar a una función de inicialización si existe
-                const initFunctionName = `inicializarModulo${moduleName.split('-').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)).join('')}`;
-                if (typeof window[initFunctionName] === 'function') {
-                    window[initFunctionName]();
-                }
-            };
-            document.body.appendChild(script);
-        })
-        .catch(error => console.error(`Error al cargar el módulo ${moduleName}:`, error));
-}
-
-document.addEventListener('DOMContentLoaded', function() {
+function inicializarDomiciliario() {
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
-    // Manejar clics en los enlaces de navegación
-    document.querySelectorAll('[data-module]').forEach(link => {
-        link.addEventListener('click', function(e) {
+    // Función para cargar módulos
+    function cargarModulo(nombreModulo) {
+        const contenedorPrincipal = document.getElementById('main-container');
+        
+        // Eliminar scripts y estilos previos del módulo
+        document.querySelectorAll(`script[data-module="${nombreModulo}"]`).forEach(el => el.remove());
+        document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
+
+        fetch(`modules/${nombreModulo}/${nombreModulo}.html`)
+            .then(response => response.text())
+            .then(html => {
+                contenedorPrincipal.innerHTML = html;
+                
+                // Cargar el CSS del módulo
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = `modules/${nombreModulo}/${nombreModulo}.css`;
+                link.setAttribute('data-module', nombreModulo);
+                document.head.appendChild(link);
+                
+                // Cargar el script del módulo
+                const script = document.createElement('script');
+                script.src = `modules/${nombreModulo}/${nombreModulo}.js`;
+                script.setAttribute('data-module', nombreModulo);
+                script.onload = function() {
+                    console.log("Cargando el módulo de " + nombreModulo);
+                    // Llamar a una función de inicialización si existe
+                    const initFunctionName = `inicializarModulo${nombreModulo.split('-').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)).join('')}`;
+                    if (typeof window[initFunctionName] === 'function') {
+                        window[initFunctionName]();
+                    }
+                };
+                document.body.appendChild(script);
+            })
+            .catch(error => console.error(`Error al cargar el módulo ${nombreModulo}:`, error));
+    }
+
+    // Configurar navegación
+    document.querySelectorAll('[data-module]').forEach(enlace => {
+        enlace.addEventListener('click', function(e) {
             e.preventDefault();
-            const moduleName = this.getAttribute('data-module');
-            loadModule(moduleName);
+            const nombreModulo = this.getAttribute('data-module');
+            cargarModulo(nombreModulo);
+            const sectionTitle = document.getElementById('section-title');
+            if (sectionTitle) {
+                sectionTitle.textContent = this.textContent;
+            }
         });
     });
 
-    // Menú de usuario
+    // Configurar menú de usuario
     if (userMenuButton && userDropdown) {
         userMenuButton.addEventListener('click', function() {
             userDropdown.classList.toggle('show');
@@ -61,5 +66,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    loadModule('pedidos-asignados');
+    // Cargar el módulo inicial
+    cargarModulo('pedidos-asignados');
+}
+
+// Esperar a que los datos globales estén disponibles
+if (typeof window.datosGlobales !== 'undefined') {
+    inicializarDomiciliario();
+} else {
+    window.addEventListener('datosGlobalesDisponibles', inicializarDomiciliario);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Si los datos globales ya están disponibles, inicializar inmediatamente
+    if (typeof window.datosGlobales !== 'undefined') {
+        inicializarDomiciliario();
+    }
+    // Si no, el evento 'datosGlobalesDisponibles' se encargará de la inicialización
 });

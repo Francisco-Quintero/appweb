@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Domiciliario</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mi Perfil - Domiciliario</h1>
+        </header>
+
+        <main>
+            <section id="perfil-domiciliario-container" class="card" style="display: none;">
+                <h2>Información del Domiciliario</h2>
+                <div id="domiciliario-info">
+                    <!-- La información del domiciliario se cargará aquí dinámicamente -->
+                </div>
+                <button id="btn-cerrar-sesion-domiciliario" class="btn btn-secundario">Cerrar Sesión</button>
+            </section>
+
+            <section id="login-domiciliario-container" class="card">
+                <h2>Iniciar Sesión</h2>
+                <form id="form-login-domiciliario">
+                    <div class="form-grupo">
+                        <label for="login-usuario-domiciliario">Usuario:</label>
+                        <input type="text" id="login-usuario-domiciliario" required>
+                    </div>
+                    <div class="form-grupo">
+                        <label for="login-password-domiciliario">Contraseña:</label>
+                        <input type="password" id="login-password-domiciliario" required>
+                    </div>
+                    <button type="submit" class="btn btn-primario">Iniciar Sesión</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 TiendaBarrio. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>

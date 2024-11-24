@@ -1,32 +1,47 @@
 (function() {
     console.log('Iniciando carga del módulo de Carrito');
 
-    let carritoState = {
-        eventListeners: [],
-        appStateRef: null // Referencia al appState para uso en funciones expuestas globalmente
-    };
+    let carrito = [];
+    let pedidos = [];
+    let facturas = [];
+    let usuarios = [];
 
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            carritoState.eventListeners.push({ element, event, handler });
+    function cargarDatosDesdeLocalStorage() {
+        try {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            carrito = datosGuardados.carrito || [];
+            pedidos = datosGuardados.pedidos || [];
+            facturas = datosGuardados.facturas || [];
+            console.log('Datos del carrito cargados desde localStorage');
+        } catch (error) {
+            console.error('Error al cargar datos del carrito desde localStorage:', error);
         }
     }
 
-    function cleanup() {
-        console.log('Limpiando módulo de Carrito');
-        carritoState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
-            }
-        });
-        carritoState.eventListeners = [];
-        // Limpiar las funciones globales
-        window.generarPedido = undefined;
-        carritoState.appStateRef = null;
+    function guardarEnLocalStorage() {
+        try {
+            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            datosActuales.carrito = carrito;
+            datosActuales.pedidos = pedidos;
+            datosActuales.facturas = facturas;
+            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            console.log('Datos del carrito guardados en localStorage');
+        } catch (error) {
+            console.error('Error al guardar datos del carrito en localStorage:', error);
+        }
     }
 
-    function renderizarCarrito(appState) {
+    function sincronizarConDatosGlobales() {
+        if (window.datosGlobales) {
+            carrito = Array.isArray(window.datosGlobales.carrito) ? window.datosGlobales.carrito : [];
+            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
+            facturas = Array.isArray(window.datosGlobales.facturas) ? window.datosGlobales.facturas : [];
+            renderizarCarrito();
+            console.log('Datos del carrito sincronizados con datosGlobales');
+        }
+    }
+
+    function renderizarCarrito() {
         const carritoContainer = document.getElementById('carrito-items');
         if (!carritoContainer) {
             console.error('No se encontró el contenedor del carrito');
@@ -34,7 +49,7 @@
         }
         carritoContainer.innerHTML = '';
         
-        if (appState.carrito.length === 0) {
+        if (carrito.length === 0) {
             carritoContainer.innerHTML = `
                 <div class="carrito-vacio">
                     <p>Tu carrito está vacío</p>
@@ -43,15 +58,15 @@
             return;
         }
         
-        appState.carrito.forEach(item => {
+        carrito.forEach(item => {
             const itemElem = document.createElement('div');
             itemElem.className = 'carrito-item';
             const subtotalItem = item.precio * item.cantidad;
             
             itemElem.innerHTML = `
-                <img src="${item.imagen}" alt="${item.nombre}" class="carrito-item-imagen">
+                <img src="${item.imagenProducto}" alt="${item.Nombre}" class="carrito-item-imagen">
                 <div class="carrito-item-detalles">
-                    <div class="carrito-item-nombre">${item.nombre}</div>
+                    <div class="carrito-item-nombre">${item.Nombre}</div>
                     <div class="carrito-item-precio">$${subtotalItem.toLocaleString()}</div>
                     <div class="carrito-item-precio-unitario">
                         ${item.precioGramo ? `Gramo a $${item.precioGramo}` : ''}
@@ -72,13 +87,13 @@
             carritoContainer.appendChild(itemElem);
         });
         
-        // Reinicializar los iconos de Lucide
         lucide.createIcons();
+        actualizarTotales();
     }
 
-    function actualizarTotales(appState) {
-        const subtotal = calcularSubtotal(appState);
-        const costoEnvio = appState.carrito.length > 0 ? 2000 : 0;
+    function actualizarTotales() {
+        const subtotal = calcularSubtotal();
+        const costoEnvio = carrito.length > 0 ? 2000 : 0;
         const total = subtotal + costoEnvio;
         
         document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString()}`;
@@ -86,164 +101,63 @@
         document.getElementById('total').textContent = `$${total.toLocaleString()}`;
     }
 
-    function calcularSubtotal(appState) {
-        return appState.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    function calcularSubtotal() {
+        return carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
     }
 
-    function actualizarCantidad(appState, productoId, operacion) {
-        const itemIndex = appState.carrito.findIndex(item => item.id === productoId);
+    function actualizarCantidad(productoId, operacion) {
+        const itemIndex = carrito.findIndex(item => item.id === productoId);
         if (itemIndex !== -1) {
             if (operacion === 'sumar') {
-                appState.carrito[itemIndex].cantidad++;
+                carrito[itemIndex].cantidad++;
             } else if (operacion === 'restar') {
-                if (appState.carrito[itemIndex].cantidad > 1) {
-                    appState.carrito[itemIndex].cantidad--;
+                if (carrito[itemIndex].cantidad > 1) {
+                    carrito[itemIndex].cantidad--;
                 } else {
-                    appState.carrito.splice(itemIndex, 1);
+                    carrito.splice(itemIndex, 1);
                 }
             }
-            renderizarCarrito(appState);
-            actualizarTotales(appState);
+            actualizarCarrito();
         }
     }
 
-    function actualizarCantidadDirecta(appState, productoId, nuevaCantidad) {
+    function actualizarCantidadDirecta(productoId, nuevaCantidad) {
         nuevaCantidad = parseInt(nuevaCantidad);
         if (isNaN(nuevaCantidad) || nuevaCantidad < 0) nuevaCantidad = 0;
         
         if (nuevaCantidad === 0) {
-            appState.carrito = appState.carrito.filter(item => item.id !== productoId);
+            carrito = carrito.filter(item => item.id !== productoId);
         } else {
-            const itemIndex = appState.carrito.findIndex(item => item.id === productoId);
+            const itemIndex = carrito.findIndex(item => item.id === productoId);
             if (itemIndex !== -1) {
-                appState.carrito[itemIndex].cantidad = nuevaCantidad;
+                carrito[itemIndex].cantidad = nuevaCantidad;
             }
         }
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
+        actualizarCarrito();
     }
 
-    function eliminarDelCarrito(appState, productoId) {
-        appState.carrito = appState.carrito.filter(item => item.id !== productoId);
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
+    function eliminarDelCarrito(productoId) {
+        carrito = carrito.filter(item => item.id !== productoId);
+        actualizarCarrito();
     }
 
-    function generarPedido(appState) {
-        if (appState.carrito.length === 0) {
+    function actualizarCarrito() {
+        guardarEnLocalStorage();
+        renderizarCarrito();
+        if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
+            window.datosGlobales.actualizarCarrito(carrito);
+        }
+        console.log('Carrito actualizado:', carrito);
+    }
+
+    function generarPedido() {
+        if (carrito.length === 0) {
             alert('El carrito está vacío');
             return;
         }
 
-        const metodoPago = document.querySelector('input[name="metodoPago"]:checked').value;
-        const costoEnvio = 2000; // Valor fijo para este ejemplo
-        const subtotal = calcularSubtotal(appState);
-        const total = subtotal + costoEnvio;
-
-        const pedido = {
-            idPedido: generarIdUnico(),
-            fechaPedido: new Date(),
-            estadoPedido: 'pendiente',
-            horaCreacion: new Date(),
-            costoEnvio: costoEnvio,
-            items: appState.carrito.map(item => ({
-                idProducto: item.id,
-                cantidad: item.cantidad,
-                precioUnitario: item.precio,
-                total: item.precio * item.cantidad,
-                descuento: 0
-            })),
-            subtotal: subtotal,
-            total: total
-        };
-
-        const factura = {
-            idFactura: generarIdUnico(),
-            fechaEmision: new Date(),
-            idPedido: pedido.idPedido,
-            subtotal: subtotal,
-            impuestos: calcularImpuestos(subtotal),
-            total: total,
-            estadoFactura: 'pendiente',
-            pago: {
-                idPago: generarIdUnico(),
-                metodoPago: metodoPago,
-                estadoPago: metodoPago === 'contraentrega' ? 'pendiente' : 'procesando',
-                monto: total,
-                fechaPago: null
-            }
-        };
-
-        appState.pedidos.push(pedido);
-        appState.facturas.push(factura);
-
-        // Limpiar el carrito
-        appState.carrito = [];
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-
-        alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
-    }
-
-    function generarIdUnico() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-
-    function calcularImpuestos(subtotal) {
-        return subtotal * 0.19; // 19% de impuestos
-    }
-
-    function configurarEventListeners(appState) {
-        const carritoContainer = document.getElementById('carrito-items');
-        const btnGenerarPedido = document.getElementById('btn-generar-pedido');
-        
-        addEventListenerWithCleanup(carritoContainer, 'click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('btn-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const accion = target.dataset.action;
-                actualizarCantidad(appState, productoId, accion);
-            } else if (target.classList.contains('btn-eliminar')) {
-                const productoId = parseInt(target.dataset.id);
-                eliminarDelCarrito(appState, productoId);
-            }
-        });
-
-        addEventListenerWithCleanup(carritoContainer, 'change', (event) => {
-            const target = event.target;
-            if (target.classList.contains('input-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const nuevaCantidad = parseInt(target.value);
-                actualizarCantidadDirecta(appState, productoId, nuevaCantidad);
-            }
-        });
-
-        if (btnGenerarPedido) {
-            addEventListenerWithCleanup(btnGenerarPedido, 'click', () => generarPedido(appState));
-        }
-    }
-
-    // Función de inicialización del módulo
-    function inicializarModuloCarrito(appState) {
-        console.log('Inicializando módulo de Carrito');
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-        configurarEventListeners(appState);
-        return {
-            cleanup: cleanup
-        };
-    }
-
-    function generarPedidoHandler() {
-        if (!carritoState.appStateRef) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
-        const appState = carritoState.appStateRef;
-        
-        if (appState.carrito.length === 0) {
-            alert('El carrito está vacío');
+        if (!usuarioEstaLogueado()) {
+            alert('Debe iniciar sesión para realizar un pedido');
             return;
         }
 
@@ -255,8 +169,14 @@
 
         const metodoPago = metodoPagoElement.value;
         const costoEnvio = 2000;
-        const subtotal = calcularSubtotal(appState);
+        const subtotal = calcularSubtotal();
         const total = subtotal + costoEnvio;
+
+        const usuarioActual = obtenerUsuarioActual();
+        if (!usuarioActual) {
+            alert('Error al obtener la información del usuario');
+            return;
+        }
 
         const pedido = {
             idPedido: generarIdUnico(),
@@ -264,7 +184,7 @@
             estadoPedido: 'en espera',
             horaCreacion: new Date(),
             costoEnvio: costoEnvio,
-            items: appState.carrito.map(item => ({
+            items: carrito.map(item => ({
                 idProducto: item.id,
                 cantidad: item.cantidad,
                 precioUnitario: item.precio,
@@ -272,7 +192,14 @@
                 descuento: 0
             })),
             subtotal: subtotal,
-            total: total
+            total: total,
+            cliente: {
+                id: usuarioActual.id,
+                nombre: usuarioActual.nombre,
+                apellido: usuarioActual.apellido,
+                direccion: usuarioActual.direccion,
+                telefono: usuarioActual.telefono
+            }
         };
 
         const factura = {
@@ -292,60 +219,88 @@
             }
         };
 
-        appState.pedidos.push(pedido);
-        appState.facturas.push(factura);
+        pedidos.push(pedido);
+        facturas.push(factura);
 
-        // Limpiar el carrito
-        appState.carrito = [];
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
+        carrito = [];
+        actualizarCarrito();
 
         alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
     }
 
-    function configurarEventListeners(appState) {
+    function usuarioEstaLogueado() {
+        return typeof window.verificarUsuarioParaPedido === 'function' && window.verificarUsuarioParaPedido();
+    }
+
+    function obtenerUsuarioActual() {
+        return typeof window.obtenerUsuarioActual === 'function' ? window.obtenerUsuarioActual() : null;
+    }
+
+    function generarIdUnico() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function calcularImpuestos(subtotal) {
+        return subtotal * 0.19; // 19% de impuestos
+    }
+
+    function configurarEventListeners() {
         const carritoContainer = document.getElementById('carrito-items');
+        const btnGenerarPedido = document.getElementById('btn-generar-pedido');
         
-        // En lugar de configurar el botón aquí, exponemos la función globalmente
-        window.generarPedido = generarPedidoHandler;
-        
-        addEventListenerWithCleanup(carritoContainer, 'click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('btn-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const accion = target.dataset.action;
-                actualizarCantidad(appState, productoId, accion);
-            } else if (target.classList.contains('btn-eliminar')) {
-                const productoId = parseInt(target.dataset.id);
-                eliminarDelCarrito(appState, productoId);
-            }
-        });
+        if (carritoContainer) {
+            carritoContainer.addEventListener('click', (event) => {
+                const target = event.target;
+                if (target.classList.contains('btn-cantidad')) {
+                    const productoId = parseInt(target.dataset.id);
+                    const accion = target.dataset.action;
+                    actualizarCantidad(productoId, accion);
+                } else if (target.classList.contains('btn-eliminar')) {
+                    const productoId = parseInt(target.dataset.id);
+                    eliminarDelCarrito(productoId);
+                }
+            });
 
-        addEventListenerWithCleanup(carritoContainer, 'change', (event) => {
-            const target = event.target;
-            if (target.classList.contains('input-cantidad')) {
-                const productoId = parseInt(target.dataset.id);
-                const nuevaCantidad = parseInt(target.value);
-                actualizarCantidadDirecta(appState, productoId, nuevaCantidad);
-            }
-        });
+            carritoContainer.addEventListener('change', (event) => {
+                const target = event.target;
+                if (target.classList.contains('input-cantidad')) {
+                    const productoId = parseInt(target.dataset.id);
+                    const nuevaCantidad = parseInt(target.value);
+                    actualizarCantidadDirecta(productoId, nuevaCantidad);
+                }
+            });
+        }
+
+        if (btnGenerarPedido) {
+            btnGenerarPedido.addEventListener('click', generarPedido);
+        }
     }
 
-    // Función de inicialización del módulo
-    function inicializarModuloCarrito(appState) {
-        console.log('Inicializando módulo de Carrito');
-        carritoState.appStateRef = appState; // Guardamos la referencia al appState
-        renderizarCarrito(appState);
-        actualizarTotales(appState);
-        configurarEventListeners(appState);
-        return {
-            cleanup: cleanup
-        };
+    function initCarrito() {
+        console.log('Inicializando módulo de carrito');
+        cargarDatosDesdeLocalStorage();
+        renderizarCarrito();
+        configurarEventListeners();
+        
+        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
+        
+        if (window.datosGlobales) {
+            sincronizarConDatosGlobales();
+        }
+        
+        console.log('Módulo de carrito cargado completamente');
     }
 
-    // Exponer la función de inicialización al objeto global window
-    window.inicializarModuloCarrito = inicializarModuloCarrito;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCarrito);
+    } else {
+        initCarrito();
+    }
+
+    window.addEventListener('load', renderizarCarrito);
+
+    // Exponer funciones necesarias globalmente
     window.generarPedido = generarPedido;
-
-    console.log('Módulo de Carrito cargado completamente');
+    window.actualizarCantidadDirecta = actualizarCantidadDirecta;
 })();
+

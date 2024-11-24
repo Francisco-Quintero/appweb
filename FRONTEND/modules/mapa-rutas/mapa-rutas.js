@@ -1,153 +1,135 @@
 (function() {
     console.log('Iniciando carga del módulo de Mapa de Rutas');
 
-    const mapaRutasState = {
-        rutas: [],
-        mapaInstancia: null,
-        rutaActual: null,
-        eventListeners: []
-    };
+    let pedidos = [];
+    let clientes = [];
+    let mapaInstancia = null;
+    let rutaActual = null;
 
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            mapaRutasState.eventListeners.push({ element, event, handler });
+    function cargarDatosDesdeLocalStorage() {
+        try {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            pedidos = datosGuardados.pedidos || [];
+            clientes = datosGuardados.clientes || [];
+            console.log('Datos de mapa de rutas cargados desde localStorage');
+        } catch (error) {
+            console.error('Error al cargar datos de mapa de rutas desde localStorage:', error);
         }
     }
 
-    function cleanup() {
-        console.log('Limpiando módulo de Mapa de Rutas');
-        mapaRutasState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
+    function sincronizarConDatosGlobales() {
+        if (window.datosGlobales) {
+            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
+            clientes = Array.isArray(window.datosGlobales.clientes) ? window.datosGlobales.clientes : [];
+            console.log('Datos de mapa de rutas sincronizados con datosGlobales');
+        }
+    }
+
+    async function obtenerRuta(origen, destino) {
+        try {
+            const response = await fetch(`https://api.openrouteservice.org/v2/directions/driving-car?api_key=YOUR_API_KEY&start=${origen.join(',')}&end=${destino.join(',')}`);
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la API');
             }
-        });
-        mapaRutasState.eventListeners = [];
-        if (mapaRutasState.mapaInstancia) {
-            mapaRutasState.mapaInstancia.remove();
-            mapaRutasState.mapaInstancia = null;
+            const data = await response.json();
+            return data.features[0].geometry.coordinates;
+        } catch (error) {
+            console.error('Error al obtener la ruta:', error);
+            return null;
         }
-        mapaRutasState.rutas = [];
-        mapaRutasState.rutaActual = null;
-    }
-
-    function inicializarModuloMapaRutas() {
-        console.log('Inicializando módulo de Mapa de Rutas');
-        
-        if (mapaRutasState.mapaInstancia) {
-            mapaRutasState.mapaInstancia.remove();
-            mapaRutasState.mapaInstancia = null;
-        }
-        mapaRutasState.rutas = [];
-        mapaRutasState.rutaActual = null;
-        
-        cargarRutas();
-        inicializarMapa();
-        configurarEventListeners();
-    }
-
-    function cargarRutas() {
-        console.log('Cargando rutas...');
-        mapaRutasState.rutas = [
-            { id: 1, nombre: 'Ruta Norte', coordenadas: [[4.6097, -74.0817], [4.6261, -74.0737]] },
-            { id: 2, nombre: 'Ruta Sur', coordenadas: [[4.5709, -74.1263], [4.5981, -74.0760]] },
-            { id: 3, nombre: 'Ruta Este', coordenadas: [[4.6486, -74.0628], [4.6280, -74.0633]] }
-        ];
-        actualizarSelectorRutas();
     }
 
     function inicializarMapa() {
         console.log('Inicializando mapa');
-        mapaRutasState.mapaInstancia = L.map('mapa').setView([4.6097, -74.0817], 13);
+        mapaInstancia = L.map('mapa').setView([4.6097, -74.0817], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
-        }).addTo(mapaRutasState.mapaInstancia);
+        }).addTo(mapaInstancia);
+    }
+
+    function mostrarRutaEnMapa(ruta) {
+        if (mapaInstancia) {
+            if (rutaActual) {
+                mapaInstancia.removeLayer(rutaActual);
+            }
+            rutaActual = L.polyline(ruta, {color: 'red'}).addTo(mapaInstancia);
+            mapaInstancia.fitBounds(rutaActual.getBounds());
+        }
+    }
+
+    async function mostrarRutaPedido(idPedido) {
+        const pedido = pedidos.find(p => p.idPedido === idPedido);
+        if (!pedido) {
+            console.error('Pedido no encontrado');
+            return;
+        }
+
+        const cliente = clientes.find(c => c.id === pedido.idCliente);
+        if (!cliente) {
+            console.error('Cliente no encontrado');
+            return;
+        }
+
+        const origen = [4.6097, -74.0817]; // Coordenadas de la tienda (ejemplo)
+        const destino = [cliente.latitud, cliente.longitud];
+
+        const ruta = await obtenerRuta(origen, destino);
+        if (ruta) {
+            mostrarRutaEnMapa(ruta);
+        }
+    }
+
+    function actualizarSelectorPedidos() {
+        const selectorPedido = document.getElementById('selector-pedido');
+        if (!selectorPedido) {
+            console.error('No se encontró el elemento selector-pedido');
+            return;
+        }
+        selectorPedido.innerHTML = '<option value="">Seleccionar pedido</option>';
+        pedidos.forEach(pedido => {
+            const option = document.createElement('option');
+            option.value = pedido.idPedido;
+            option.textContent = `Pedido ${pedido.idPedido}`;
+            selectorPedido.appendChild(option);
+        });
     }
 
     function configurarEventListeners() {
         console.log('Configurando event listeners');
-        const selectorRuta = document.getElementById('selector-ruta');
-        const btnIniciarRuta = document.getElementById('btn-iniciar-ruta');
-
-        if (selectorRuta) addEventListenerWithCleanup(selectorRuta, 'change', seleccionarRuta);
-        if (btnIniciarRuta) addEventListenerWithCleanup(btnIniciarRuta, 'click', iniciarRuta);
-    }
-
-    function actualizarSelectorRutas() {
-        const selectorRuta = document.getElementById('selector-ruta');
-        if (!selectorRuta) {
-            console.error('No se encontró el elemento selector-ruta');
-            return;
-        }
-        selectorRuta.innerHTML = '<option value="">Seleccionar ruta</option>';
-        mapaRutasState.rutas.forEach(ruta => {
-            const option = document.createElement('option');
-            option.value = ruta.id;
-            option.textContent = ruta.nombre;
-            selectorRuta.appendChild(option);
-        });
-    }
-
-    function seleccionarRuta(event) {
-        const rutaId = event.target.value;
-        mapaRutasState.rutaActual = mapaRutasState.rutas.find(r => r.id == rutaId);
-        if (mapaRutasState.rutaActual) {
-            mostrarRutaEnMapa(mapaRutasState.rutaActual);
-        } else {
-            limpiarRutaEnMapa();
-        }
-    }
-
-    function mostrarRutaEnMapa(ruta) {
-        limpiarRutaEnMapa();
-        if (mapaRutasState.mapaInstancia) {
-            const polyline = L.polyline(ruta.coordenadas, {color: 'red'}).addTo(mapaRutasState.mapaInstancia);
-            mapaRutasState.mapaInstancia.fitBounds(polyline.getBounds());
-            actualizarInfoRuta(ruta);
-        }
-    }
-
-    function limpiarRutaEnMapa() {
-        if (mapaRutasState.mapaInstancia) {
-            mapaRutasState.mapaInstancia.eachLayer(layer => {
-                if (layer instanceof L.Polyline) {
-                    mapaRutasState.mapaInstancia.removeLayer(layer);
+        const selectorPedido = document.getElementById('selector-pedido');
+        if (selectorPedido) {
+            selectorPedido.addEventListener('change', (event) => {
+                const idPedido = event.target.value;
+                if (idPedido) {
+                    mostrarRutaPedido(idPedido);
                 }
             });
         }
-        document.getElementById('distancia-ruta').textContent = '-';
-        document.getElementById('tiempo-ruta').textContent = '-';
     }
 
-    function actualizarInfoRuta(ruta) {
-        const distancia = calcularDistancia(ruta.coordenadas);
-        const tiempo = Math.round(distancia / 50 * 60); // Asumiendo una velocidad promedio de 50 km/h
-        document.getElementById('distancia-ruta').textContent = `${distancia.toFixed(2)} km`;
-        document.getElementById('tiempo-ruta').textContent = `${tiempo} minutos`;
-    }
-
-    function calcularDistancia(coordenadas) {
-        let distancia = 0;
-        for (let i = 1; i < coordenadas.length; i++) {
-            distancia += mapaRutasState.mapaInstancia.distance(coordenadas[i-1], coordenadas[i]);
+    function initMapaRutas() {
+        console.log('Inicializando módulo de Mapa de Rutas');
+        cargarDatosDesdeLocalStorage();
+        inicializarMapa();
+        actualizarSelectorPedidos();
+        configurarEventListeners();
+        
+        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
+        
+        if (window.datosGlobales) {
+            sincronizarConDatosGlobales();
         }
-        return distancia / 1000; // Convertir a kilómetros
+        
+        console.log('Módulo de Mapa de Rutas cargado completamente');
     }
 
-    function iniciarRuta() {
-        if (mapaRutasState.rutaActual) {
-            console.log(`Iniciando ruta: ${mapaRutasState.rutaActual.nombre}`);
-            // Aquí irían las acciones para iniciar la navegación real
-            alert(`Ruta iniciada: ${mapaRutasState.rutaActual.nombre}`);
-        } else {
-            alert('Por favor, selecciona una ruta primero.');
-        }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMapaRutas);
+    } else {
+        initMapaRutas();
     }
 
     // Exponer funciones necesarias globalmente
-    window.inicializarModuloMapaRutas = inicializarModuloMapaRutas;
-    window.seleccionarRuta = seleccionarRuta;
-    window.iniciarRuta = iniciarRuta;
-
-    console.log('Módulo de Mapa de Rutas cargado completamente');
+    window.mostrarRutaPedido = mostrarRutaPedido;
 })();
+

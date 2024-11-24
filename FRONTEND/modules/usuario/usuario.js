@@ -1,70 +1,160 @@
 (function() {
     console.log('Iniciando carga del módulo de Usuario');
 
-    let usuarioState = {
-        eventListeners: [],
-        appStateRef: null
-    };
+    let usuarios = [];
+    let usuarioActual = null;
+    let pedidos = [];
 
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            usuarioState.eventListeners.push({ element, event, handler });
+    function cargarDatosDesdeLocalStorage() {
+        try {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            usuarios = datosGuardados.usuarios || [];
+            pedidos = datosGuardados.pedidos || [];
+            usuarioActual = datosGuardados.usuarioActual || null;
+            console.log('Datos de usuarios y pedidos cargados desde localStorage');
+        } catch (error) {
+            console.error('Error al cargar datos desde localStorage:', error);
         }
     }
 
-    function cleanup() {
-        console.log('Limpiando módulo de Usuario');
-        usuarioState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
-            }
-        });
-        usuarioState.eventListeners = [];
-        window.cerrarModal = undefined;
-        usuarioState.appStateRef = null;
+    function guardarEnLocalStorage() {
+        try {
+            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            datosActuales.usuarios = usuarios;
+            datosActuales.usuarioActual = usuarioActual;
+            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            console.log('Datos de usuarios guardados en localStorage');
+        } catch (error) {
+            console.error('Error al guardar en localStorage:', error);
+        }
     }
 
-    function cargarInformacionUsuario(appState) {
-        if (!appState) return;
+    function actualizarInterfazUsuario() {
+        const contenedorUsuario = document.querySelector('.usuario-container');
+        const contenedorLogin = document.getElementById('login-registro-container');
         
-        const usuario = appState.usuario || {
-            id: 1,
-            nombre: 'Juan Pérez',
-            email: 'juan.perez@example.com',
-            telefono: '123-456-7890',
-            direccion: 'Calle Principal 123, Ciudad'
+        if (usuarioActual) {
+            if (contenedorUsuario) contenedorUsuario.style.display = 'block';
+            if (contenedorLogin) contenedorLogin.style.display = 'none';
+            cargarInformacionUsuario();
+            cargarHistorialPedidos();
+        } else {
+            if (contenedorUsuario) contenedorUsuario.style.display = 'none';
+            if (contenedorLogin) contenedorLogin.style.display = 'block';
+        }
+    }
+
+    function configurarEventListenersLoginRegistro() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabId = e.target.dataset.tab;
+                cambiarTab(tabId);
+            });
+        });
+
+        const formLogin = document.getElementById('form-login');
+        if (formLogin) {
+            formLogin.addEventListener('submit', (e) => {
+                e.preventDefault();
+                iniciarSesion();
+            });
+        }
+
+        const formRegistro = document.getElementById('form-registro');
+        if (formRegistro) {
+            formRegistro.addEventListener('submit', (e) => {
+                e.preventDefault();
+                registrarUsuario();
+            });
+        }
+
+        const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+        if (btnCerrarSesion) {
+            btnCerrarSesion.addEventListener('click', cerrarSesion);
+        }
+    }
+
+    function cambiarTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        document.querySelectorAll('.form-container').forEach(form => {
+            form.classList.toggle('active', form.id === `${tabId}-form`);
+        });
+    }
+
+    function iniciarSesion() {
+        const username = document.getElementById('login-usuario').value;
+        const password = document.getElementById('login-password').value;
+
+        usuarioActual = usuarios.find(u => u.usuario === username && u.password === password);
+
+        if (usuarioActual) {
+            console.log('Inicio de sesión exitoso');
+            guardarEnLocalStorage();
+            actualizarInterfazUsuario();
+            window.dispatchEvent(new Event('usuarioLogueado'));
+        } else {
+            alert('Usuario o contraseña incorrectos');
+        }
+    }
+
+    function cerrarSesion() {
+        usuarioActual = null;
+        guardarEnLocalStorage();
+        actualizarInterfazUsuario();
+        window.dispatchEvent(new Event('usuarioDeslogueado'));
+    }
+
+    function registrarUsuario() {
+        const nuevoUsuario = {
+            id: Date.now(),
+            nombre: document.getElementById('registro-nombre').value,
+            apellido: document.getElementById('registro-apellido').value,
+            identificacion: document.getElementById('registro-identificacion').value,
+            telefono: document.getElementById('registro-telefono').value,
+            direccion: document.getElementById('registro-direccion').value,
+            correo: document.getElementById('registro-correo').value,
+            usuario: document.getElementById('registro-usuario').value,
+            password: document.getElementById('registro-password').value,
         };
 
+        if (usuarios.some(u => u.usuario === nuevoUsuario.usuario)) {
+            alert('El nombre de usuario ya existe. Por favor, elija otro.');
+            return;
+        }
+
+        usuarios.push(nuevoUsuario);
+        usuarioActual = nuevoUsuario;
+        guardarEnLocalStorage();
+        console.log('Usuario registrado exitosamente');
+        actualizarInterfazUsuario();
+        window.dispatchEvent(new Event('usuarioLogueado'));
+    }
+
+    function cargarInformacionUsuario() {
+        if (!usuarioActual) return;
+        
         const usuarioInfo = document.getElementById('usuario-info');
         if (usuarioInfo) {
             usuarioInfo.innerHTML = `
                 <h3>Información Personal</h3>
-                <p><strong>Nombre:</strong> ${usuario.nombre}</p>
-                <p><strong>Email:</strong> ${usuario.email}</p>
-                <p><strong>Teléfono:</strong> ${usuario.telefono}</p>
-                <p><strong>Dirección:</strong> ${usuario.direccion}</p>
+                <p><strong>Nombre:</strong> ${usuarioActual.nombre} ${usuarioActual.apellido || ''}</p>
+                <p><strong>Identificación:</strong> ${usuarioActual.identificacion || ''}</p>
+                <p><strong>Teléfono:</strong> ${usuarioActual.telefono || ''}</p>
+                <p><strong>Dirección:</strong> ${usuarioActual.direccion || ''}</p>
+                <p><strong>Correo:</strong> ${usuarioActual.correo || ''}</p>
             `;
         }
     }
 
-    function formatearEstadoPedido(estado) {
-        if (!estado || typeof estado !== 'string') return '';
-        return estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase();
-    }
-
-    function cargarHistorialPedidos(appState) {
-        if (!appState) return;
-
-        const pedidos = appState.pedidos || [];
+    function cargarHistorialPedidos() {
         const listaPedidos = document.getElementById('lista-pedidos');
-        
-        if (!listaPedidos) {
-            console.error('No se encontró el elemento lista-pedidos');
-            return;
-        }
+        if (!listaPedidos || !usuarioActual) return;
 
-        if (pedidos.length === 0) {
+        const pedidosUsuario = pedidos.filter(pedido => pedido.idUsuario === usuarioActual.id);
+
+        if (pedidosUsuario.length === 0) {
             listaPedidos.innerHTML = `
                 <div class="pedido-empty">
                     <p>No hay pedidos en tu historial</p>
@@ -73,92 +163,44 @@
             return;
         }
 
-        listaPedidos.innerHTML = pedidos.map(pedido => {
-            if (!pedido) return '';
-            
-            const fecha = pedido.fecha ? new Date(pedido.fecha).toLocaleDateString() : 'Fecha no disponible';
-            const total = pedido.total ? pedido.total.toLocaleString() : '0';
-            const estado = formatearEstadoPedido(pedido.estado);
-            
-            return `
+        listaPedidos.innerHTML = pedidosUsuario
+            .map(pedido => `
                 <div class="pedido-item">
-                    <div class="pedido-fecha">Pedido #${pedido.id || 'N/A'} - ${fecha}</div>
+                    <div class="pedido-fecha">Pedido #${pedido.idPedido} - ${new Date(pedido.fecha).toLocaleDateString()}</div>
                     <div class="pedido-detalles">
-                        <span>Total: $${total}</span>
-                        <span class="pedido-estado ${pedido.estado || ''}">${estado}</span>
+                        <span>Total: $${pedido.total.toLocaleString()}</span>
+                        <span class="pedido-estado ${pedido.estado}">${pedido.estado}</span>
                     </div>
                 </div>
-            `;
-        }).join('');
+            `).join('');
     }
 
-    function configurarEventListeners() {
-        addEventListenerWithCleanup(
-            document.getElementById('btn-editar-perfil'),
-            'click',
-            () => abrirModal('modal-editar-perfil')
-        );
-        
-        addEventListenerWithCleanup(
-            document.getElementById('btn-cambiar-contrasena'),
-            'click',
-            () => abrirModal('modal-cambiar-contrasena')
-        );
-
-        addEventListenerWithCleanup(
-            document.getElementById('form-editar-perfil'),
-            'submit',
-            (e) => {
-                e.preventDefault();
-                console.log('Perfil actualizado');
-                cerrarModal('modal-editar-perfil');
-            }
-        );
-
-        addEventListenerWithCleanup(
-            document.getElementById('form-cambiar-contrasena'),
-            'submit',
-            (e) => {
-                e.preventDefault();
-                console.log('Contraseña cambiada');
-                cerrarModal('modal-cambiar-contrasena');
-            }
-        );
+    function verificarUsuarioParaPedido() {
+        return usuarioActual !== null;
     }
 
-    function abrirModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'block';
-        }
+    function obtenerUsuarioActual() {
+        return usuarioActual;
     }
 
-    function cerrarModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    function inicializarModuloUsuario(appState) {
+    function initUsuario() {
         console.log('Inicializando módulo de Usuario');
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-        
-        usuarioState.appStateRef = appState;
-        cargarInformacionUsuario(appState);
-        cargarHistorialPedidos(appState);
-        configurarEventListeners();
-        window.cerrarModal = cerrarModal;
-        
-        return {
-            cleanup: cleanup
-        };
+        cargarDatosDesdeLocalStorage();
+        actualizarInterfazUsuario();
+        configurarEventListenersLoginRegistro();
+        console.log('Módulo de Usuario cargado completamente');
     }
 
-    window.inicializarModuloUsuario = inicializarModuloUsuario;
+    // Inicializar el módulo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initUsuario);
+    } else {
+        initUsuario();
+    }
 
-    console.log('Módulo de Usuario cargado completamente');
+    // Exponer funciones necesarias globalmente
+    window.verificarUsuarioParaPedido = verificarUsuarioParaPedido;
+    window.obtenerUsuarioActual = obtenerUsuarioActual;
+    window.initUsuario = initUsuario;
 })();
+

@@ -1,31 +1,42 @@
 (function() {
     console.log('Iniciando carga del módulo de Facturas');
 
-    let facturasState = {
-        eventListeners: [],
-        appStateRef: null
-    };
+    let facturas = [];
+    let pedidos = [];
 
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            facturasState.eventListeners.push({ element, event, handler });
+    function cargarDatosDesdeLocalStorage() {
+        try {
+            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            facturas = datosGuardados.facturas || [];
+            pedidos = datosGuardados.pedidos || [];
+            console.log('Datos de facturas cargados desde localStorage');
+        } catch (error) {
+            console.error('Error al cargar datos de facturas desde localStorage:', error);
         }
     }
 
-    function cleanup() {
-        console.log('Limpiando módulo de Facturas');
-        facturasState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
-            }
-        });
-        facturasState.eventListeners = [];
-        window.procesarPago = undefined;
-        facturasState.appStateRef = null;
+    function guardarEnLocalStorage() {
+        try {
+            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            datosActuales.facturas = facturas;
+            datosActuales.pedidos = pedidos;
+            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            console.log('Datos de facturas guardados en localStorage');
+        } catch (error) {
+            console.error('Error al guardar datos de facturas en localStorage:', error);
+        }
     }
 
-    function renderizarFacturas(appState) {
+    function sincronizarConDatosGlobales() {
+        if (window.datosGlobales) {
+            facturas = Array.isArray(window.datosGlobales.facturas) ? window.datosGlobales.facturas : [];
+            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
+            renderizarFacturas();
+            console.log('Datos de facturas sincronizados con datosGlobales');
+        }
+    }
+
+    function renderizarFacturas(facturasFiltradas = null) {
         const facturasContainer = document.getElementById('lista-facturas');
         const facturasEmpty = document.getElementById('facturas-empty');
         
@@ -34,7 +45,9 @@
             return;
         }
 
-        if (!appState.facturas || appState.facturas.length === 0) {
+        const facturasAMostrar = facturasFiltradas || facturas;
+
+        if (facturasAMostrar.length === 0) {
             facturasContainer.style.display = 'none';
             facturasEmpty.style.display = 'block';
             return;
@@ -43,8 +56,8 @@
         facturasContainer.style.display = 'block';
         facturasEmpty.style.display = 'none';
 
-        facturasContainer.innerHTML = appState.facturas.map(factura => {
-            const pedido = appState.pedidos.find(p => p.idPedido === factura.idPedido);
+        facturasContainer.innerHTML = facturasAMostrar.map(factura => {
+            const pedido = pedidos.find(p => p.idPedido === factura.idPedido);
             if (!pedido) return '';
             
             return `
@@ -74,11 +87,11 @@
                             </span>
                         </div>
                         <div class="factura-montos">
-                            <div>Subtotal: $${factura.subtotal.toLocaleString()}</div>
-                            <div>IVA (19%): $${factura.impuestos.toLocaleString()}</div>
-                            <div>Envío: $${pedido.costoEnvio.toLocaleString()}</div>
+                            <div>Subtotal: $${factura.subtotal}</div>
+                            <div>IVA (19%): $${factura.impuestos}</div>
+                            <div>Envío: $${pedido.costoEnvio}</div>
                             <div class="factura-total">
-                                Total: $${factura.total.toLocaleString()}
+                                Total: $${factura.total}
                             </div>
                         </div>
                     </div>
@@ -95,7 +108,7 @@
 
         // Agregar event listeners a los botones de pago
         document.querySelectorAll('.btn-pagar').forEach(btn => {
-            addEventListenerWithCleanup(btn, 'click', (e) => {
+            btn.addEventListener('click', (e) => {
                 const idFactura = e.target.getAttribute('data-id-factura');
                 procesarPago(idFactura);
             });
@@ -115,66 +128,88 @@
         }
     }
 
-    function procesarPago(idFactura) {
-        const appState = facturasState.appStateRef;
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
-        const factura = appState.facturas.find(f => f.idFactura === idFactura);
+    async function procesarPago(idFactura) {
+        const factura = facturas.find(f => f.idFactura === idFactura);
         if (!factura) return;
 
-        if (factura.pago.metodoPago === 'pse') {
-            alert('Redirigiendo a PSE...');
-        } else {
-            alert('El pago se realizará contra entrega');
+        if (factura.pago.metodoPago === 'transferencia') {
+            try {
+                const response = await fetch('https://api.ejemplo.com/pse', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        idFactura: factura.idFactura,
+                        monto: factura.total,
+                        // Otros datos necesarios para PSE
+                    }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    // Redirigir al usuario a la página de pago de PSE
+                    window.location.href = result.urlPago;
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error al procesar el pago por PSE:', error);
+                alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+            }
+        } else if (factura.pago.metodoPago === 'efectivo') {
+            alert('El pago se realizará contra entrega en efectivo');
         }
 
         factura.pago.estadoPago = 'procesando';
-        renderizarFacturas(appState);
+        guardarEnLocalStorage();
+        renderizarFacturas();
     }
 
     function filtrarFacturas() {
-        const appState = facturasState.appStateRef;
-        if (!appState) {
-            console.error('Estado de la aplicación no disponible');
-            return;
-        }
-
         const estado = document.getElementById('filtro-estado')?.value || 'todos';
         const fecha = document.getElementById('filtro-fecha')?.value || '';
 
-        if (!appState.facturas) return;
-
-        const facturasFiltradas = appState.facturas.filter(factura => {
+        const facturasFiltradas = facturas.filter(factura => {
             const cumpleEstado = estado === 'todos' || factura.estadoFactura.toLowerCase() === estado;
             const cumpleFecha = !fecha || new Date(factura.fechaEmision).toLocaleDateString() === new Date(fecha).toLocaleDateString();
 
             return cumpleEstado && cumpleFecha;
         });
 
-        renderizarFacturas({ ...appState, facturas: facturasFiltradas });
+        renderizarFacturas(facturasFiltradas);
     }
 
     function configurarEventListeners() {
-        addEventListenerWithCleanup(document.getElementById('filtro-estado'), 'change', filtrarFacturas);
-        addEventListenerWithCleanup(document.getElementById('filtro-fecha'), 'change', filtrarFacturas);
-        addEventListenerWithCleanup(document.getElementById('btn-aplicar-filtros'), 'click', filtrarFacturas);
+        document.getElementById('filtro-estado')?.addEventListener('change', filtrarFacturas);
+        document.getElementById('filtro-fecha')?.addEventListener('change', filtrarFacturas);
+        document.getElementById('btn-aplicar-filtros')?.addEventListener('click', filtrarFacturas);
     }
 
-    function inicializarModuloFacturas(appState) {
+    function initFacturas() {
         console.log('Inicializando módulo de Facturas');
-        facturasState.appStateRef = appState;
-        renderizarFacturas(appState);
+        cargarDatosDesdeLocalStorage();
+        renderizarFacturas();
         configurarEventListeners();
-        window.procesarPago = procesarPago;
-        return {
-            cleanup: cleanup
-        };
+        
+        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
+        
+        if (window.datosGlobales) {
+            sincronizarConDatosGlobales();
+        }
+        
+        console.log('Módulo de Facturas cargado completamente');
     }
 
-    window.inicializarModuloFacturas = inicializarModuloFacturas;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFacturas);
+    } else {
+        initFacturas();
+    }
 
-    console.log('Módulo de Facturas cargado completamente');
+    window.addEventListener('load', renderizarFacturas);
+
+    // Exponer funciones necesarias globalmente
+    window.procesarPago = procesarPago;
+    window.filtrarFacturas = filtrarFacturas;
 })();
