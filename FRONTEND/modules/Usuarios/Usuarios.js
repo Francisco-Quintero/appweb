@@ -4,6 +4,7 @@
     let usuarios = [];
     let usuarioActual = null;
     let codigoEnviado = null;
+    let clientes = [];
 
     function cargarDatosDesdeLocalStorage() {
         try {
@@ -17,6 +18,10 @@
                 usuarioActual = JSON.parse(sesionGuardada);
                 actualizarInterfaz();
             }
+
+            // Cargar clientes desde datosGlobales
+            const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            clientes = datosGlobales.usuarios || [];
         } catch (error) {
             console.error('Error al cargar datos de usuarios del sistema desde localStorage:', error);
         }
@@ -44,7 +49,10 @@
 
     function cerrarSesion() {
         usuarioActual = null;
+        localStorage.removeItem('sesionUsuario');
         actualizarInterfaz();
+        // Redirigir al módulo de usuarios
+        window.dispatchEvent(new CustomEvent('redirigirAUsuarios'));
     }
 
     function registrarUsuario(nombre, email, password, codigo) {
@@ -90,11 +98,7 @@
             panelAdmin.style.display = 'block';
             document.getElementById('bienvenida').textContent = `Bienvenido, ${usuarioActual.nombre}`;
             actualizarListaUsuarios();
-            if (usuarioActual.rol !== 'admin') {
-                document.getElementById('registro-domiciliario').style.display = 'none';
-            } else {
-                document.getElementById('registro-domiciliario').style.display = 'block';
-            }
+            mostrarListaClientes();
             // Notificar al sistema de gestión que el usuario ha iniciado sesión
             window.dispatchEvent(new CustomEvent('usuarioLogueado', { detail: usuarioActual }));
         } else {
@@ -105,6 +109,50 @@
         }
     }
 
+    function mostrarListaClientes() {
+        const listaClientes = document.getElementById('lista-clientes');
+        if (!listaClientes) return;
+    
+        listaClientes.innerHTML = '';
+    
+        clientes.forEach(cliente => {
+            const card = document.createElement('div');
+            card.className = 'usuario-card';
+            card.innerHTML = `
+                <div class="usuario-info">
+                    <strong>${cliente.nombre} ${cliente.apellido}</strong>
+                    <p>Teléfono: ${cliente.telefono}</p>
+                    <p>Dirección: ${cliente.direccion}</p>
+                </div>
+                <div class="usuario-acciones">
+                    <button class="btn-accion btn-ver" onclick="mostrarDetallesCliente('${cliente.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            `;
+            listaClientes.appendChild(card);
+        });
+    }
+    
+    function mostrarDetallesCliente(clienteId) {
+        const cliente = clientes.find(c => c.id.toString() === clienteId);
+        if (!cliente) return;
+    
+        const modal = document.getElementById('cliente-modal');
+        const modalContent = document.getElementById('cliente-modal-content');
+    
+        modalContent.innerHTML = `
+            <h2>Detalles del Cliente</h2>
+            <p><strong>Nombre:</strong> ${cliente.nombre} ${cliente.apellido}</p>
+            <p><strong>Identificación:</strong> ${cliente.identificacion}</p>
+            <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
+            <p><strong>Dirección:</strong> ${cliente.direccion}</p>
+            <p><strong>Correo:</strong> ${cliente.correo}</p>
+            <p><strong>Usuario:</strong> ${cliente.usuario}</p>
+        `;
+    
+        modal.style.display = 'block';
+    }
     function actualizarListaUsuarios() {
         const listaUsuarios = document.getElementById('lista-usuarios');
         const listaDomiciliarios = document.getElementById('lista-domiciliarios');
@@ -248,6 +296,7 @@
     function configurarEventListeners() {
         document.getElementById('tab-login').addEventListener('click', () => cambiarTab('login'));
         document.getElementById('tab-register').addEventListener('click', () => cambiarTab('register'));
+        
 
         document.getElementById('form-login').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -333,22 +382,20 @@
 
         document.getElementById('cerrar-sesion').addEventListener('click', cerrarSesion);
 
-        // Configurar búsqueda de clientes
-        document.getElementById('buscar-cliente').addEventListener('input', function(e) {
-            const busqueda = e.target.value.toLowerCase();
-            const listaClientes = document.getElementById('lista-clientes');
-            const clientes = listaClientes.getElementsByClassName('usuario-card');
-
-            Array.from(clientes).forEach((cliente) => {
-                const nombre = cliente.querySelector('strong').textContent.toLowerCase();
-                const email = cliente.querySelector('p').textContent.toLowerCase();
-                if (nombre.includes(busqueda) || email.includes(busqueda)) {
-                    cliente.style.display = '';
-                } else {
-                    cliente.style.display = 'none';
+            // Cerrar modal de cliente
+            document.querySelector('.close-cliente-modal').addEventListener('click', () => {
+                document.getElementById('cliente-modal').style.display = 'none';
+            });
+    
+            // Cerrar modal de cliente al hacer clic fuera de él
+            window.addEventListener('click', (event) => {
+                const modal = document.getElementById('cliente-modal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
                 }
             });
-        });
+            
+        
     }
 
     function cambiarTab(tab) {
@@ -389,8 +436,11 @@
         initUsuariosSistema();
     }
 
-    // Exponer funciones necesarias globalmente
-    window.initUsuariosSistema = initUsuariosSistema;
-    window.cerrarSesion = cerrarSesion;
-    window.obtenerUsuarioActual = () => usuarioActual;
+// Exponer funciones necesarias globalmente
+window.initUsuariosSistema = initUsuariosSistema;
+// Exponer la función mostrarDetallesCliente globalmente
+window.mostrarDetallesCliente = mostrarDetallesCliente;
+window.cerrarSesion = cerrarSesion;
+window.obtenerUsuarioActual = () => usuarioActual;
+window.hayUsuarioLogueado = () => !!usuarioActual;
 })();

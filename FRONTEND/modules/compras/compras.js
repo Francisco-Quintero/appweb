@@ -75,7 +75,7 @@
                 <td>${compra.id}</td>
                 <td>${compra.fechaSuministro}</td>
                 <td>${compra.proveedor}</td>
-                <td>$${compra.total.toFixed(2)}</td>
+                <td>$${compra.total}</td>
                 <td>
                     <span class="estado-compra estado-${compra.estado.toLowerCase()}">
                         ${compra.estado}
@@ -206,8 +206,7 @@
         const nombre = document.getElementById('busquedaProducto').value;
         const cantidad = parseInt(document.getElementById('cantidad').value);
         const precioCompraTotal = parseFloat(document.getElementById('precioCompraTotal').value);
-        const selectProveedor = document.getElementById('proveedor');
-        const proveedorSeleccionadoId = selectProveedor.value;
+
 
         if (!nombre || isNaN(cantidad) || isNaN(precioCompraTotal)) {
             alert('Por favor, complete todos los campos correctamente');
@@ -220,10 +219,8 @@
             return;
         }
 
-        const precioCompraUnitario = precioCompraTotal / cantidad;
-        const impuesto = parseFloat(document.getElementById('impuesto').value) || 0;
-        const precioConIva = precioCompraUnitario * (1 + impuesto / 100);
-        const precioUnitarioFinal = precioConIva * 1.2; // 20% de ganancia
+        const precioCompraFinal = precioCompraTotal + (precioCompraTotal * 0.2);
+        const precioUnitarioFinal = precioCompraFinal / cantidad ; // 20% de ganancia
 
         const nuevoProducto = {
             id: producto.id,
@@ -231,7 +228,7 @@
             valorMedida: producto.valorMedida,
             unidadMedida: producto.unidadMedida,
             cantidad: cantidad,
-            precioCompraTotal: precioCompraTotal,
+            precioCompraTotal: precioCompraFinal,
             precioUnitarioFinal: precioUnitarioFinal
         };
   

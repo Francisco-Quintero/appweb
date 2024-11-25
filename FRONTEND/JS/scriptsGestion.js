@@ -2,8 +2,13 @@ function inicializarGestion() {
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
-    // Función para cargar módulos
     function cargarModulo(nombreModulo) {
+        if (!window.hayUsuarioLogueado() && nombreModulo !== 'usuarios') {
+            alert('Debe iniciar sesión para acceder a este módulo.');
+            cargarModulo('usuarios');
+            return;
+        }
+
         const contenedorPrincipal = document.getElementById('main-container');
 
         // Eliminar scripts y estilos previos del módulo
@@ -72,8 +77,13 @@ function inicializarGestion() {
         });
     }
 
+    // Escuchar evento de cierre de sesión
+    window.addEventListener('redirigirAUsuarios', function() {
+        cargarModulo('usuarios');
+    });
+
     // Cargar el módulo inicial
-    cargarModulo('dashboard');
+    cargarModulo('usuarios');
 }
 
 // Esperar a que los datos globales estén disponibles

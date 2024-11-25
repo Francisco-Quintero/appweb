@@ -157,6 +157,7 @@
 
         if (!usuarioEstaLogueado()) {
             alert('Debe iniciar sesión para realizar un pedido');
+            //redirijir al usuario
             return;
         }
 
@@ -192,13 +193,7 @@
             })),
             subtotal: subtotal,
             total: total,
-            domicliario: {
-                id: null,
-                nombre: null,
-                rol: 'domiciliario',
-                estado: 'disponible',
-                activo: true
-            },
+            domiciliario: null,
             cliente: {
                 id: usuarioActual.id,
                 nombre: usuarioActual.nombre,

@@ -118,6 +118,39 @@ function verDatosLocalStorage() {
     }
 }
 
+function verDatosUsuarios() {
+    console.log('Contenido de localStorage:');
+    console.log('-------------------------');
+
+    const datosGuardados = localStorage.getItem('usuariosSistema');
+    if (datosGuardados) {
+        const datos = JSON.parse(datosGuardados);
+        Object.keys(datos).forEach(clave => {
+            console.log(`${clave}:`);
+            console.log(datos[clave]);
+            console.log('-------------------------');
+        });
+    } else {
+        console.log('No hay datos almacenados en datosGlobales');
+    }
+}
+function verUsuarioActual(usuario) {
+    console.log('Contenido de localStorage:');
+    console.log('-------------------------');
+
+    const datosGuardados = localStorage.getItem(usuario);
+    if (datosGuardados) {
+        const datos = JSON.parse(datosGuardados);
+        Object.keys(datos).forEach(clave => {
+            console.log(`${clave}:`);
+            console.log(datos[clave]);
+            console.log('-------------------------');
+        });
+    } else {
+        console.log('No hay datos almacenados en datosGlobales');
+    }
+}
+
 // Agregar esta función al objeto global window para poder llamarla desde la consola
 window.verDatosLocalStorage = verDatosLocalStorage;
 

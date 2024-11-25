@@ -2,8 +2,20 @@ function inicializarDomiciliario() {
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
+    // Función para verificar si hay un domiciliario logueado
+    function verificarSesionDomiciliario() {
+        const sesionDomiciliario = localStorage.getItem('sesionDomiciliario');
+        return !!sesionDomiciliario;
+    }
+
     // Función para cargar módulos
     function cargarModulo(nombreModulo) {
+        if (!verificarSesionDomiciliario() && nombreModulo !== 'perfil-domiciliario') {
+            alert('Debe iniciar sesión para acceder a este módulo.');
+            cargarModulo('perfil-domiciliario');
+            return;
+        }
+
         const contenedorPrincipal = document.getElementById('main-container');
         
         // Eliminar scripts y estilos previos del módulo
@@ -66,8 +78,13 @@ function inicializarDomiciliario() {
         });
     }
 
+    // Escuchar evento de cierre de sesión
+    window.addEventListener('redirigirAPerfilDomiciliario', function() {
+        cargarModulo('perfil-domiciliario');
+    });
+
     // Cargar el módulo inicial
-    cargarModulo('pedidos-asignados');
+    cargarModulo('perfil-domiciliario');
 }
 
 // Esperar a que los datos globales estén disponibles

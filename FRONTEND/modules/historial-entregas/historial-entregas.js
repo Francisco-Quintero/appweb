@@ -9,27 +9,8 @@
             estado: 'todos'
         },
         paginaActual: 1,
-        entradasPorPagina: 10,
-        eventListeners: []
+        entradasPorPagina: 10
     };
-
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            historialEntregasState.eventListeners.push({ element, event, handler });
-        }
-    }
-
-    function cleanup() {
-        console.log('Limpiando módulo de Historial de Entregas');
-        historialEntregasState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
-            }
-        });
-        historialEntregasState.eventListeners = [];
-        historialEntregasState.entregas = [];
-    }
 
     function inicializarModuloHistorialEntregas() {
         console.log('Inicializando módulo de Historial de Entregas');
@@ -38,12 +19,16 @@
     }
 
     function cargarEntregas() {
+        const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+        const usuarioActual = JSON.parse(localStorage.getItem('sesionDomiciliario') || '{}');
 
-        historialEntregasState.entregas = [
-            { id: 1, fecha: '2023-05-15', cliente: 'Juan Pérez', direccion: 'Calle 123 #45-67', monto: 50000, estado: 'Entregado' },
-            { id: 2, fecha: '2023-05-16', cliente: 'María López', direccion: 'Avenida 789 #12-34', monto: 75000, estado: 'Entregado' },
-            { id: 3, fecha: '2023-05-17', cliente: 'Carlos Rodríguez', direccion: 'Carrera 456 #78-90', monto: 100000, estado: 'Cancelado' }, 
-        ];
+        if (usuarioActual.rol === 'domiciliario') {
+            historialEntregasState.entregas = (datosGlobales.historialVentas || []).filter(venta => 
+                venta.domiciliario && venta.domiciliario.id === usuarioActual.id
+            );
+        } 
+
+        console.log('Entregas cargadas:', historialEntregasState.entregas);
         actualizarTablaHistorial();
     }
 
@@ -54,11 +39,11 @@
         const filtroEstado = document.getElementById('filtro-estado');
         const cerrarModal = document.querySelector('.cerrar-modal');
 
-        addEventListenerWithCleanup(btnFiltrar, 'click', aplicarFiltros);
-        addEventListenerWithCleanup(fechaInicio, 'change', actualizarFiltros);
-        addEventListenerWithCleanup(fechaFin, 'change', actualizarFiltros);
-        addEventListenerWithCleanup(filtroEstado, 'change', actualizarFiltros);
-        addEventListenerWithCleanup(cerrarModal, 'click', cerrarModalDetalles);
+        if (btnFiltrar) btnFiltrar.addEventListener('click', aplicarFiltros);
+        if (fechaInicio) fechaInicio.addEventListener('change', actualizarFiltros);
+        if (fechaFin) fechaFin.addEventListener('change', actualizarFiltros);
+        if (filtroEstado) filtroEstado.addEventListener('change', actualizarFiltros);
+        if (cerrarModal) cerrarModal.addEventListener('click', cerrarModalDetalles);
     }
 
     function actualizarFiltros() {
@@ -78,35 +63,33 @@
         const entregasPaginadas = paginarEntregas(entregasFiltradas);
         
         const tbody = document.getElementById('cuerpo-tabla-historial');
-        tbody.innerHTML = entregasPaginadas.map(entrega => `
-            <tr>
-                <td>${entrega.id}</td>
-                <td>${entrega.fecha}</td>
-                <td>${entrega.cliente}</td>
-                <td>${entrega.direccion}</td>
-                <td>$${entrega.monto.toFixed(2)}</td>
-                <td>${entrega.estado}</td>
-                <td>
-                    <button onclick="window.verDetallesEntrega(${entrega.id})" class="btn-ver-detalles" aria-label="Ver Detalles">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            <line x1="11" y1="8" x2="11" y2="14"></line>
-                            <line x1="8" y1="11" x2="14" y2="11"></line>
-                        </svg>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        if (tbody) {
+            tbody.innerHTML = entregasPaginadas.map(entrega => `
+                <tr>
+                    <td>${entrega.idPedido}</td>
+                    <td>${new Date(entrega.fechaPedido).toLocaleDateString()}</td>
+                    <td>${entrega.cliente ? entrega.cliente.nombre : 'N/A'}</td>
+                    <td>${entrega.cliente ? entrega.cliente.direccion : 'N/A'}</td>
+                    <td>$${entrega.total}</td>
+                    <td>${entrega.estadoPedido}</td>
+                    <td>
+                        <button onclick="window.verDetallesEntrega(${entrega.idPedido})" class="btn-ver-detalles">
+                            Ver Detalles
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
         
         actualizarPaginacion(entregasFiltradas.length);
     }
 
     function filtrarEntregas() {
         return historialEntregasState.entregas.filter(entrega => {
-            const cumpleFechaInicio = !historialEntregasState.filtros.fechaInicio || entrega.fecha >= historialEntregasState.filtros.fechaInicio;
-            const cumpleFechaFin = !historialEntregasState.filtros.fechaFin || entrega.fecha <= historialEntregasState.filtros.fechaFin;
-            const cumpleEstado = historialEntregasState.filtros.estado === 'todos' || entrega.estado === historialEntregasState.filtros.estado;
+            const fechaEntrega = new Date(entrega.fechaPedido);
+            const cumpleFechaInicio = !historialEntregasState.filtros.fechaInicio || fechaEntrega >= new Date(historialEntregasState.filtros.fechaInicio);
+            const cumpleFechaFin = !historialEntregasState.filtros.fechaFin || fechaEntrega <= new Date(historialEntregasState.filtros.fechaFin);
+            const cumpleEstado = historialEntregasState.filtros.estado === 'todos' || entrega.estadoPedido === historialEntregasState.filtros.estado;
             return cumpleFechaInicio && cumpleFechaFin && cumpleEstado;
         });
     }
@@ -120,28 +103,30 @@
     function actualizarPaginacion(totalEntregas) {
         const totalPaginas = Math.ceil(totalEntregas / historialEntregasState.entradasPorPagina);
         const paginacion = document.getElementById('paginacion');
-        paginacion.innerHTML = '';
-        
-        if (totalPaginas > 1) {
-            const btnAnterior = document.createElement('button');
-            btnAnterior.textContent = 'Anterior';
-            btnAnterior.disabled = historialEntregasState.paginaActual === 1;
-            btnAnterior.addEventListener('click', () => cambiarPagina(historialEntregasState.paginaActual - 1));
-            paginacion.appendChild(btnAnterior);
+        if (paginacion) {
+            paginacion.innerHTML = '';
             
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btnPagina = document.createElement('button');
-                btnPagina.textContent = i;
-                btnPagina.classList.toggle('activa', i === historialEntregasState.paginaActual);
-                btnPagina.addEventListener('click', () => cambiarPagina(i));
-                paginacion.appendChild(btnPagina);
+            if (totalPaginas > 1) {
+                const btnAnterior = document.createElement('button');
+                btnAnterior.textContent = 'Anterior';
+                btnAnterior.disabled = historialEntregasState.paginaActual === 1;
+                btnAnterior.addEventListener('click', () => cambiarPagina(historialEntregasState.paginaActual - 1));
+                paginacion.appendChild(btnAnterior);
+                
+                for (let i = 1; i <= totalPaginas; i++) {
+                    const btnPagina = document.createElement('button');
+                    btnPagina.textContent = i;
+                    btnPagina.classList.toggle('activa', i === historialEntregasState.paginaActual);
+                    btnPagina.addEventListener('click', () => cambiarPagina(i));
+                    paginacion.appendChild(btnPagina);
+                }
+                
+                const btnSiguiente = document.createElement('button');
+                btnSiguiente.textContent = 'Siguiente';
+                btnSiguiente.disabled = historialEntregasState.paginaActual === totalPaginas;
+                btnSiguiente.addEventListener('click', () => cambiarPagina(historialEntregasState.paginaActual + 1));
+                paginacion.appendChild(btnSiguiente);
             }
-            
-            const btnSiguiente = document.createElement('button');
-            btnSiguiente.textContent = 'Siguiente';
-            btnSiguiente.disabled = historialEntregasState.paginaActual === totalPaginas;
-            btnSiguiente.addEventListener('click', () => cambiarPagina(historialEntregasState.paginaActual + 1));
-            paginacion.appendChild(btnSiguiente);
         }
     }
 
@@ -151,23 +136,33 @@
     }
 
     function verDetallesEntrega(idEntrega) {
-        const entrega = historialEntregasState.entregas.find(e => e.id === idEntrega);
+        const entrega = historialEntregasState.entregas.find(e => e.idPedido === idEntrega);
         if (entrega) {
             const detallesEntrega = document.getElementById('detalles-entrega');
-            detallesEntrega.innerHTML = `
-                <p><strong>ID Pedido:</strong> ${entrega.id}</p>
-                <p><strong>Fecha:</strong> ${entrega.fecha}</p>
-                <p><strong>Cliente:</strong> ${entrega.cliente}</p>
-                <p><strong>Dirección:</strong> ${entrega.direccion}</p>
-                <p><strong>Monto:</strong> $${entrega.monto.toFixed(2)}</p>
-                <p><strong>Estado:</strong> ${entrega.estado}</p>
-            `;
-            document.getElementById('modal-detalles').style.display = 'block';
+            if (detallesEntrega) {
+                detallesEntrega.innerHTML = `
+                    <p><strong>ID Pedido:</strong> ${entrega.idPedido}</p>
+                    <p><strong>Fecha:</strong> ${new Date(entrega.fechaPedido).toLocaleString()}</p>
+                    <p><strong>Cliente:</strong> ${entrega.cliente ? entrega.cliente.nombre : 'N/A'}</p>
+                    <p><strong>Dirección:</strong> ${entrega.cliente ? entrega.cliente.direccion : 'N/A'}</p>
+                    <p><strong>Total:</strong> $${entrega.total.toFixed(2)}</p>
+                    <p><strong>Estado:</strong> ${entrega.estadoPedido}</p>
+                    <h4>Productos:</h4>
+                    <ul>
+                        ${entrega.items.map(item => `
+                            <li>${item.cantidad} x ${item.nombre} - $${item.total}</li>
+                        `).join('')}
+                    </ul>
+                `;
+            }
+            const modalDetalles = document.getElementById('modal-detalles');
+            if (modalDetalles) modalDetalles.style.display = 'block';
         }
     }
 
     function cerrarModalDetalles() {
-        document.getElementById('modal-detalles').style.display = 'none';
+        const modalDetalles = document.getElementById('modal-detalles');
+        if (modalDetalles) modalDetalles.style.display = 'none';
     }
 
     window.inicializarModuloHistorialEntregas = inicializarModuloHistorialEntregas;
@@ -176,3 +171,4 @@
 
     console.log('Módulo de Historial de Entregas cargado completamente');
 })();
+

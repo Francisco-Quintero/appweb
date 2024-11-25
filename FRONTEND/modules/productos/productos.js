@@ -1,5 +1,5 @@
 // productos.js
-(function() {
+(function () {
     console.log('Iniciando carga del módulo de productos');
 
     let productos = [];
@@ -45,7 +45,7 @@
         const contenidoTabla = productos.length === 0
             ? '<tr><td colspan="6" class="text-center">No hay productos registrados. Haga clic en "+" para agregar uno nuevo.</td></tr>'
             : productos.map(producto => {
-                   return`
+                return `
                     <tr>
                         <td>${producto.idProducto}</td>
                         <td>${producto.Nombre}</td>
@@ -80,7 +80,7 @@
 
     function manejarEnvioFormulario(e) {
         e.preventDefault();
-        
+
         const idProducto = document.getElementById('idProducto').value;
         const producto = {
             idProducto: idProducto ? parseInt(idProducto) : Date.now(),
@@ -88,9 +88,9 @@
             Descripcion: document.getElementById('descripcionProducto').value,
             precioUnitario: document.getElementById('precio').value,
             categoria: document.getElementById('categoriaProducto').value,
-            imagenProducto: document.getElementById('imagenProducto').value,
             unidadMedida: document.getElementById('unidadMedida').value,
-            valorMedida: document.getElementById('valorMedida').value
+            valorMedida: document.getElementById('valorMedida').value,
+            imagenProducto: document.getElementById('imagenProducto').value
         };
 
         if (idProducto) {
@@ -111,7 +111,7 @@
 
 
     function configurarEventListeners() {
-            document.getElementById('btnAgregarProducto').addEventListener('click', () => {
+        document.getElementById('btnAgregarProducto').addEventListener('click', () => {
             document.getElementById('formularioProducto').reset();
             document.getElementById('idProducto').value = '';
             document.getElementById('modalProducto').style.display = 'block';
@@ -127,7 +127,7 @@
 
     function buscarProductos() {  //funcion para revisar bien en la busqueda de productos
         const termino = document.getElementById('busquedaProducto').value.toLowerCase();
-        const productosFiltrados = productos.filter(p => 
+        const productosFiltrados = productos.filter(p =>
             p.Nombre.toLowerCase().includes(termino) ||
             p.Descripcion.toLowerCase().includes(termino) ||
             p.categoria.toLowerCase().includes(termino)
@@ -140,19 +140,19 @@
         cargarDatosDesdeLocalStorage();
         cargarProductos();
         configurarEventListeners();
-        
+
         window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
+
         if (window.datosGlobales) {
             sincronizarConDatosGlobales();
         }
-        
+
         console.log('Módulo de productos cargado completamente');
     }
 
     window.moduloProductos = {
         init: initProductos,
-        editarProducto: function(idProducto) {
+        editarProducto: function (idProducto) {
             const producto = productos.find(p => p.idProducto === idProducto);
             if (producto) {
                 document.getElementById('idProducto').value = producto.idProducto;
@@ -166,7 +166,7 @@
                 document.getElementById('modalProducto').style.display = 'block';
             }
         },
-        eliminarProducto: function(idProducto) {
+        eliminarProducto: function (idProducto) {
             if (confirm('¿Estás seguro de que quieres eliminar este producto ?')) {
                 productos = productos.filter(p => p.idProducto !== idProducto);
                 guardarEnLocalStorage();

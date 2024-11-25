@@ -1,147 +1,88 @@
 (function() {
-    console.log('Iniciando carga del módulo de Mi Perfil Domiciliario');
+    console.log('Iniciando carga del módulo de Perfil Domiciliario');
 
-    let domiciliarios = [];
     let domiciliarioActual = null;
 
     function cargarDatosDesdeLocalStorage() {
         try {
-            // const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            // domiciliarios = datosGuardados.domiciliarios || [];
-            const datosGuardados = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            domiciliarios = datosGuardados;
-            // Cargar la sesión del usuario si existe
             const sesionGuardada = localStorage.getItem('sesionDomiciliario');
             if (sesionGuardada) {
                 domiciliarioActual = JSON.parse(sesionGuardada);
-               // actualizarInterfaz();
-            }            
-            // console.log('Datos de usuarios del sistema cargados desde localStorage');
-            // domiciliarioActual = datosGuardados.domiciliarioActual || null;
-            console.log('Datos de domiciliarios cargados desde localStorage');
+                actualizarInterfaz();
+            }
         } catch (error) {
-            console.error('Error al cargar datos desde localStorage:', error);
+            console.error('Error al cargar datos del domiciliario desde localStorage:', error);
         }
     }
 
-    function guardarEnLocalStorage() {
-        try {
-            // const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            // datosActuales.domiciliarios = domiciliarios;
-            // datosActuales.domiciliarioActual = domiciliarioActual;
-            // localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
-            localStorage.setItem('usuariosSistema', JSON.stringify(domiciliarios));
-            console.log('Datos de domiciliarios guardados en localStorage');
-        } catch (error) {
-            console.error('Error al guardar en localStorage:', error);
+    function iniciarSesion(email, password) {
+        const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+        const domiciliario = usuarios.find(u => u.email === email && u.password === password && u.rol === 'domiciliario');
+        if (domiciliario) {
+            domiciliarioActual = domiciliario;
+            localStorage.setItem('sesionDomiciliario', JSON.stringify(domiciliario));
+            actualizarInterfaz();
+            return true;
         }
+        return false;
     }
 
-    function actualizarInterfazDomiciliario() {
-        const contenedorPerfil = document.querySelector('.perfil-domiciliario-container');
-        const contenedorLogin = document.getElementById('login-domiciliario-container');
-        
+    function cerrarSesion() {
+        domiciliarioActual = null;
+        localStorage.removeItem('sesionDomiciliario');
+        actualizarInterfaz();
+        // Redirigir al módulo de perfil domiciliario
+        window.dispatchEvent(new CustomEvent('redirigirAPerfilDomiciliario'));
+    }
+
+    function actualizarInterfaz() {
+        const loginContainer = document.getElementById('login-domiciliario-container');
+        const perfilContainer = document.getElementById('perfil-domiciliario-container');
+
         if (domiciliarioActual) {
-            if (contenedorPerfil) contenedorPerfil.style.display = 'block';
-            if (contenedorLogin) contenedorLogin.style.display = 'none';
-            cargarInformacionDomiciliario();
+            loginContainer.style.display = 'none';
+            perfilContainer.style.display = 'block';
+            document.getElementById('nombre-domiciliario').textContent = domiciliarioActual.nombre;
+            document.getElementById('email-domiciliario').textContent = domiciliarioActual.email;
+            document.getElementById('estado-domiciliario').textContent = domiciliarioActual.estado || 'Disponible';
         } else {
-            if (contenedorPerfil) contenedorPerfil.style.display = 'none';
-            if (contenedorLogin) contenedorLogin.style.display = 'block';
+            loginContainer.style.display = 'block';
+            perfilContainer.style.display = 'none';
         }
     }
 
-    function configurarEventListenersLogin() {
-        // const formLogin = document.getElementById('form-login-domiciliario');
-        // if (formLogin) {
-        //     formLogin.addEventListener('submit', (e) => {
-        //         e.preventDefault();
-        //         iniciarSesion();
-        //     });
-        // }
-
-        const btnCerrarSesion = document.getElementById('btn-cerrar-sesion-domiciliario');
-        if (btnCerrarSesion) {
-            btnCerrarSesion.addEventListener('click', cerrarSesion);
-        }
-
+    function configurarEventListeners() {
         document.getElementById('form-login-domiciliario').addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-usuario-domiciliario').value;
+            const email = document.getElementById('login-email-domiciliario').value;
             const password = document.getElementById('login-password-domiciliario').value;
             if (iniciarSesion(email, password)) {
-                actualizarInterfazDomiciliario();
+                console.log('Sesión iniciada con éxito');
             } else {
                 alert('Credenciales incorrectas');
             }
         });
 
+        document.getElementById('btn-cerrar-sesion-domiciliario').addEventListener('click', cerrarSesion);
     }
 
-    function iniciarSesion(email,password) {
-       const domiciliario = domiciliarios.find(d => d.email === email && d.password === password && d.rol === "domiciliario");
-
-        if (domiciliario) {
-            domiciliarioActual = domiciliario;
-            localStorage.setItem('sesionDomiciliario', JSON.stringify(domiciliario));
-            actualizarInterfazDomiciliario();
-           // window.dispatchEvent(new Event('domiciliarioLogueado'));
-            return true;
-        } else {
-            alert('Usuario o contraseña incorrectos');
-            return false;
-        }
-    }
-
-
-    function cerrarSesion() {
-        domiciliarioActual = null;
-        actualizarInterfazDomiciliario();
-        window.dispatchEvent(new Event('domiciliarioDeslogueado'));
-    }
-
-
-    function cargarInformacionDomiciliario() {
-        if (!domiciliarioActual) return;
-        
-        const domiciliarioInfo = document.getElementById('domiciliario-info');
-        if (domiciliarioInfo) {
-            domiciliarioInfo.innerHTML = `
-                <h3>Información del Domiciliario</h3>
-                <p><strong>Nombre:</strong> ${domiciliarioActual.nombre} ${domiciliarioActual.apellido || ''}</p>
-                <p><strong>Usuario:</strong> ${domiciliarioActual.usuario}</p>
-                <p><strong>Teléfono:</strong> ${domiciliarioActual.telefono || ''}</p>
-                <p><strong>Último inicio de sesión:</strong> ${domiciliarioActual.ultimoLogin ? new Date(domiciliarioActual.ultimoLogin).toLocaleString() : 'N/A'}</p>
-                <p><strong>Último cierre de sesión:</strong> ${domiciliarioActual.ultimoLogout ? new Date(domiciliarioActual.ultimoLogout).toLocaleString() : 'N/A'}</p>
-            `;
-        }
-    }
-
-    function verificarDomiciliarioLogueado() {
-        return domiciliarioActual !== null;
-    }
-
-    function obtenerDomiciliarioActual() {
-        return domiciliarioActual;
-    }
-
-    function initMiPerfilDomiciliario() {
-        console.log('Inicializando módulo de Mi Perfil Domiciliario');
+    function initPerfilDomiciliario() {
+        console.log('Inicializando módulo de Perfil Domiciliario');
         cargarDatosDesdeLocalStorage();
-        actualizarInterfazDomiciliario();
-        configurarEventListenersLogin();
-        console.log('Módulo de Mi Perfil Domiciliario cargado completamente');
+        configurarEventListeners();
+        actualizarInterfaz();
+        console.log('Módulo de Perfil Domiciliario cargado completamente');
     }
 
-    // Inicializar el módulo
+    // Inicializar el módulo cuando el DOM esté listo
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initMiPerfilDomiciliario);
+        document.addEventListener('DOMContentLoaded', initPerfilDomiciliario);
     } else {
-        initMiPerfilDomiciliario();
+        initPerfilDomiciliario();
     }
 
     // Exponer funciones necesarias globalmente
-    window.verificarDomiciliarioLogueado = verificarDomiciliarioLogueado;
-    window.obtenerDomiciliarioActual = obtenerDomiciliarioActual;
-    window.initMiPerfilDomiciliario = initMiPerfilDomiciliario;
+    window.initPerfilDomiciliario = initPerfilDomiciliario;
+    window.cerrarSesionDomiciliario = cerrarSesion;
+    window.hayDomiciliarioLogueado = () => !!domiciliarioActual;
 })();
