@@ -6,9 +6,18 @@
 
     function cargarDatosDesdeLocalStorage() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            domiciliarios = datosGuardados.domiciliarios || [];
-            domiciliarioActual = datosGuardados.domiciliarioActual || null;
+            // const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            // domiciliarios = datosGuardados.domiciliarios || [];
+            const datosGuardados = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
+            domiciliarios = datosGuardados;
+            // Cargar la sesión del usuario si existe
+            const sesionGuardada = localStorage.getItem('sesionDomiciliario');
+            if (sesionGuardada) {
+                domiciliarioActual = JSON.parse(sesionGuardada);
+               // actualizarInterfaz();
+            }            
+            // console.log('Datos de usuarios del sistema cargados desde localStorage');
+            // domiciliarioActual = datosGuardados.domiciliarioActual || null;
             console.log('Datos de domiciliarios cargados desde localStorage');
         } catch (error) {
             console.error('Error al cargar datos desde localStorage:', error);
@@ -17,10 +26,11 @@
 
     function guardarEnLocalStorage() {
         try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.domiciliarios = domiciliarios;
-            datosActuales.domiciliarioActual = domiciliarioActual;
-            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            // const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            // datosActuales.domiciliarios = domiciliarios;
+            // datosActuales.domiciliarioActual = domiciliarioActual;
+            // localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            localStorage.setItem('usuariosSistema', JSON.stringify(domiciliarios));
             console.log('Datos de domiciliarios guardados en localStorage');
         } catch (error) {
             console.error('Error al guardar en localStorage:', error);
@@ -42,46 +52,54 @@
     }
 
     function configurarEventListenersLogin() {
-        const formLogin = document.getElementById('form-login-domiciliario');
-        if (formLogin) {
-            formLogin.addEventListener('submit', (e) => {
-                e.preventDefault();
-                iniciarSesion();
-            });
-        }
+        // const formLogin = document.getElementById('form-login-domiciliario');
+        // if (formLogin) {
+        //     formLogin.addEventListener('submit', (e) => {
+        //         e.preventDefault();
+        //         iniciarSesion();
+        //     });
+        // }
 
         const btnCerrarSesion = document.getElementById('btn-cerrar-sesion-domiciliario');
         if (btnCerrarSesion) {
             btnCerrarSesion.addEventListener('click', cerrarSesion);
         }
+
+        document.getElementById('form-login-domiciliario').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-usuario-domiciliario').value;
+            const password = document.getElementById('login-password-domiciliario').value;
+            if (iniciarSesion(email, password)) {
+                actualizarInterfazDomiciliario();
+            } else {
+                alert('Credenciales incorrectas');
+            }
+        });
+
     }
 
-    function iniciarSesion() {
-        const username = document.getElementById('login-usuario-domiciliario').value;
-        const password = document.getElementById('login-password-domiciliario').value;
+    function iniciarSesion(email,password) {
+       const domiciliario = domiciliarios.find(d => d.email === email && d.password === password && d.rol === "domiciliario");
 
-        domiciliarioActual = domiciliarios.find(d => d.usuario === username && d.password === password);
-
-        if (domiciliarioActual) {
-            console.log('Inicio de sesión exitoso');
-            domiciliarioActual.ultimoLogin = new Date().toISOString();
-            guardarEnLocalStorage();
+        if (domiciliario) {
+            domiciliarioActual = domiciliario;
+            localStorage.setItem('sesionDomiciliario', JSON.stringify(domiciliario));
             actualizarInterfazDomiciliario();
-            window.dispatchEvent(new Event('domiciliarioLogueado'));
+           // window.dispatchEvent(new Event('domiciliarioLogueado'));
+            return true;
         } else {
             alert('Usuario o contraseña incorrectos');
+            return false;
         }
     }
 
+
     function cerrarSesion() {
-        if (domiciliarioActual) {
-            domiciliarioActual.ultimoLogout = new Date().toISOString();
-            guardarEnLocalStorage();
-        }
         domiciliarioActual = null;
         actualizarInterfazDomiciliario();
         window.dispatchEvent(new Event('domiciliarioDeslogueado'));
     }
+
 
     function cargarInformacionDomiciliario() {
         if (!domiciliarioActual) return;

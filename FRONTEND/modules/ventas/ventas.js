@@ -8,9 +8,10 @@
     function cargarDatosDesdeLocalStorage() {
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
             ventasActivas = datosGuardados.pedidosPendientes || [];
             historialVentas = datosGuardados.historialVentas || [];
-            domiciliarios = datosGuardados.domiciliarios || [];
+            domiciliarios = usuarios.filter(u => u.rol === 'domiciliario') || [];
             console.log('Datos de ventas cargados desde localStorage');
         } catch (error) {
             console.error('Error al cargar datos de ventas desde localStorage:', error);
@@ -29,15 +30,6 @@
         }
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            ventasActivas = Array.isArray(window.datosGlobales.pedidosPendientes) ? window.datosGlobales.pedidosPendientes : [];
-            historialVentas = Array.isArray(window.datosGlobales.historialVentas) ? window.datosGlobales.historialVentas : [];
-            domiciliarios = Array.isArray(window.datosGlobales.domiciliarios) ? window.datosGlobales.domiciliarios : [];
-            renderizarVentasActivas();
-            console.log('Datos de ventas sincronizados con datosGlobales');
-        }
-    }
 
     function renderizarVentasActivas() {
         const cuerpoTablaVentas = document.getElementById('cuerpoTablaVentas');
@@ -58,11 +50,11 @@
         cuerpoTablaVentas.innerHTML = ventasActivas.map(venta => `
             <tr>
                 <td>${venta.idPedido}</td>
-                <td>${venta.fecha}</td>
-                <td>${venta.cliente}</td>
-                <td>$${venta.total.toFixed(2)}</td>
-                <td>${venta.estado}</td>
-                <td>${venta.domiciliario || 'No asignado'}</td>
+                <td>${venta.fechaPedido}</td>
+                <td>${venta.cliente ? venta.cliente.nombre : "sin cliente"}</td>
+                <td>$${venta.total}</td>
+                <td>${venta.estadoPedido}</td>
+                <td>${venta.domiciliario ? venta.domiciliario.nombre : 'No asignado'}</td>
                 <td>
                     <button onclick="mostrarDetallesVenta(${venta.idPedido})" class="btn-detalles">Detalles</button>
                     ${!venta.domiciliario ? `
@@ -94,11 +86,12 @@
         historialEmpty.style.display = 'none';
         cuerpoTablaHistorial.innerHTML = historialVentas.map(venta => `
             <tr>
+
                 <td>${venta.idPedido}</td>
-                <td>${venta.fecha}</td>
-                <td>${venta.cliente}</td>
-                <td>$${venta.total.toFixed(2)}</td>
-                <td>${venta.domiciliario}</td>
+                <td>${venta.fechaPedido}</td>
+                <td>${venta.cliente ? venta.cliente.nombre : 'sin cliente'}</td>
+                <td>$${venta.total}</td>
+                <td>${venta.domiciliario ? venta.domiciliario.nombre : 'No asignado'}</td>
                 <td>
                     <button onclick="mostrarDetallesVenta(${venta.idPedido})" class="btn-detalles">Detalles</button>
                 </td>
@@ -111,8 +104,8 @@
         const domiciliario = domiciliarios.find(d => d.id === parseInt(domiciliarioId));
 
         if (ventaIndex !== -1 && domiciliario) {
-            ventasActivas[ventaIndex].domiciliario = domiciliario.nombre;
-            ventasActivas[ventaIndex].estado = 'En proceso';
+            ventasActivas[ventaIndex].domiciliario = domiciliario;
+            ventasActivas[ventaIndex].estadoPedido = 'En proceso';
             guardarEnLocalStorage();
             renderizarVentasActivas();
             cerrarModalAsignarDomiciliario();
@@ -165,11 +158,11 @@
             const detallesVenta = document.getElementById('detallesVenta');
             detallesVenta.innerHTML = `
                 <p><strong>ID Pedido:</strong> ${venta.idPedido}</p>
-                <p><strong>Fecha:</strong> ${venta.fecha}</p>
-                <p><strong>Cliente:</strong> ${venta.cliente}</p>
-                <p><strong>Total:</strong> $${venta.total.toFixed(2)}</p>
-                <p><strong>Estado:</strong> ${venta.estado}</p>
-                <p><strong>Domiciliario:</strong> ${venta.domiciliario || 'No asignado'}</p>
+                <p><strong>Fecha:</strong> ${venta.fechaPedido}</p>
+                <p><strong>Cliente:</strong> ${venta.cliente ? venta.cliente.nombre : 'sin cliente'}</p>
+                <p><strong>Total:</strong> $${venta.total}</p>
+                <p><strong>Estado:</strong> ${venta.estadoPedido}</p>
+                <p><strong>Domiciliario:</strong> ${venta.domiciliario ? venta.domiciliario.nombre : 'No asignado'}</p>
                 <!-- Aquí puedes agregar más detalles si es necesario -->
             `;
             document.getElementById('modalVenta').style.display = 'block';
@@ -206,12 +199,6 @@
             document.getElementById('modalVenta').style.display = 'none';
         });
         document.getElementById('btnCerrarModalAsignar').addEventListener('click', cerrarModalAsignarDomiciliario);
-        
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
         
         console.log('Módulo de ventas cargado completamente');
     }

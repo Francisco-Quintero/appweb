@@ -4,13 +4,12 @@
     let carrito = [];
     let pedidos = [];
     let facturas = [];
-    let usuarios = [];
 
     function cargarDatosDesdeLocalStorage() {
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             carrito = datosGuardados.carrito || [];
-            pedidos = datosGuardados.pedidos || [];
+            pedidos = datosGuardados.pedidosPendientes || [];
             facturas = datosGuardados.facturas || [];
             console.log('Datos del carrito cargados desde localStorage');
         } catch (error) {
@@ -22,7 +21,7 @@
         try {
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             datosActuales.carrito = carrito;
-            datosActuales.pedidos = pedidos;
+            datosActuales.pedidosPendientes = pedidos;
             datosActuales.facturas = facturas;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos del carrito guardados en localStorage');
@@ -34,7 +33,7 @@
     function sincronizarConDatosGlobales() {
         if (window.datosGlobales) {
             carrito = Array.isArray(window.datosGlobales.carrito) ? window.datosGlobales.carrito : [];
-            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
+            pedidos = Array.isArray(window.datosGlobales.pedidosPendientes) ? window.datosGlobales.pedidosPendientes : [];
             facturas = Array.isArray(window.datosGlobales.facturas) ? window.datosGlobales.facturas : [];
             renderizarCarrito();
             console.log('Datos del carrito sincronizados con datosGlobales');
@@ -61,7 +60,7 @@
         carrito.forEach(item => {
             const itemElem = document.createElement('div');
             itemElem.className = 'carrito-item';
-            const subtotalItem = item.precio * item.cantidad;
+            const subtotalItem = item.precioUnitario * item.cantidad;
             
             itemElem.innerHTML = `
                 <img src="${item.imagenProducto}" alt="${item.Nombre}" class="carrito-item-imagen">
@@ -102,7 +101,7 @@
     }
 
     function calcularSubtotal() {
-        return carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        return carrito.reduce((sum, item) => sum + (item.precioUnitario * item.cantidad), 0);
     }
 
     function actualizarCantidad(productoId, operacion) {
@@ -179,31 +178,36 @@
         }
 
         const pedido = {
-            idPedido: generarIdUnico(),
+            idPedido: pedidos.length + 1,
             fechaPedido: new Date(),
             estadoPedido: 'en espera',
-            horaCreacion: new Date(),
             costoEnvio: costoEnvio,
             items: carrito.map(item => ({
-                idProducto: item.id,
+                idProducto: item.idProducto,
+                nombre: item.Nombre,
                 cantidad: item.cantidad,
-                precioUnitario: item.precio,
-                total: item.precio * item.cantidad,
+                precioUnitario: item.precioUnitario,
+                total: item.precioUnitario * item.cantidad,
                 descuento: 0
             })),
             subtotal: subtotal,
             total: total,
+            domicliario: {
+                id: null,
+                nombre: null,
+                rol: 'domiciliario',
+                estado: 'disponible',
+                activo: true
+            },
             cliente: {
                 id: usuarioActual.id,
                 nombre: usuarioActual.nombre,
-                apellido: usuarioActual.apellido,
-                direccion: usuarioActual.direccion,
-                telefono: usuarioActual.telefono
+                direccion: usuarioActual.direccion
             }
         };
 
         const factura = {
-            idFactura: generarIdUnico(),
+            idFactura: facturas.length + 1,
             fechaEmision: new Date(),
             idPedido: pedido.idPedido,
             subtotal: subtotal,
@@ -211,7 +215,7 @@
             total: total,
             estadoFactura: 'pendiente',
             pago: {
-                idPago: generarIdUnico(),
+                idPago: facturas.length + 1,
                 metodoPago: metodoPago,
                 estadoPago: metodoPago === 'contraentrega' ? 'pendiente' : 'procesando',
                 monto: total,
@@ -236,9 +240,6 @@
         return typeof window.obtenerUsuarioActual === 'function' ? window.obtenerUsuarioActual() : null;
     }
 
-    function generarIdUnico() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
 
     function calcularImpuestos(subtotal) {
         return subtotal * 0.19; // 19% de impuestos

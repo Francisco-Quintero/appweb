@@ -101,11 +101,11 @@ datosGlobales.inicializar();
 window.datosGlobales = datosGlobales;
 
 // Función para ver datos en localStorage
-function verDatosLocalStorage(variableLocal) {
+function verDatosLocalStorage() {
     console.log('Contenido de localStorage:');
     console.log('-------------------------');
 
-    const datosGuardados = localStorage.getItem(variableLocal);
+    const datosGuardados = localStorage.getItem('datosGlobales');
     if (datosGuardados) {
         const datos = JSON.parse(datosGuardados);
         Object.keys(datos).forEach(clave => {
