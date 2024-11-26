@@ -314,6 +314,12 @@
             const button = this;
             button.textContent = 'Enviando...';
 
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS no está cargado');
+                button.textContent = 'Error al enviar';
+                return;
+            }
+
             const serviceID = 'default_service';
             const templateID = 'template_y4r04nt';
             const templateParams = {
@@ -422,6 +428,11 @@
 
     function initUsuariosSistema() {
         console.log('Inicializando módulo de Usuarios del Sistema');
+        if (typeof emailjs === 'undefined') {
+            console.warn('EmailJS no está cargado. Esperando...');
+            window.addEventListener('emailjsLoaded', initUsuariosSistema);
+            return;
+        }
         cargarDatosDesdeLocalStorage();
         configurarEventListeners();
         configurarModal();
@@ -429,11 +440,21 @@
         console.log('Módulo de Usuarios del Sistema cargado completamente');
     }
 
-    // Inicializar el módulo cuando el DOM esté listo
+    // Inicializar el módulo cuando el DOM esté listo y EmailJS esté cargado
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initUsuariosSistema);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof emailjs !== 'undefined') {
+                initUsuariosSistema();
+            } else {
+                window.addEventListener('emailjsLoaded', initUsuariosSistema);
+            }
+        });
     } else {
-        initUsuariosSistema();
+        if (typeof emailjs !== 'undefined') {
+            initUsuariosSistema();
+        } else {
+            window.addEventListener('emailjsLoaded', initUsuariosSistema);
+        }
     }
 
 // Exponer funciones necesarias globalmente

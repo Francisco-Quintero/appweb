@@ -2,6 +2,23 @@ function inicializarGestion() {
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
+    function cargarLibreriaEmailJS() {
+        return new Promise((resolve, reject) => {
+            if (window.emailjs) {
+                resolve();
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+                script.onload = () => {
+                    emailjs.init('R6MTXZtcPcos0kbQw');
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            }
+        });
+    }
+
     function cargarModulo(nombreModulo) {
         if (!window.hayUsuarioLogueado() && nombreModulo !== 'usuarios') {
             alert('Debe iniciar sesión para acceder a este módulo.');
@@ -19,7 +36,8 @@ function inicializarGestion() {
         });
         document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
 
-        fetch(`modules/${nombreModulo}/${nombreModulo}.html`)
+        cargarLibreriaEmailJS()
+            .then(() => fetch(`modules/${nombreModulo}/${nombreModulo}.html`))
             .then(response => response.text())
             .then(html => {
                 contenedorPrincipal.innerHTML = html;
@@ -30,14 +48,6 @@ function inicializarGestion() {
                 link.href = `modules/${nombreModulo}/${nombreModulo}.css`;
                 link.setAttribute('data-module', nombreModulo);
                 document.head.appendChild(link);
-
-                // Cargar librería externa si no está cargada
-                if (!document.querySelector('script[src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"]')) {
-                    const scriptLibreria = document.createElement('script');
-                    scriptLibreria.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-                    scriptLibreria.onload = () => emailjs.init('R6MTXZtcPcos0kbQw');
-                    document.head.appendChild(scriptLibreria);
-                }
 
                 // Cargar el script del módulo
                 const script = document.createElement('script');

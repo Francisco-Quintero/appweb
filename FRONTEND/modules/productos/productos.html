@@ -30,8 +30,8 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Categoría</th>
-                    <th>unidad Medida</th>
                     <th>Valor Medida</th>
+                    <th>unidad Medida</th>
                     <th>Imagen</th>
                     <th>Acciones</th>
                 </tr>
@@ -50,37 +50,46 @@
                 <h3 id="tituloModal">Añadir Producto</h3>
                 <form id="formularioProducto">
                     <input type="hidden" id="idProducto">
-                    <div class="grupo-formulario">
+                    
+                    <!-- Nombre - Full width -->
+                    <div class="grupo-formulario full-width">
                         <label for="nombreProducto">Nombre:</label>
                         <input type="text" id="nombreProducto" required>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="precio">Precio:</label>
-                        <input type="text" id="precio" required>
-                    </div>
-                    <div class="grupo-formulario">
-                        <label for="descripcionProducto">Descripción:</label>
-                        <textarea id="descripcionProducto" required></textarea>
-                    </div>
+        
+                    <!-- Categoría -->
                     <div class="grupo-formulario">
                         <label for="categoriaProducto">Categoría:</label>
                         <input type="text" id="categoriaProducto" required>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="unidadMedida">Unidad de Medida:</label>
-                        <input type="text" id="unidadMedida" required>
-                    </div>
-                    <div class="grupo-formulario">
-                        <label for="valorMedida">Valor de Medida:</label>
-                        <input type="number" id="valorMedida" step="0.01" required>
-                    </div>
+        
+                    <!-- URL Imagen -->
                     <div class="grupo-formulario">
                         <label for="imagenProducto">URL de la imagen:</label>
                         <input type="url" id="imagenProducto">
                     </div>
+        
+                    <!-- Medidas en campos más pequeños -->
+                    <div class="grupo-formulario measure-field">
+                        <label for="unidadMedida">Unidad de Medida:</label>
+                        <input type="text" id="unidadMedida" required>
+                    </div>
+        
+                    <div class="grupo-formulario measure-field">
+                        <label for="valorMedida">Valor de Medida:</label>
+                        <input type="number" id="valorMedida" step="0.01" required>
+                    </div>
+        
+                    <!-- Descripción - Full width -->
+                    <div class="grupo-formulario full-width">
+                        <label for="descripcionProducto">Descripción:</label>
+                        <textarea id="descripcionProducto" required></textarea>
+                    </div>
+        
+                    <!-- Botones de acción -->
                     <div class="acciones-formulario">
-                        <button type="submit" class="btn btn-primario">Guardar</button>
                         <button type="button" class="btn btn-secundario" id="btnCancelar">Cancelar</button>
+                        <button type="submit" class="btn btn-primario">Guardar</button>
                     </div>
                 </form>
             </div>

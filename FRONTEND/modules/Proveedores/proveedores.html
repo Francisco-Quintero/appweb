@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Proveedores</title>
-    <link rel="stylesheet" href="modules/proveedores/proveedores.css">
+
 </head>
 <body>
     <div class="proveedores-container">
@@ -27,10 +27,11 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
+                    <th>Empresa</th>
+                    <th>Contacto</th>
                     <th>Correo</th>
                     <th>Teléfono</th>
-                    <th>frecuenciaAbastecimiento</th>
+                    <th>Compras Realizadas</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -45,8 +46,12 @@
                 <form id="formularioProveedor">
                     <input type="hidden" id="idProveedor">
                     <div class="grupo-formulario">
-                        <label for="nombreProveedor">Nombre:</label>
-                        <input type="text" id="nombreProveedor" required>
+                        <label for="nombreEmpresa">Nombre de la Empresa:</label>
+                        <input type="text" id="nombreEmpresa" required>
+                    </div>
+                    <div class="grupo-formulario">
+                        <label for="nombreContacto">Nombre del Contacto:</label>
+                        <input type="text" id="nombreContacto" required>
                     </div>
                     <div class="grupo-formulario">
                         <label for="correoProveedor">Correo:</label>
@@ -56,10 +61,6 @@
                         <label for="telefonoProveedor">Teléfono:</label>
                         <input type="tel" id="telefonoProveedor" required>
                     </div>
-                    <div class="grupo-formulario">
-                        <label for="frecuenciaAbastecimiento">Freuencia Abastecimiento:</label>
-                        <input type="text" id="frecuenciaAbastecimiento" required>
-                    </div>
                     <div class="acciones-formulario">
                         <button type="submit" class="btn btn-primario">Guardar</button>
                         <button type="button" class="btn btn-secundario" id="btnCancelar">Cancelar</button>
@@ -68,6 +69,7 @@
             </div>
         </div>
     </div>
-    <script src="/modules/Proveedores/proveedores.js"></script>
+
 </body>
 </html>
+

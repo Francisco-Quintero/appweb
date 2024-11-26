@@ -1,104 +1,47 @@
-const datosGlobales = {
+// Definición de datos globales iniciales
+const datosGlobalesInicial = {
+    usuarios: [],
     productos: [],
-    categorias: [],
-    proveedores: [],
-    compras: [],
     inventario: [],
     carrito: [],
+    pedidosPendientes: [],
+    pedidosEntregados: [],
     facturas: [],
-    usuarios: [],
-    usuariosSistema: [], 
-
-    // Función para obtener usuario por credenciales
-    obtenerUsuarioPorCredenciales: function(usuario, password) {
-        return this.usuarios.find(u => 
-            u.usuario === usuario && 
-            u.password === password
-        ) || null;
-    },
-
-    // Función para agregar usuario
-    agregarUsuario: function(usuario) {
-        // Verificar si ya existe un usuario con el mismo nombre de usuario
-        if (this.usuarios.some(u => u.usuario === usuario.usuario)) {
-            throw new Error('El nombre de usuario ya existe');
-        }
-
-        usuario.id = this.generarId(this.usuarios);
-        this.usuarios.push(usuario);
-        this.guardarEnLocalStorage();
-        return usuario;
-    },
-
-    actualizarUsuario: function(usuarioActualizado) {
-        const index = this.usuarios.findIndex(u => u.id === usuarioActualizado.id);
-        if (index !== -1) {
-            this.usuarios[index] = usuarioActualizado;
-            this.guardarEnLocalStorage();
-            return true;
-        }
-        return false;
-    },
-
-    eliminarUsuario: function(id) {
-        const longitudAnterior = this.usuarios.length;
-        this.usuarios = this.usuarios.filter(u => u.id !== id);
-        if (this.usuarios.length < longitudAnterior) {
-            this.guardarEnLocalStorage();
-            return true;
-        }
-        return false;
-    },
-
-    generarId: function(array) {
-        return array.length > 0 ? Math.max(...array.map(item => item.id)) + 1 : 1;
-    },
-
-    guardarEnLocalStorage: function() {
-        localStorage.setItem('datosGlobales', JSON.stringify({
-            productos: this.productos,
-            categorias: this.categorias,
-            proveedores: this.proveedores,
-            compras: this.compras,
-            inventario: this.inventario,
-            carrito: this.carrito,
-            facturas: this.facturas,
-            usuarios: this.usuario,
-            usuariosSistema: this.usuariosSistema
-        }));
-    },
-
-    cargarDesdeLocalStorage: function() {
-        const datosGuardados = localStorage.getItem('datosGlobales');
-        if (datosGuardados) {
-            const datos = JSON.parse(datosGuardados);
-            this.productos = datos.productos || [];
-            this.categorias = datos.categorias || [];
-            this.proveedores = datos.proveedores || [];
-            this.compras = datos.compras || [];
-            this.inventario = datos.inventario || [];
-            this.carrito = datos.carrito || [];
-            this.facturas = datos.facturas || [];
-            this.usuarios = datos.usuarios || [];
-            this.usuariosSistema = datos.usuariosSistema || [];
-            
-        }
-    },
-
-    inicializar: function() {
-        this.cargarDesdeLocalStorage();
-        console.log('Datos globales inicializados');
-        // Disparar evento de datos globales listos
-        const evento = new Event('datosGlobalesListo');
-        window.dispatchEvent(evento);
-    }
+    domiciliarios: []
 };
 
-// Inicializar datos globales al cargar el script
-datosGlobales.inicializar();
+// Función para inicializar los datos si no existen en localStorage
+function inicializarDatosGlobales() {
+    const datosAlmacenados = localStorage.getItem('datosGlobales');
+    if (!datosAlmacenados) {
+        localStorage.setItem('datosGlobales', JSON.stringify(datosGlobalesInicial));
+        console.log('Datos globales inicializados');
+        return datosGlobalesInicial;
+    }
+    return JSON.parse(datosAlmacenados);
+}
 
-// Exponer datosGlobales al ámbito global
-window.datosGlobales = datosGlobales;
+// Función para guardar datos globales
+function guardarDatosGlobales(datos) {
+    localStorage.setItem('datosGlobales', JSON.stringify(datos));
+    console.log('Datos globales guardados');
+}
+
+// Función para obtener datos globales actuales
+function obtenerDatosGlobales() {
+    return JSON.parse(localStorage.getItem('datosGlobales')) || datosGlobalesInicial;
+}
+
+// Inicializar datos globales cuando se carga el script
+window.datosGlobales = inicializarDatosGlobales();
+
+// Exponer funciones globalmente
+window.inicializarDatosGlobales = inicializarDatosGlobales;
+window.guardarDatosGlobales = guardarDatosGlobales;
+window.obtenerDatosGlobales = obtenerDatosGlobales;
+window.datosGlobalesInicial = datosGlobalesInicial;
+
+
 
 // Función para ver datos en localStorage
 function verDatosLocalStorage() {

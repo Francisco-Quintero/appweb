@@ -51,8 +51,8 @@
                         <td>${producto.Nombre}</td>
                         <td>${producto.Descripcion}</td>
                         <td>${producto.categoria}</td>
-                        <td>${producto.unidadMedida}</td>
                         <td>${producto.valorMedida}</td>
+                        <td>${producto.unidadMedida}</td>
                         <td>
                             <img src="${producto.imagenProducto || '/placeholder.jpg'}" 
                                 alt="${producto.Nombre}" 
@@ -76,20 +76,79 @@
             }).join('');
 
         cuerpoTabla.innerHTML = contenidoTabla;
+    }function validarFormulario() {
+        const campos = [
+            { id: 'nombreProducto', mensaje: 'El nombre del producto es obligatorio.' },
+            { id: 'descripcionProducto', mensaje: 'La descripción del producto es obligatoria.' },
+            { id: 'categoriaProducto', mensaje: 'La categoría del producto es obligatoria.' },
+            { id: 'unidadMedida', mensaje: 'La unidad de medida es obligatoria.' }
+        ];
+    
+        // Validar campos obligatorios
+        for (const campo of campos) {
+            const valor = document.getElementById(campo.id).value.trim();
+            if (valor.length === 0) {
+                alert(campo.mensaje);
+                return false;
+            }
+        }
+    
+        // Validar unidad de medida no numérica
+        const unidadMedida = document.getElementById('unidadMedida').value.trim();
+        if (/\d/.test(unidadMedida)) {
+            alert('La unidad de medida no debe contener números.');
+            return false;
+        }
+    
+        // Validar valor de medida
+        const valorMedida = document.getElementById('valorMedida').value.trim();
+        if (!isPositiveNumber(valorMedida)) {
+            alert('El valor de medida debe ser un número positivo.');
+            return false;
+        }
+    
+        // Validar URL de imagen
+        const imagenProducto = document.getElementById('imagenProducto').value.trim();
+        if (imagenProducto.length > 0 && !isValidURL(imagenProducto)) {
+            alert('La URL de la imagen no es válida.');
+            return false;
+        }
+    
+        return true;
     }
+    
+    // Función para validar números positivos
+    function isPositiveNumber(value) {
+        const number = parseFloat(value);
+        return !isNaN(number) && number > 0;
+    }
+    
+    // Función para validar URLs
+    function isValidURL(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+    
 
     function manejarEnvioFormulario(e) {
         e.preventDefault();
 
+        if(!validarFormulario()){
+            return;
+        }
         const idProducto = document.getElementById('idProducto').value;
         const producto = {
-            idProducto: idProducto ? parseInt(idProducto) : Date.now(),
+            idProducto: idProducto ? parseInt(idProducto) : productos.length + 1,
             Nombre: document.getElementById('nombreProducto').value,
             Descripcion: document.getElementById('descripcionProducto').value,
-            precioUnitario: document.getElementById('precio').value,
+            //precioUnitario: document.getElementById('precio').value,
             categoria: document.getElementById('categoriaProducto').value,
-            unidadMedida: document.getElementById('unidadMedida').value,
             valorMedida: document.getElementById('valorMedida').value,
+            unidadMedida: document.getElementById('unidadMedida').value,
             imagenProducto: document.getElementById('imagenProducto').value
         };
 
@@ -123,6 +182,29 @@
 
         document.getElementById('formularioProducto').addEventListener('submit', manejarEnvioFormulario);
         document.getElementById('btnBuscar').addEventListener('click', buscarProductos);
+        document.getElementById('unidadMedida').addEventListener('input', function(e) {
+            if (/\d/.test(this.value)) {
+                this.setCustomValidity('La unidad de medida no debe contener números.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        document.getElementById('valorMedida').addEventListener('input', function(e) {
+            if (isNaN(parseFloat(this.value)) || parseFloat(this.value) <= 0) {
+                this.setCustomValidity('El valor de medida debe ser un número positivo.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        document.getElementById('imagenProducto').addEventListener('change', function(e) {
+            if (this.value.trim().length > 0 && !isValidURL(this.value)) {
+                this.setCustomValidity('La URL de la imagen no es válida.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
     }
 
     function buscarProductos() {  //funcion para revisar bien en la busqueda de productos
@@ -157,12 +239,12 @@
             if (producto) {
                 document.getElementById('idProducto').value = producto.idProducto;
                 document.getElementById('nombreProducto').value = producto.Nombre;
-                document.getElementById('categoriaProducto').value = producto.precioUnitario;
+                //document.getElementById('categoriaProducto').value = producto.precioUnitario;
                 document.getElementById('descripcionProducto').value = producto.Descripcion;
                 document.getElementById('categoriaProducto').value = producto.categoria;
                 document.getElementById('imagenProducto').value = producto.imagenProducto;
-                document.getElementById('unidadMedida').value = producto.unidadMedida;
                 document.getElementById('valorMedida').value = producto.valorMedida;
+                document.getElementById('unidadMedida').value = producto.unidadMedida;
                 document.getElementById('modalProducto').style.display = 'block';
             }
         },

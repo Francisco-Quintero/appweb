@@ -72,14 +72,14 @@
                     </div>
                 </div>
                 <div class="carrito-item-controles">
-                    <button class="btn-cantidad" data-id="${item.id}" data-action="restar" aria-label="Disminuir cantidad">-</button>
+                    <button class="btn-cantidad" data-id="${item.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
                     <input type="number" value="${item.cantidad}" 
                            class="input-cantidad" 
-                           data-id="${item.id}"
+                           data-id="${item.idProducto}"
                            aria-label="Cantidad del producto">
-                    <button class="btn-cantidad" data-id="${item.id}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
+                    <button class="btn-cantidad" data-id="${item.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
                 </div>
-                <button class="btn-eliminar" data-id="${item.id}" aria-label="Eliminar del carrito">
+                <button class="btn-eliminar" data-id="${item.idProducto}" aria-label="Eliminar del carrito">
                     <i data-lucide="trash-2"></i>
                 </button>
             `;
@@ -105,7 +105,7 @@
     }
 
     function actualizarCantidad(productoId, operacion) {
-        const itemIndex = carrito.findIndex(item => item.id === productoId);
+        const itemIndex = carrito.findIndex(item => item.idProducto === productoId);
         if (itemIndex !== -1) {
             if (operacion === 'sumar') {
                 carrito[itemIndex].cantidad++;
@@ -125,9 +125,9 @@
         if (isNaN(nuevaCantidad) || nuevaCantidad < 0) nuevaCantidad = 0;
         
         if (nuevaCantidad === 0) {
-            carrito = carrito.filter(item => item.id !== productoId);
+            carrito = carrito.filter(item => item.idProducto !== productoId);
         } else {
-            const itemIndex = carrito.findIndex(item => item.id === productoId);
+            const itemIndex = carrito.findIndex(item => item.idProducto === productoId);
             if (itemIndex !== -1) {
                 carrito[itemIndex].cantidad = nuevaCantidad;
             }
@@ -136,17 +136,26 @@
     }
 
     function eliminarDelCarrito(productoId) {
-        carrito = carrito.filter(item => item.id !== productoId);
+        carrito = carrito.filter(item => item.idProducto !== productoId);
         actualizarCarrito();
     }
 
     function actualizarCarrito() {
         guardarEnLocalStorage();
         renderizarCarrito();
+        actualizarCartCount();
         if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
             window.datosGlobales.actualizarCarrito(carrito);
         }
         console.log('Carrito actualizado:', carrito);
+    }
+
+    function actualizarCartCount() {
+        const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0);
+        const cartCountElement = document.querySelector('.cart-count');
+        if (cartCountElement) {
+            cartCountElement.textContent = totalItems;
+        }
     }
 
     function generarPedido() {
@@ -235,7 +244,6 @@
         return typeof window.obtenerUsuarioActual === 'function' ? window.obtenerUsuarioActual() : null;
     }
 
-
     function calcularImpuestos(subtotal) {
         return subtotal * 0.19; // 19% de impuestos
     }
@@ -270,6 +278,12 @@
         if (btnGenerarPedido) {
             btnGenerarPedido.addEventListener('click', generarPedido);
         }
+
+        // Escuchar eventos de actualización del catálogo
+        window.addEventListener('actualizacionCatalogo', function(event) {
+            const { productoId, cantidad } = event.detail;
+            actualizarCantidadDirecta(productoId, cantidad);
+        });
     }
 
     function initCarrito() {

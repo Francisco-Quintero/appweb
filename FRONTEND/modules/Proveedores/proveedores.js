@@ -33,22 +33,23 @@
         }
     }
 
-    function cargarProveedores() {
+    function cargarProveedores(proveedoresFiltrados = proveedores) {
         const cuerpoTabla = document.getElementById('cuerpoTablaProveedores');
         if (!cuerpoTabla) {
             console.error('No se encontró el elemento cuerpoTablaProveedores');
             return;
         }
 
-        const contenidoTabla = proveedores.length === 0
-            ? '<tr><td colspan="6" class="text-center">No hay proveedores registrados. Haga clic en "+" para agregar uno nuevo.</td></tr>'
-            : proveedores.map(proveedor => `
+        const contenidoTabla = proveedoresFiltrados.length === 0
+            ? '<tr><td colspan="7" class="text-center">No se encontraron proveedores que coincidan con la búsqueda.</td></tr>'
+            : proveedoresFiltrados.map(proveedor => `
                 <tr>
                     <td>${proveedor.id}</td>
-                    <td>${proveedor.nombre}</td>
+                    <td>${proveedor.nombreEmpresa}</td>
+                    <td>${proveedor.nombreContacto}</td>
                     <td>${proveedor.correo}</td>
                     <td>${proveedor.telefono}</td>
-                    <td>${proveedor.frecuenciaAbastecimiento}</td>
+                    <td>${proveedor.comprasRealizadas || 0}</td>
                     <td>
                         <div class="acciones-tabla">
                             <button onclick="window.moduloProveedores.editar(${proveedor.id})" class="btn-icono" title="Editar">
@@ -78,19 +79,57 @@
         });
 
         document.getElementById('formularioProveedor')?.addEventListener('submit', manejarEnvioFormulario);
-        document.getElementById('btnBuscar')?.addEventListener('click', buscarProveedores);
+        
+        // Modificar el evento de búsqueda para que se active con cada pulsación de tecla
+        document.getElementById('busquedaProveedor')?.addEventListener('input', buscarProveedores);
     }
+
+    function validarFormulario() {
+        const campos = [
+            { id: 'nombreEmpresa', mensaje: 'El nombre de la empresa es obligatorio.' },
+            { id: 'nombreContacto', mensaje: 'El nombre del contacto es obligatorio.' },
+            { id: 'correoProveedor', mensaje: 'Por favor, ingrese un correo electrónico válido.', validador: validarCorreo },
+            { id: 'telefonoProveedor', mensaje: 'Por favor, ingrese un número de teléfono válido.', validador: validarTelefono }
+        ];
+    
+        for (const campo of campos) {
+            const valor = document.getElementById(campo.id).value.trim();
+    
+            if (valor.length === 0 || (campo.validador && !campo.validador(valor))) {
+                alert(campo.mensaje);
+                return false;
+            }
+        }
+    
+        return true;
+    }
+    
+    function validarCorreo(correo) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(correo);
+    }
+    
+    function validarTelefono(telefono) {
+        const re = /^\+?(\d{1,3})?[-. ]?\d{3}[-. ]?\d{3}[-. ]?\d{4}$/;
+        return re.test(telefono);
+    }
+    
 
     function manejarEnvioFormulario(e) {
         e.preventDefault();
         
+        if (!validarFormulario()) {
+            return;
+        }
+
         const id = document.getElementById('idProveedor')?.value;
         const proveedor = {
             id: id ? parseInt(id) : Date.now(),
-            nombre: document.getElementById('nombreProveedor')?.value || '',
+            nombreEmpresa: document.getElementById('nombreEmpresa')?.value || '',
+            nombreContacto: document.getElementById('nombreContacto')?.value || '',
             correo: document.getElementById('correoProveedor')?.value || '',
             telefono: document.getElementById('telefonoProveedor')?.value || '',
-            frecuenciaAbastecimiento: parseInt(document.getElementById('frecuenciaAbastecimiento')?.value || '0')
+            comprasRealizadas: id ? (proveedores.find(p => p.id === parseInt(id))?.comprasRealizadas || 0) : 0
         };
 
         if (id) {
@@ -112,10 +151,10 @@
     function buscarProveedores() {
         const termino = document.getElementById('busquedaProveedor')?.value.toLowerCase() || '';
         const proveedoresFiltrados = proveedores.filter(p => 
-            p.nombre.toLowerCase().includes(termino) ||
+            p.nombreEmpresa.toLowerCase().includes(termino) ||
+            p.nombreContacto.toLowerCase().includes(termino) ||
             p.correo.toLowerCase().includes(termino) ||
-            p.telefono.includes(termino) ||
-            p.frecuenciaAbastecimiento.toString().includes(termino)
+            p.telefono.includes(termino)
         );
         cargarProveedores(proveedoresFiltrados);
         console.log(`Se encontraron ${proveedoresFiltrados.length} proveedores`);
@@ -143,10 +182,10 @@
             const proveedor = proveedores.find(p => p.id === id);
             if (proveedor) {
                 document.getElementById('idProveedor').value = proveedor.id;
-                document.getElementById('nombreProveedor').value = proveedor.nombre;
+                document.getElementById('nombreEmpresa').value = proveedor.nombreEmpresa;
+                document.getElementById('nombreContacto').value = proveedor.nombreContacto;
                 document.getElementById('correoProveedor').value = proveedor.correo;
                 document.getElementById('telefonoProveedor').value = proveedor.telefono;
-                document.getElementById('frecuenciaAbastecimiento').value = proveedor.frecuenciaAbastecimiento;
                 document.getElementById('modalProveedor').style.display = 'block';
             } else {
                 console.error('No se encontró el proveedor con ID:', id);
@@ -160,6 +199,15 @@
                 cargarProveedores();
                 console.log('Proveedor eliminado con éxito');
             }
+        },
+        incrementarCompras: function(id) {
+            const proveedor = proveedores.find(p => p.id === id);
+            if (proveedor) {
+                proveedor.comprasRealizadas = (proveedor.comprasRealizadas || 0) + 1;
+                guardarEnLocalStorage();
+                cargarProveedores();
+                console.log(`Compra registrada para el proveedor ${proveedor.nombreEmpresa}`);
+            }
         }
     };
 
@@ -171,3 +219,4 @@
 })();
 
 console.log('Archivo proveedores.js cargado completamente');
+

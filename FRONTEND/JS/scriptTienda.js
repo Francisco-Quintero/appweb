@@ -24,7 +24,7 @@ function inicializarTienda() {
 
     // Función para cargar módulos
     function cargarModulo(nombreModulo) {
-        const contenedorPrincipal = document.getElementById('main-container');
+        const contenedorPrincipal = document.getElementById('contenedor-principal');
 
         // Eliminar scripts y estilos previos del módulo
         document.querySelectorAll(`script[data-module="${nombreModulo}"]`).forEach(el => el.remove());
@@ -63,7 +63,6 @@ function inicializarTienda() {
             e.preventDefault();
             const nombreModulo = this.getAttribute('data-module');
             cargarModulo(nombreModulo);
-            //document.getElementById('section-title').textContent = this.textContent;
         });
     });
 

@@ -74,7 +74,6 @@
                         </div>
                         <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
                         <div class="producto-precio">$${producto.precioUnitario}</div>
-                        <div class="producto-inventario">Disponible: ${itemInventario.stock}</div>
                         ${cantidadEnCarrito > 0 ? `
                             <div class="producto-cantidad">
                                 <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
@@ -158,11 +157,24 @@
     function actualizarCarrito() {
         guardarEnLocalStorage();
         renderizarCatalogo();
+        actualizarCartCount();
         if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
             window.datosGlobales.actualizarCarrito(carrito);
         }
-        // Aquí puedes agregar código para actualizar la interfaz del carrito si es necesario
         console.log('Carrito actualizado:', carrito);
+
+        const event = new CustomEvent('actualizacionCatalogo', { 
+            detail: { productoId: productoId, cantidad: nuevaCantidad }
+        });
+        window.dispatchEvent(event);
+    }
+
+    function actualizarCartCount() {
+        const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0);
+        const cartCountElement = document.querySelector('.cart-count');
+        if (cartCountElement) {
+            cartCountElement.textContent = totalItems;
+        }
     }
 
     function configurarEventListeners() {
@@ -214,3 +226,4 @@
 
     window.addEventListener('load', renderizarCatalogo);
 })();
+

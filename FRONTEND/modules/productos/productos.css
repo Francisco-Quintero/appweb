@@ -304,30 +304,71 @@
     overflow: hidden; /* Cambiado de auto a hidden */
 }
 
+/* ... (previous CSS remains unchanged until modal styles) ... */
+
+/* Modal styles updated for better form layout */
 .contenido-modal {
     background-color: hsl(var(--background));
     margin: 2rem auto;
     padding: 2rem;
     border: 1px solid hsl(var(--border));
     width: 90%;
-    max-width: 800px;
+    max-width: 1000px; /* Increased max-width for better space utilization */
     border-radius: var(--radius);
-    max-height: calc(100vh - 4rem); /* Altura máxima ajustada */
-    overflow-y: auto; /* Permite scroll solo en el contenido */
+    max-height: calc(100vh - 4rem);
     position: relative;
-    scrollbar-gutter: stable;
 }
 
-/* Para las tablas con scroll horizontal */
-.tabla-container {
-    overflow-x: auto;
-    margin: 1rem 0;
-    scrollbar-gutter: stable;
+/* Form layout improvements */
+#formularioProducto {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns layout */
+    gap: 1.5rem;
+    margin-top: 1rem;
 }
 
-/* Para los resultados de búsqueda */
-.resultados-busqueda {
-    max-height: 200px;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
+/* Full width elements */
+#formularioProducto .grupo-formulario.full-width {
+    grid-column: 1 / -1;
 }
+
+.grupo-formulario {
+    margin-bottom: 0; /* Remove margin as we're using grid gap */
+}
+
+/* Smaller fields for measure values */
+.grupo-formulario.measure-field {
+    grid-column: span 1;
+}
+
+.grupo-formulario.measure-field input {
+    max-width: 200px; /* Limit width for measure fields */
+}
+
+/* Description field styling */
+#descripcionProducto {
+    min-height: 100px;
+    max-height: 150px;
+    resize: vertical;
+}
+
+/* Action buttons at the bottom */
+.acciones-formulario {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #formularioProducto {
+        grid-template-columns: 1fr;
+    }
+    
+    .grupo-formulario.measure-field {
+        grid-column: 1;
+    }
+}
+
