@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Compras</title>
-    <link rel="stylesheet" href="/modules/compras/compras.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div id="modulo-compras" class="compras-container">
@@ -71,9 +71,10 @@
                     <div class="form-grid">
                         <div class="campo">
                             <label for="proveedor">Proveedor:</label>
-                            <select id="proveedor" required>
-                                <option value="">Seleccione un proveedor</option>
-                            </select>
+                            <input type="text" id="proveedor" list="listaProveedores" placeholder="Buscar proveedor..." required>
+                            <datalist id="listaProveedores">
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </datalist>
                         </div>
             
                         <div class="campo">
@@ -118,14 +119,9 @@
                     </div>
             
                     <div class="form-footer">
-                        <div class="campo">
-                            <label for="impuesto">Impuesto (%):</label>
-                            <input type="number" id="impuesto" min="0" max="100" value="19">
-                        </div>
-            
                         <div class="totales">
                             <p>Subtotal: <span id="subtotal">$0.00</span></p>
-                            <p>Impuesto: <span id="valorImpuesto">$0.00</span></p>
+                            <p>Ganancia (20%): <span id="ganancia">$0.00</span></p>
                             <p>Total: <span id="total">$0.00</span></p>
                         </div>
             
@@ -143,6 +139,6 @@
         </div>
     </div>
     <script src="/JS/datosGlobales.js"></script>
-    <script src="/modules/compras/compras.js"></script>
 </body>
 </html>
+

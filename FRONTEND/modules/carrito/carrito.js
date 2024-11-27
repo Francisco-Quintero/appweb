@@ -233,6 +233,12 @@
         carrito = [];
         actualizarCarrito();
 
+        console.log('Disparando evento actualizarCatalogo');
+        // Añade esta línea para actualizar el catálogo
+        window.dispatchEvent(new CustomEvent('actualizarCatalogo'));
+
+    alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
+
         alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
     }
 
@@ -284,6 +290,8 @@
             const { productoId, cantidad } = event.detail;
             actualizarCantidadDirecta(productoId, cantidad);
         });
+
+        
     }
 
     function initCarrito() {

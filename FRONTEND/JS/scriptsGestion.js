@@ -1,4 +1,6 @@
+
 function inicializarGestion() {
+    
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
@@ -36,6 +38,14 @@ function inicializarGestion() {
         });
         document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
 
+        // Cargar el sistema de eventos si aún no está cargado
+        if (!window.sistemaEventos) {
+            const scriptEventos = document.createElement('script');
+            scriptEventos.src = 'JS/sistemaEventos.js';
+            scriptEventos.setAttribute('data-global', 'true');
+            document.body.appendChild(scriptEventos);
+        }
+
         cargarLibreriaEmailJS()
             .then(() => fetch(`modules/${nombreModulo}/${nombreModulo}.html`))
             .then(response => response.text())
@@ -55,6 +65,9 @@ function inicializarGestion() {
                 script.setAttribute('data-module', nombreModulo);
                 script.onload = function () {
                     console.log("Módulo cargado:", nombreModulo);
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
                     // Despachar evento personalizado cuando el módulo se cargue
                     const event = new Event(`${nombreModulo}Cargado`);
                     document.dispatchEvent(event);

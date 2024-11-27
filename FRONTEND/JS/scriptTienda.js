@@ -22,6 +22,7 @@ function inicializarTienda() {
         document.body.classList.remove('usuario-logueado');
     });
 
+
     // Función para cargar módulos
     function cargarModulo(nombreModulo) {
         const contenedorPrincipal = document.getElementById('contenedor-principal');

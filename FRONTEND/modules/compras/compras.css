@@ -542,3 +542,35 @@ body {
         max-height: none;
     }
 }
+
+
+.btn-icono {
+    background-color: #547980; /* Using the secondary color from the palette */
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.btn-icono:hover {
+    background-color: #45ADA8; 
+}
+
+.btn-icono svg {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-icono-eliminar {
+    background-color: hsl(var(--destructive));
+}
+
+.btn-icono-eliminar:hover {
+    background-color: hsl(var(--destructive) / 0.8);
+}
+

@@ -124,7 +124,7 @@
 
         const id = document.getElementById('idProveedor')?.value;
         const proveedor = {
-            id: id ? parseInt(id) : Date.now(),
+            id: id ? parseInt(id) : proveedores.length + 1,
             nombreEmpresa: document.getElementById('nombreEmpresa')?.value || '',
             nombreContacto: document.getElementById('nombreContacto')?.value || '',
             correo: document.getElementById('correoProveedor')?.value || '',

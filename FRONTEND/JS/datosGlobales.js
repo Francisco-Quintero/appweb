@@ -94,6 +94,19 @@ function verUsuarioActual(usuario) {
     }
 }
 
+function eliminarDatos(){
+    const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales'));
+
+if (datosGlobales && datosGlobales.compras) {
+    delete datosGlobales.compras; // Elimina la propiedad inventario
+    localStorage.setItem('datosGlobales', JSON.stringify(datosGlobales)); // Actualiza el localStorage
+    console.log('La propiedad inventario ha sido eliminada de datosGlobales.');
+} else {
+    console.log('No se encontró la propiedad inventario en datosGlobales.');
+}
+}
+
 // Agregar esta función al objeto global window para poder llamarla desde la consola
 window.verDatosLocalStorage = verDatosLocalStorage;
+window.eliminarDatos = eliminarDatos;
 

@@ -11,10 +11,6 @@
         <h2>Gestión de Inventario</h2>
         
         <div class="acciones-stock">
-            <button id="btnActualizarStock" class="btn btn-primario">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                Actualizar Stock
-            </button>
             <div class="contenedor-busqueda">
                 <input type="text" id="busquedaStock" placeholder="Buscar producto...">
                 <button id="btnBuscar">
@@ -42,21 +38,20 @@
 
         <div id="modalStock" class="modal">
             <div class="contenido-modal">
-                <h3>Actualizar Stock</h3>
-                <button id="btnCerrarModal" class="btn btn-fantasma">Cerrar</button>
+                <button id="btnCerrarModal" class="btn-cerrar-modal">&times;</button>
+                <h3>Editar Inventario</h3>
         
                 <form id="formularioStock">
                     <input type="hidden" id="idInventario">
-                    <input type="hidden" id="idProducto">
                     
                     <div class="campo">
-                        <input type="text" id="busquedaProducto" placeholder="Nombre del producto">
-                        <div id="resultadosBusqueda" class="resultados-busqueda"></div>
+                        <label for="nombreProducto">Nombre del Producto:</label>
+                        <input type="text" id="nombreProducto" readonly>
                     </div>
         
                     <div class="campo">
                         <label for="stockActual">Stock Actual:</label>
-                        <input type="number" id="stockActual" required min="0">
+                        <input type="number" id="stockActual" readonly>
                     </div>
         
                     <div class="campo">
@@ -65,8 +60,8 @@
                     </div>
         
                     <div class="campo">
-                        <label for="observaciones">Observaciones:</label>
-                        <textarea id="observaciones"></textarea>
+                        <label for="precioUnitario">Precio Unitario:</label>
+                        <input type="number" id="precioUnitario" step="0.01" required min="0">
                     </div>
         
                     <button type="submit" id="Guardar" class="btn btn-primario">Guardar Cambios</button>
@@ -77,3 +72,4 @@
     <script src="modules/stock/stock.js"></script>
 </body>
 </html>
+

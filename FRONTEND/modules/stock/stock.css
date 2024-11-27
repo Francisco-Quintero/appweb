@@ -114,6 +114,7 @@
     color: hsl(var(--destructive-foreground));
 }
 
+
 .modal {
     display: none;
     position: fixed;
@@ -122,18 +123,38 @@
     width: 100%;
     height: 100%;
     background-color: hsl(var(--primary) / 0.7);
+    z-index: 1000;
+    overflow: auto;
 }
 
 .contenido-modal {
     position: relative;
     background-color: hsl(var(--background));
-    margin: 10% auto;
+    margin: 5% auto;
     padding: 2rem;
-    width: 80%;
+    width: 90%;
     max-width: 500px;
     border-radius: var(--radius);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.btn-cerrar-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: hsl(var(--primary));
+}
+
+.btn-cerrar-modal:hover {
+    color: hsl(var(--destructive));
+}
+
+
+
 
 .campo {
     margin-bottom: 1.5rem;
@@ -199,3 +220,30 @@
     vertical-align: middle;
     margin-right: 0.5rem;
 }
+
+/* ... (estilos existentes) */
+
+.btn-icono {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.btn-icono:hover {
+    background-color: hsl(var(--secondary) / 0.8);
+}
+
+.btn-icono svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* ... (resto de los estilos) */
+
