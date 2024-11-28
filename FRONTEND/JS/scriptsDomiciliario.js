@@ -8,6 +8,24 @@ function inicializarDomiciliario() {
         return !!sesionDomiciliario;
     }
 
+    // Añade la siguiente función cargarLibreriaEmailJS() justo después de la declaración de verificarSesionDomiciliario()
+    function cargarLibreriaEmailJS() {
+        return new Promise((resolve, reject) => {
+            if (window.emailjs) {
+                resolve();
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+                script.onload = () => {
+                    emailjs.init('R6MTXZtcPcos0kbQw');
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            }
+        });
+    }
+
     // Función para cargar módulos
     function cargarModulo(nombreModulo) {
         if (!verificarSesionDomiciliario() && nombreModulo !== 'perfil-domiciliario') {
@@ -22,7 +40,8 @@ function inicializarDomiciliario() {
         document.querySelectorAll(`script[data-module="${nombreModulo}"]`).forEach(el => el.remove());
         document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
 
-        fetch(`modules/${nombreModulo}/${nombreModulo}.html`)
+        cargarLibreriaEmailJS()
+            .then(() => fetch(`modules/${nombreModulo}/${nombreModulo}.html`))
             .then(response => response.text())
             .then(html => {
                 contenedorPrincipal.innerHTML = html;
@@ -40,12 +59,18 @@ function inicializarDomiciliario() {
                 script.setAttribute('data-module', nombreModulo);
                 script.onload = function() {
                     console.log("Cargando el módulo de " + nombreModulo);
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
                     // Llamar a una función de inicialización si existe
                     const initFunctionName = `inicializarModulo${nombreModulo.split('-').map(word => 
                         word.charAt(0).toUpperCase() + word.slice(1)).join('')}`;
                     if (typeof window[initFunctionName] === 'function') {
                         window[initFunctionName]();
                     }
+                    // Despachar evento personalizado cuando el módulo se cargue
+                    const event = new Event(`${nombreModulo}Cargado`);
+                    document.dispatchEvent(event);
                 };
                 document.body.appendChild(script);
             })
@@ -101,3 +126,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Si no, el evento 'datosGlobalesDisponibles' se encargará de la inicialización
 });
+

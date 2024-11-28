@@ -145,7 +145,7 @@
             idProducto: idProducto ? parseInt(idProducto) : productos.length + 1,
             Nombre: document.getElementById('nombreProducto').value,
             Descripcion: document.getElementById('descripcionProducto').value,
-            //precioUnitario: document.getElementById('precio').value,
+            precioUnitario: null,
             categoria: document.getElementById('categoriaProducto').value,
             valorMedida: document.getElementById('valorMedida').value,
             unidadMedida: document.getElementById('unidadMedida').value,

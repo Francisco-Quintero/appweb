@@ -1,45 +1,43 @@
 (function() {
     console.log('Iniciando carga del módulo de Gestión de Pagos y Entregas');
 
-    const gestionPagosEntregasState = {
-        entregas: [],
-        eventListeners: []
-    };
-
-    function addEventListenerWithCleanup(element, event, handler) {
-        if (element) {
-            element.addEventListener(event, handler);
-            gestionPagosEntregasState.eventListeners.push({ element, event, handler });
-        }
-    }
-
-    function cleanup() {
-        console.log('Limpiando módulo de Gestión de Pagos y Entregas');
-        gestionPagosEntregasState.eventListeners.forEach(({ element, event, handler }) => {
-            if (element) {
-                element.removeEventListener(event, handler);
-            }
-        });
-        gestionPagosEntregasState.eventListeners = [];
-        gestionPagosEntregasState.entregas = [];
-    }
+    let entregas = [];
+    let historialVentas = [];
 
     function inicializarModuloGestionPagosEntregas() {
         console.log('Inicializando módulo de Gestión de Pagos y Entregas');
-        cargarEntregas();
+        cargarDatos();
         configurarEventListeners();
     }
 
-    function cargarEntregas() {
-        console.log('Cargando entregas...');
-        gestionPagosEntregasState.entregas = [
-            { id: 1, cliente: 'Juan Pérez', montoTotal: 50000, efectivo: 0, transferencia: 0, estado: 'Pendiente' },
-            { id: 2, cliente: 'María López', montoTotal: 75000, efectivo: 0, transferencia: 0, estado: 'Pendiente' },
-            { id: 3, cliente: 'Carlos Rodríguez', montoTotal: 100000, efectivo: 100000, transferencia: 0, estado: 'Entregado' }
-        ];
-        console.log('Entregas cargadas:', gestionPagosEntregasState.entregas);
+    function cargarDatos() {
+        console.log('Cargando datos de pedidos pendientes e historial de ventas desde localStorage...');
+        try {
+            const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales')) || {};
+            entregas = datosGlobales.pedidosPendientes || [];
+            historialVentas = datosGlobales.historialVentas || [];
+            console.log('Datos cargados:', { entregas, historialVentas });
+        } catch (error) {
+            console.error('Error al cargar datos desde localStorage:', error);
+            entregas = [];
+            historialVentas = [];
+        }
         actualizarTablaEntregas();
+        actualizarTablaHistorial();
         actualizarResumen();
+    }
+
+    function guardarDatos() {
+        console.log('Guardando datos en localStorage...');
+        try {
+            const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales')) || {};
+            datosGlobales.pedidosPendientes = entregas;
+            datosGlobales.historialVentas = historialVentas;
+            localStorage.setItem('datosGlobales', JSON.stringify(datosGlobales));
+            console.log('Datos guardados en localStorage');
+        } catch (error) {
+            console.error('Error al guardar datos en localStorage:', error);
+        }
     }
 
     function configurarEventListeners() {
@@ -47,71 +45,89 @@
         const formRegistroPago = document.getElementById('form-registro-pago');
         const btnCerrarModal = document.getElementById('cerrar-modal');
 
-        if (formRegistroPago) addEventListenerWithCleanup(formRegistroPago, 'submit', registrarPago);
-        if (btnCerrarModal) addEventListenerWithCleanup(btnCerrarModal, 'click', cerrarModalRegistroPago);
+        if (formRegistroPago) formRegistroPago.addEventListener('submit', registrarPago);
+        if (btnCerrarModal) btnCerrarModal.addEventListener('click', cerrarModalRegistroPago);
     }
 
     function actualizarTablaEntregas() {
-        console.log('Actualizando tabla de entregas');
+        console.log('Actualizando tabla de entregas pendientes');
         const tbody = document.getElementById('cuerpo-tabla-entregas');
         if (!tbody) {
             console.error('No se encontró el elemento cuerpo-tabla-entregas');
             return;
         }
-        tbody.innerHTML = gestionPagosEntregasState.entregas.map(entrega => `
+        const entregasFiltradas = entregas.filter(entrega => entrega.domiciliario && entrega.domiciliario.nombre);
+        tbody.innerHTML = entregasFiltradas.map(entrega => `
             <tr>
-                <td>${entrega.id}</td>
-                <td>${entrega.cliente}</td>
-                <td>$${entrega.montoTotal.toFixed(2)}</td>
-                <td>$${entrega.efectivo.toFixed(2)}</td>
-                <td>$${entrega.transferencia.toFixed(2)}</td>
-                <td>${entrega.estado}</td>
+                <td>${entrega.idPedido}</td>
+                <td>${entrega.cliente.nombre}</td>
+                <td>$${entrega.total.toFixed(2)}</td>
+                <td>${entrega.efectivo}</td>
+                <td>${entrega.transferencia}</td>
+                <td>${entrega.estadoPedido}</td>                
                 <td>
-                    ${entrega.estado === 'Pendiente' 
-                        ? `<button onclick="window.abrirModalRegistroPago(${entrega.id})" class="btn-registrar-pago" aria-label="Registrar Pago">
-                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
-                               <circle cx="12" cy="12" r="10"></circle>
-                               <line x1="12" y1="6" x2="12" y2="18"></line>
-                               <path d="M16 10H9.5a2.5 2.5 0 0 0 0 5H16"></path>
-                             </svg>
-                           </button>`
-                        : `<span class="pago-registrado">Pago Registrado</span>`
-                    }
+                    <button onclick="window.abrirModalRegistroPago(${entrega.idPedido})" class="btn-registrar-pago" aria-label="Registrar Pago">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="6" x2="12" y2="18"></line>
+                            <path d="M16 10H9.5a2.5 2.5 0 0 0 0 5H16"></path>
+                        </svg>
+                    </button>
                 </td>
             </tr>
         `).join('');
-        console.log('Tabla de entregas actualizada');
+        console.log('Tabla de entregas pendientes actualizada');
+    }
+
+    function actualizarTablaHistorial() {
+        console.log('Actualizando tabla de historial de ventas');
+        const tbody = document.getElementById('cuerpo-tabla-historial');
+        if (!tbody) {
+            console.error('No se encontró el elemento cuerpo-tabla-historial');
+            return;
+        }
+        tbody.innerHTML = historialVentas.map(venta => `
+            <tr>
+                <td>${venta.idPedido}</td>
+                <td>${venta.cliente.nombre}</td>
+                <td>$${venta.total}</td>
+                <td>$${(venta.efectivo || 0)}</td>
+                <td>$${(venta.transferencia || 0)}</td>
+                <td>${new Date(venta.fechaPedido).toLocaleDateString()}</td>
+            </tr>
+        `).join('');
+        console.log('Tabla de historial de ventas actualizada');
     }
 
     function actualizarResumen() {
         console.log('Actualizando resumen de pagos');
-        const { totalRecaudado, totalEfectivo, totalTransferencias } = gestionPagosEntregasState.entregas.reduce((acc, entrega) => {
-            acc.totalRecaudado += entrega.efectivo + entrega.transferencia;
-            acc.totalEfectivo += entrega.efectivo;
-            acc.totalTransferencias += entrega.transferencia;
+        const resumen = historialVentas.reduce((acc, venta) => {
+            acc.totalRecaudado += venta.total;
+            acc.totalEfectivo += venta.efectivo || 0;
+            acc.totalTransferencias += venta.transferencia || 0;
             return acc;
         }, { totalRecaudado: 0, totalEfectivo: 0, totalTransferencias: 0 });
         
-        document.getElementById('monto-total').textContent = totalRecaudado.toFixed(2);
-        document.getElementById('monto-efectivo').textContent = totalEfectivo.toFixed(2);
-        document.getElementById('monto-transferencias').textContent = totalTransferencias.toFixed(2);
+        document.getElementById('monto-total').textContent = resumen.totalRecaudado.toFixed(2);
+        document.getElementById('monto-efectivo').textContent = resumen.totalEfectivo.toFixed(2);
+        document.getElementById('monto-transferencias').textContent = resumen.totalTransferencias.toFixed(2);
         
-        console.log('Resumen actualizado:', { totalRecaudado, totalEfectivo, totalTransferencias });
+        console.log('Resumen actualizado:', resumen);
     }
 
-    function abrirModalRegistroPago(idEntrega) {
-        console.log('Abriendo modal para registrar pago de entrega:', idEntrega);
-        const entrega = gestionPagosEntregasState.entregas.find(e => e.id == idEntrega);
+    function abrirModalRegistroPago(idPedido) {
+        console.log('Abriendo modal para registrar pago de entrega:', idPedido);
+        const entrega = entregas.find(e => e.idPedido == idPedido);
         if (!entrega) {
-            console.error('No se encontró la entrega con ID:', idEntrega);
+            console.error('No se encontró la entrega con ID:', idPedido);
             return;
         }
 
         const modal = document.getElementById('modal-registro-pago');
-        document.getElementById('id-pedido').value = idEntrega;
+        document.getElementById('id-pedido').value = idPedido;
         document.getElementById('monto-efectivo').value = '';
         document.getElementById('monto-transferencia').value = '';
-        document.getElementById('numero-pedido').textContent = idEntrega;
+        document.getElementById('numero-pedido').textContent = idPedido;
         modal.style.display = 'block';
     }
 
@@ -126,14 +142,22 @@
         
         console.log('Datos del pago:', { idPedido, montoEfectivo, montoTransferencia });
 
-        const entrega = gestionPagosEntregasState.entregas.find(e => e.id == idPedido);
-        if (entrega) {
+        const entregaIndex = entregas.findIndex(e => e.idPedido == idPedido);
+        if (entregaIndex !== -1) {
+            const entrega = entregas[entregaIndex];
             entrega.efectivo = montoEfectivo;
             entrega.transferencia = montoTransferencia;
-            entrega.estado = 'Entregado';
-            console.log('Entrega actualizada:', entrega);
+            entrega.estadoPedido = 'Entregado';
             
+            // Mover la entrega al historial de ventas
+            historialVentas.push(entrega);
+            entregas.splice(entregaIndex, 1);
+            
+            console.log('Entrega actualizada y movida al historial:', entrega);
+            
+            guardarDatos();
             actualizarTablaEntregas();
+            actualizarTablaHistorial();
             actualizarResumen();
             cerrarModalRegistroPago();
             mostrarConfirmacion(`Pago registrado con éxito para el pedido #${idPedido}`);

@@ -1,9 +1,18 @@
 (function() {
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM completamente cargado y analizado');
+        renderizarCarrito(); 
+        actualizarCartCount();
+    });
+
     console.log('Iniciando carga del módulo de Carrito');
 
     let carrito = [];
     let pedidos = [];
     let facturas = [];
+    let historialPedidos = [];
+    let inventario = [];
 
     function cargarDatosDesdeLocalStorage() {
         try {
@@ -11,18 +20,23 @@
             carrito = datosGuardados.carrito || [];
             pedidos = datosGuardados.pedidosPendientes || [];
             facturas = datosGuardados.facturas || [];
+            inventario = datosGlobales.inventario || [];
+            historialPedidos = datosGlobales.historialVentas || [];
             console.log('Datos del carrito cargados desde localStorage');
         } catch (error) {
             console.error('Error al cargar datos del carrito desde localStorage:', error);
         }
     }
 
+
+    //AQUI GUARDA
     function guardarEnLocalStorage() {
         try {
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             datosActuales.carrito = carrito;
             datosActuales.pedidosPendientes = pedidos;
             datosActuales.facturas = facturas;
+            datosActuales.inventario = inventario;      
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos del carrito guardados en localStorage');
         } catch (error) {
@@ -40,7 +54,7 @@
         }
     }
 
-    function renderizarCarrito() {
+    async function renderizarCarrito() {
         const carritoContainer = document.getElementById('carrito-items');
         if (!carritoContainer) {
             console.error('No se encontró el contenedor del carrito');
@@ -78,18 +92,36 @@
                            data-id="${item.idProducto}"
                            aria-label="Cantidad del producto">
                     <button class="btn-cantidad" data-id="${item.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
-                </div>
-                <button class="btn-eliminar" data-id="${item.idProducto}" aria-label="Eliminar del carrito">
-                    <i data-lucide="trash-2"></i>
-                </button>
+                    <button id="btnEliminar" class="btn-eliminar" data-id="${item.idProducto}" aria-label="Eliminar del carrito">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>  
             `;
             carritoContainer.appendChild(itemElem);
         });
         
+        document.querySelectorAll('.btn-cantidad').forEach(button => {
+            button.addEventListener('click', event => {
+                const productoId = parseInt(event.target.getAttribute('data-id'));
+                const action = event.target.getAttribute('data-action');
+                actualizarCantidad(productoId, action);
+            });
+        });
+
+        document.querySelectorAll('.btn-eliminar').forEach(button => {
+            button.addEventListener('click', event => {
+                const productoId = parseInt(event.target.getAttribute('data-id'));
+                console.log("Este es el query selector all aqui esta tu id", productoId);
+                
+                eliminarDelCarrito(productoId);
+            });
+        });
+
         lucide.createIcons();
         actualizarTotales();
     }
-
+    
+    //aca esta el actualizar totales cuando se presione el btn correspondiente -------> 
     function actualizarTotales() {
         const subtotal = calcularSubtotal();
         const costoEnvio = carrito.length > 0 ? 2000 : 0;
@@ -137,17 +169,27 @@
 
     function eliminarDelCarrito(productoId) {
         carrito = carrito.filter(item => item.idProducto !== productoId);
-        actualizarCarrito();
+        try {
+            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+            if (datosActuales.carrito) {
+                datosActuales.carrito = carrito;
+            }
+            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+            console.log(`Producto con ID ${productoId} eliminado del carrito y actualizado en localStorage`);
+        } catch (error) {
+            console.error('Error al eliminar producto del carrito en localStorage:', error);
+        }
     }
 
     function actualizarCarrito() {
         guardarEnLocalStorage();
-        renderizarCarrito();
         actualizarCartCount();
-        if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
-            window.datosGlobales.actualizarCarrito(carrito);
-        }
-        console.log('Carrito actualizado:', carrito);
+        renderizarCarrito().then(() => {
+            if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
+                window.datosGlobales.actualizarCarrito(carrito);
+            }
+            console.log('Carrito actualizado:', carrito);
+        });
     }
 
     function actualizarCartCount() {
@@ -188,8 +230,8 @@
         }
 
         const pedido = {
-            idPedido: pedidos.length + 1,
-            fechaPedido: new Date(),
+            idPedido: pedidos.length + historialPedidos.length + 1,
+            fechaPedido: new Date().toISOString().split('T')[0],
             estadoPedido: 'en espera',
             costoEnvio: costoEnvio,
             items: carrito.map(item => ({
@@ -198,7 +240,6 @@
                 cantidad: item.cantidad,
                 precioUnitario: item.precioUnitario,
                 total: item.precioUnitario * item.cantidad,
-                descuento: 0
             })),
             subtotal: subtotal,
             total: total,
@@ -207,12 +248,31 @@
                 id: usuarioActual.id,
                 nombre: usuarioActual.nombre,
                 direccion: usuarioActual.direccion
-            }
+            },
+            efectivo: 0,
+            transferencia: 0
         };
+
+                // Actualizar el inventario
+        pedido.items.forEach(item => {
+            const productoEnInventario = inventario.find(inv => inv.idProducto === item.idProducto);
+            if (productoEnInventario) {
+                productoEnInventario.stock -= item.cantidad;
+                productoEnInventario.fechaActualizacion = new Date().toISOString().split('T')[0];
+                if (productoEnInventario.stock <= productoEnInventario.puntoReorden) {
+                    productoEnInventario.estado = 'Bajo';
+                }
+            } else {
+                console.warn(`Producto con ID ${item.idProducto} no encontrado en el inventario.`);
+            }
+        });
+
+        // Actualizar el inventario global
+       // window.actualizarInventarioGlobal(window.inventario);
 
         const factura = {
             idFactura: facturas.length + 1,
-            fechaEmision: new Date(),
+            fechaEmision: new Date().toISOString().split('T')[0],
             idPedido: pedido.idPedido,
             subtotal: subtotal,
             impuestos: calcularImpuestos(subtotal),
@@ -238,8 +298,6 @@
         window.dispatchEvent(new CustomEvent('actualizarCatalogo'));
 
     alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
-
-        alert('Pedido generado con éxito. ID del pedido: ' + pedido.idPedido);
     }
 
     function usuarioEstaLogueado() {
@@ -255,7 +313,7 @@
     }
 
     function configurarEventListeners() {
-        const carritoContainer = document.getElementById('carrito-items');
+        const carritoContainer = document.getElementById('carrito-item-controles');
         const btnGenerarPedido = document.getElementById('btn-generar-pedido');
         
         if (carritoContainer) {
@@ -297,16 +355,17 @@
     function initCarrito() {
         console.log('Inicializando módulo de carrito');
         cargarDatosDesdeLocalStorage();
-        renderizarCarrito();
-        configurarEventListeners();
-        
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-        
-        console.log('Módulo de carrito cargado completamente');
+        renderizarCarrito().then(() => {
+            configurarEventListeners();
+            
+            window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
+            
+            if (window.datosGlobales) {
+                sincronizarConDatosGlobales();
+            }
+            
+            console.log('Módulo de carrito cargado completamente');
+        });
     }
 
     if (document.readyState === 'loading') {

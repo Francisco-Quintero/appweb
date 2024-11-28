@@ -7,7 +7,7 @@
     function cargarDatosDesdeLocalStorage() {
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            pedidos = datosGuardados.pedidos || [];
+            pedidos = datosGuardados.pedidosPendientes || [];
             inventario = datosGuardados.inventario || [];
             console.log('Datos de pedidos cargados desde localStorage');
         } catch (error) {
@@ -18,7 +18,7 @@
     function guardarEnLocalStorage() {
         try {
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.pedidos = pedidos;
+            datosActuales.pedidosPendientes = pedidos;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos de pedidos guardados en localStorage');
         } catch (error) {
@@ -26,14 +26,6 @@
         }
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
-            inventario = Array.isArray(window.datosGlobales.inventario) ? window.datosGlobales.inventario : [];
-            renderizarPedidos();
-            console.log('Datos de pedidos sincronizados con datosGlobales');
-        }
-    }
 
     function renderizarPedidos(pedidosFiltrados = null) {
         const pedidosLista = document.getElementById('pedidos-lista');
@@ -54,13 +46,14 @@
 
         pedidosLista.style.display = 'block';
         pedidosEmpty.style.display = 'none';
-        
+        console.log('Pedidos:', pedidosAMostrar);
+
         pedidosLista.innerHTML = pedidosAMostrar.map(pedido => {
             const pedidoItems = pedido.items.map(item => {
-                const producto = inventario.find(p => p.id === item.idProducto);
+                const producto = inventario.find(i => i.idProducto === item.idProducto);
                 return `
                     <div class="pedido-item-detalle">
-                        <span>${producto ? producto.nombre : 'Producto no encontrado'} x ${item.cantidad}</span>
+                        <span>${producto ? producto.nombreProducto : 'Producto no encontrado'} x ${item.cantidad}</span>
                         <span>$${item.total}</span>
                     </div>
                 `;
@@ -134,13 +127,6 @@
         cargarDatosDesdeLocalStorage();
         renderizarPedidos();
         configurarEventListeners();
-        
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-        
         console.log('Módulo de Pedidos cargado completamente');
     }
 

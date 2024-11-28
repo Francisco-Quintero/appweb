@@ -42,70 +42,59 @@
 
     function renderizarCatalogo() {
         console.log('Renderizando catálogo');
+        console.log(inventario);
         const catalogoContainer = document.getElementById('catalogo-productos');
-        
-        // Agregar un retraso pequeño para asegurar que el DOM esté listo
-        setTimeout(() => {
-            if (!catalogoContainer) {
-                console.error('No se encontró el contenedor del catálogo. Verificar si el elemento con ID "catalogo-productos" existe en el HTML');
-                // Intentar obtener el contenedor nuevamente
-                const retryContainer = document.getElementById('catalogo-productos');
-                if (!retryContainer) {
-                    return; // Si aún no existe, salir de la función
-                }
-            }
-            
-            // Resto del código de renderización
-            const fragment = document.createDocumentFragment();
-            inventario.forEach(itemInventario => {
-                if (itemInventario.stock > 0) {
-                    const producto = productos.find(p => p.idProducto === itemInventario.idProducto);
-                    
-                    if (producto) {
-                        const productoCard = document.createElement('div');
-                        productoCard.className = 'producto-card';
-                        const cantidadEnCarrito = obtenerCantidadEnCarrito(producto.idProducto);
-        
-                        productoCard.innerHTML = `
-                            <img src="${producto.imagenProducto || '/placeholder.svg'}" alt="${producto.Nombre}" class="producto-imagen">
-                            <div class="producto-header">
-                                <div>
-                                    <div class="producto-marca">${producto.categoria || 'Sin categoría'}</div>
-                                    <div class="producto-nombre">${producto.Nombre}</div>
-                                </div>
-                                <button class="producto-favorito" aria-label="Agregar a favoritos">
-                                    <i data-lucide="heart"></i>
-                                </button>
+        if (!catalogoContainer) {
+            console.error('No se encontró el contenedor del catálogo');
+            return;
+        }
+    
+        const productosMap = new Map(productos.map(p => [p.idProducto, p]));
+        const fragment = document.createDocumentFragment();
+    
+        inventario.forEach(itemInventario => {
+            if (itemInventario.stock > 0) {
+                const producto = productosMap.get(itemInventario.idProducto);
+                
+                if (producto) {
+                    const productoCard = document.createElement('div');
+                    productoCard.className = 'producto-card';
+                    const cantidadEnCarrito = obtenerCantidadEnCarrito(producto.idProducto);
+    
+                    productoCard.innerHTML = `
+                        <img src="${producto.imagenProducto}" alt="${producto.Nombre}" class="producto-imagen">
+                        <div class="producto-header">
+                            <div>
+                                <div class="producto-marca">${producto.categoria}</div>
+                                <div class="producto-nombre">${producto.Nombre}</div>
                             </div>
-                            <div class="producto-precio-gramo">${producto.valorMedida} ${producto.unidadMedida}</div>
-                            <div class="producto-precio">$${itemInventario.precioUnitario.toFixed(2)}</div>
-                            ${cantidadEnCarrito > 0 ? `
-                                <div class="producto-cantidad">
-                                    <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
-                                    <input type="number" value="${cantidadEnCarrito}"
-                                           class="input-cantidad"
-                                           data-id="${producto.idProducto}"
-                                           aria-label="Cantidad del producto">
-                                    <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
-                                </div>
-                            ` : `
-                                <button class="btn-agregar" data-id="${producto.idProducto}">
-                                    Agregar
-                                </button>
-                            `}
-                        `;
-                        fragment.appendChild(productoCard);
-                    }
+                        </div>
+                        <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
+                        <div class="producto-precio">$${itemInventario.precioUnitario}</div>
+                        ${cantidadEnCarrito > 0 ? `
+                            <div class="producto-cantidad">
+                                <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
+                                <input type="number" value="${cantidadEnCarrito}"
+                                       class="input-cantidad"
+                                       data-id="${producto.idProducto}"
+                                       aria-label="Cantidad del producto">
+                                <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
+                            </div>
+                        ` : `
+                            <button class="btn-agregar" data-id="${producto.idProducto}">
+                                Agregar
+                            </button>
+                        `}
+                    `;
+                    fragment.appendChild(productoCard);
                 }
-            });
-            catalogoContainer.innerHTML = '';
-            catalogoContainer.appendChild(fragment);
-        
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
             }
-            
-        }, 100); // Pequeño retraso de 100ms
+        });
+    
+        catalogoContainer.innerHTML = '';
+        catalogoContainer.appendChild(fragment);
+    
+        lucide.createIcons();
     }
     
     function obtenerCantidadEnCarrito(productoId) {
@@ -141,9 +130,8 @@
                 carrito[itemIndex].cantidad = nuevaCantidad;
             } else {
                 const producto = productos.find(p => p.idProducto === productoId);
-                const itemInventario = inventario.find(i => i.idProducto === productoId);
-                if (producto && itemInventario) {
-                    carrito.push({...producto, cantidad: nuevaCantidad, precioUnitario: itemInventario.precioUnitario});
+                if (producto) {
+                    carrito.push({...producto, cantidad: nuevaCantidad});
                 }
             }
         }
@@ -152,13 +140,12 @@
 
     function agregarAlCarrito(productoId) {
         const producto = productos.find(p => p.idProducto === productoId);
-        const itemInventario = inventario.find(i => i.idProducto === productoId);
-        if (producto && itemInventario) {
+        if (producto) {
             const itemExistente = carrito.find(item => item.idProducto === productoId);
             if (itemExistente) {
                 itemExistente.cantidad++;
             } else {
-                carrito.push({...producto, cantidad: 1, precioUnitario: itemInventario.precioUnitario});
+                carrito.push({...producto, cantidad: 1});
             }
             actualizarCarrito();
         }
@@ -167,19 +154,11 @@
     function actualizarCarrito() {
         guardarEnLocalStorage();
         renderizarCatalogo();
-        actualizarCartCount();
         if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
             window.datosGlobales.actualizarCarrito(carrito);
         }
+        // Aquí puedes agregar código para actualizar la interfaz del carrito si es necesario
         console.log('Carrito actualizado:', carrito);
-    }
-
-    function actualizarCartCount() {
-        const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0);
-        const cartCountElement = document.querySelector('.cart-count');
-        if (cartCountElement) {
-            cartCountElement.textContent = totalItems;
-        }
     }
 
     function configurarEventListeners() {
@@ -206,31 +185,21 @@
                 actualizarCantidadDirectaDesdeProducto(productoId, nuevaCantidad);
             }
         });
-        
     }
 
     function initCatalogo() {
         console.log('Inicializando módulo de catalogo');
-        if (document.getElementById('catalogo-productos')) {
-            cargarDatosDesdeLocalStorage();
-            renderizarCatalogo();
-            configurarEventListeners();
-        } else {
-            console.log('Esperando a que el contenedor del catálogo esté disponible...');
-            const observer = new MutationObserver(function(mutations, obs) {
-                if (document.getElementById('catalogo-productos')) {
-                    obs.disconnect();
-                    cargarDatosDesdeLocalStorage();
-                    renderizarCatalogo();
-                    configurarEventListeners();
-                }
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
+        cargarDatosDesdeLocalStorage();
+        renderizarCatalogo();
+        configurarEventListeners();
+        
+        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
+        
+        if (window.datosGlobales) {
+            sincronizarConDatosGlobales();
         }
+        
+        console.log('Módulo de catalogo cargado completamente');
     }
 
     if (document.readyState === 'loading') {
@@ -240,19 +209,4 @@
     }
 
     window.addEventListener('load', renderizarCatalogo);
-
-// Modificar el evento para incluir verificación
-window.addEventListener('actualizarCatalogo', function() {
-    console.log('Evento actualizarCatalogo recibido');
-    if (document.readyState === 'complete') {
-        carrito = [];
-        renderizarCatalogo();
-    } else {
-        window.addEventListener('load', function() {
-            carrito = [];
-            renderizarCatalogo();
-        });
-    }
-});
 })();
-

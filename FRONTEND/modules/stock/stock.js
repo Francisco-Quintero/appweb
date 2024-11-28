@@ -20,6 +20,7 @@
         try {
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             datosActuales.inventario = inventario;
+            datosActuales.productos = productos;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos guardados en localStorage');
         } catch (error) {
@@ -36,9 +37,19 @@
         const index = inventario.findIndex(i => i.idInventario === idInventario);
         if (index !== -1) {
             inventario[index].puntoReorden = puntoReorden;
-            inventario[index].precioUnitario = precioUnitario;
             inventario[index].fechaActualizacion = new Date().toISOString().split('T')[0];
             console.log('Inventario actualizado:', inventario[index]);
+
+        //Actualizar el producto relacionado
+        const idProducto = inventario[index].idProducto;
+        const productoIndex = productos.findIndex(p => p.idProducto === idProducto);
+
+        if (productoIndex !== -1) {
+            productos[productoIndex].precioUnitario = precioUnitario;
+            console.log('Producto actualizado:', productos[productoIndex]);
+        } else {
+            console.warn('No se encontró un producto relacionado con idProducto:', idProducto);
+        }
         }
     
         guardarEnLocalStorage();
@@ -46,22 +57,10 @@
         document.getElementById('modalStock').style.display = 'none';
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            if (Array.isArray(window.datosGlobales.inventario)) {
-                inventario = window.datosGlobales.inventario;
-            }
-            if (Array.isArray(window.datosGlobales.productos)) {
-                productos = window.datosGlobales.productos;
-            }
-            cargarInventario();
-            console.log('Datos sincronizados con datosGlobales');
-        }
-    }
-
     function cargarInventario() {
         console.log('Cargando inventario en la tabla');
         const cuerpoTabla = document.getElementById('cuerpoTablaStock');
+        console.log(cuerpoTabla);
         if (!cuerpoTabla) {
             console.error('No se encontró el elemento cuerpoTablaStock');
             return;
@@ -144,6 +143,7 @@
             item.nombreProducto.toLowerCase().includes(termino) ||
             item.estado.toLowerCase().includes(termino)
         );
+
         
         const cuerpoTabla = document.getElementById('cuerpoTablaStock');
         cuerpoTabla.innerHTML = resultados.map(item => `
@@ -159,8 +159,8 @@
                     </span>
                 </td>
                 <td>
-                    <button onclick="window.moduloStock.actualizarStock(${item.idInventario})" class="btn btn-secundario">
-                        Actualizar
+                    <button onclick="window.moduloStock.editarInventario(${item.idInventario})" class="btn-icono">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                     </button>
                 </td>
             </tr>
@@ -174,21 +174,20 @@
             document.getElementById('modalStock').style.display = 'block';
         });
 
-        document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
+        document.getElementById('btnCerrarModal')?.addEventListener('click', cerrarModal);
 
         // Update or add this function
         function cerrarModal() {
             document.getElementById('modalStock').style.display = 'none';
         }
         
-        document.getElementById('busquedaProducto')?.addEventListener('input', (e) => {
-            const resultados = buscarProductos(e.target.value);
-            mostrarResultadosBusqueda(resultados);
-        });
 
+        document.getElementById('busquedaStock')?.addEventListener('input', buscarInventario);
         document.getElementById('btnBuscar')?.addEventListener('click', buscarInventario);
-        document.getElementById('formularioStock').addEventListener('submit', guardarInventario);
+        document.getElementById('formularioStock')?.addEventListener('submit', guardarInventario);
     }
+
+
 
     function iniciarStock() {
         console.log('Inicializando módulo de stock');
@@ -196,23 +195,6 @@
         cargarInventario();
         configurarEventListeners();
         verificarAlertasReorden();
-
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-
-        // Escuchar actualizaciones del inventario
-        if (window.sistemaEventos) {
-            window.sistemaEventos.en('inventarioActualizado', function(nuevoInventario) {
-                console.log('Inventario actualizado recibido:', nuevoInventario);
-                inventario = nuevoInventario;
-                cargarInventario();
-            });
-        } else {
-            console.error('Sistema de eventos no disponible');
-        }
 
         console.log('Módulo de stock cargado completamente');
     }
@@ -247,17 +229,6 @@
         });
     }
 
-    function mostrarResultadosBusqueda(resultados) {
-        console.log('Mostrando resultados de búsqueda');
-        const divResultados = document.getElementById('resultadosBusqueda');
-        divResultados.innerHTML = '';
-        resultados.forEach(producto => {
-            const div = document.createElement('div');
-            div.textContent = `${producto.Nombre} - ${producto.Descripcion} `;
-            div.onclick = () => seleccionarProducto(producto);
-            divResultados.appendChild(div);
-        });
-    }
 
     function seleccionarProducto(producto) {
         console.log('Producto seleccionado:', producto.Nombre);

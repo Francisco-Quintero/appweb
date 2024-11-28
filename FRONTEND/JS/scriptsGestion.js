@@ -38,14 +38,6 @@ function inicializarGestion() {
         });
         document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
 
-        // Cargar el sistema de eventos si aún no está cargado
-        if (!window.sistemaEventos) {
-            const scriptEventos = document.createElement('script');
-            scriptEventos.src = 'JS/sistemaEventos.js';
-            scriptEventos.setAttribute('data-global', 'true');
-            document.body.appendChild(scriptEventos);
-        }
-
         cargarLibreriaEmailJS()
             .then(() => fetch(`modules/${nombreModulo}/${nombreModulo}.html`))
             .then(response => response.text())

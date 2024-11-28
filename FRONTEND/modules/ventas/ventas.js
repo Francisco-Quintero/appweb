@@ -60,9 +60,6 @@
                     ${!venta.domiciliario ? `
                         <button onclick="mostrarModalAsignarDomiciliario(${venta.idPedido})" class="btn-asignar">Asignar Domiciliario</button>
                     ` : ''}
-                    ${venta.domiciliario && venta.estado !== 'Completada' ? `
-                        <button onclick="completarVenta(${venta.idPedido})" class="btn-completar">Completar Venta</button>
-                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -127,9 +124,9 @@
     function buscarVentas() {
         const busqueda = document.getElementById('busquedaVenta').value.toLowerCase();
         const ventasFiltradas = ventasActivas.filter(venta => 
-            venta.cliente.toLowerCase().includes(busqueda) ||
+            venta.cliente.nombre.toLowerCase().includes(busqueda) ||
             venta.idPedido.toString().includes(busqueda) ||
-            venta.fecha.includes(busqueda)
+            venta.fechaPedido.includes(busqueda)
         );
         renderizarVentasActivas(ventasFiltradas);
     }
@@ -163,7 +160,27 @@
                 <p><strong>Total:</strong> $${venta.total}</p>
                 <p><strong>Estado:</strong> ${venta.estadoPedido}</p>
                 <p><strong>Domiciliario:</strong> ${venta.domiciliario ? venta.domiciliario.nombre : 'No asignado'}</p>
-                <!-- Aquí puedes agregar más detalles si es necesario -->
+                <h4>Productos:</h4>
+                <table class="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${venta.items.map(item => `
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>${item.cantidad}</td>
+                                <td>$${item.precioUnitario}</td>
+                                <td>$${item.total}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
             document.getElementById('modalVenta').style.display = 'block';
         }

@@ -97,9 +97,12 @@ function verUsuarioActual(usuario) {
 function eliminarDatos(){
     const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales'));
 
-if (datosGlobales && datosGlobales.compras) {
-    delete datosGlobales.compras; // Elimina la propiedad inventario
-    localStorage.setItem('datosGlobales', JSON.stringify(datosGlobales)); // Actualiza el localStorage
+if (datosGlobales && datosGlobales.inventario) {
+    delete datosGlobales.inventario; // Elimina la propiedad inventario
+    localStorage.setItem('datosGlobales', JSON.stringify(datosGlobales));
+    // window.location.href = window.location.href;
+    // location.reload();
+    location.reload();
     console.log('La propiedad inventario ha sido eliminada de datosGlobales.');
 } else {
     console.log('No se encontró la propiedad inventario en datosGlobales.');

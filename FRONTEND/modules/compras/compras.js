@@ -26,6 +26,7 @@
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             datosActuales.compras = compras;
             datosActuales.inventario = inventario;
+            datosActuales.productos = productos;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Compras e inventario guardados en localStorage');
         } catch (error) {
@@ -44,8 +45,6 @@
             if (Array.isArray(window.datosGlobales.compras)) {
                 compras = window.datosGlobales.compras;
             }
-            cargarCompras();
-            cargarProveedores();
             console.log('Datos sincronizados con datosGlobales');
         }
     }
@@ -259,9 +258,6 @@
                 <td class="texto-derecha">$${suministro.precioCompraTotal.toFixed(2)}</td>
                 <td class="texto-derecha">$${suministro.precioUnitarioFinal.toFixed(2)}</td>
                 <td>
-                    <button onclick="window.editarProducto(${indice})" class="btn-icono" title="Editar">
-                        <i data-lucide="edit"></i>
-                    </button>
                     <button onclick="window.eliminarProducto(${indice})" class="btn-icono btn-icono-eliminar" title="Eliminar">
                         <i data-lucide="trash-2"></i>
                     </button>
@@ -293,7 +289,7 @@
 
         document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
         document.getElementById('ganancia').textContent = `$${ganancia.toFixed(2)}`;
-        document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
     }
 
     function guardarCompra() {
@@ -338,7 +334,11 @@
         cargarCompras();
         cerrarFormularioCompra();
         alert('Compra guardada con éxito');
-    }
+
+        // Recargar la página
+        //window.location.href = window.location.href;
+        }
+
     
     function actualizarInventario(producto) {
         console.log('Actualizando inventario para:', producto);
@@ -357,7 +357,7 @@
         } else {
             console.log('Creando nuevo item de inventario');
             const nuevoInventario = {
-                idInventario: Date.now(),
+                idInventario: inventario.length + 1,
                 idProducto: producto.idProducto,
                 nombreProducto: producto.Nombre,
                 stock: producto.cantidad,
@@ -368,8 +368,15 @@
             };
             inventario.push(nuevoInventario);
         }
+        const productoDeLista = productos.find(p => p.idProducto === producto.idProducto);
+        if (productoDeLista) {
+            productoDeLista.precioUnitario = producto.precioUnitarioFinal;
+            console.log('Producto actualizado en la lista:', productoDeLista);
+        } else {
+            console.error('Producto no encontrado en la lista de productos:', producto.idProducto);
+        }
 
-        console.log('Inventario después de actualización:', inventario);
+        
         guardarEnLocalStorage();
         
         // Emitir evento para la actualización del inventario
@@ -420,12 +427,6 @@
                     <button onclick="window.verDetallesCompra(${compra.id})" class="btn-icono" title="Ver detalles">
                         <i data-lucide="eye"></i>
                     </button>
-                    <button onclick="window.editarCompra(${compra.id})" class="btn-icono" title="Editar">
-                        <i data-lucide="edit"></i>
-                    </button>
-                    <button onclick="window.eliminarCompra(${compra.id})" class="btn-icono btn-icono-eliminar" title="Eliminar">
-                        <i data-lucide="trash-2"></i>
-                    </button>
                 </td>
             </tr>
         `).join('');
@@ -468,16 +469,6 @@
         document.getElementById('modalCompra').style.display = 'none';
     }
 
-    function editarProducto(indice) {
-        console.log('Editando producto en índice:', indice);
-        const producto = suministros[indice];
-        document.getElementById('busquedaProducto').value = producto.Nombre;
-        document.getElementById('cantidad').value = producto.cantidad;
-        document.getElementById('precioCompraTotal').value = producto.precioCompraTotal;
-        indiceEditando = indice;
-        document.getElementById('btnAgregarProducto').textContent = 'Actualizar Producto';
-    }
-
     function eliminarProducto(indice) {
         console.log('Eliminando producto en índice:', indice);
         suministros.splice(indice, 1);
@@ -501,7 +492,6 @@
     }
 
     window.verDetallesCompra = verDetallesCompra;
-    window.editarProducto = editarProducto;
     window.eliminarProducto = eliminarProducto;
 
     // Iniciar cuando el DOM esté listo

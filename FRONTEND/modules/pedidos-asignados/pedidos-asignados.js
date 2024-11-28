@@ -51,8 +51,13 @@
                 <td>${pedido.cliente ? pedido.cliente.direccion : "sin dirreccion"}</td>
                 <td>${pedido.estadoPedido}</td>
                 <td>
-                    <button onclick="verDetallesPedido(${pedido.idPedido})">Ver Detalles</button>
-                    ${pedido.estadoPedido !== 'entregado' ? `<button onclick="marcarComoEntregado(${pedido.idPedido})">Marcar como Entregado</button>` : ''}
+                    <button class="btn btn-detalles" onclick="verDetallesPedido(${pedido.idPedido})">
+                        <i data-lucide="eye"></i> Ver Detalles
+                    </button>
+                    ${pedido.estadoPedido !== 'entregado' ? 
+                        `<button class="btn btn-entregado" onclick="marcarComoEntregado(${pedido.idPedido})">
+                            <i data-lucide="check"></i> Marcar como Entregado
+                        </button>` : ''}
                 </td>
             </tr>
         `).join('');

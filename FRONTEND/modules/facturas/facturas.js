@@ -8,7 +8,7 @@
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
             facturas = datosGuardados.facturas || [];
-            pedidos = datosGuardados.pedidos || [];
+            pedidos = datosGuardados.pedidosPendientes || [];
             console.log('Datos de facturas cargados desde localStorage');
         } catch (error) {
             console.error('Error al cargar datos de facturas desde localStorage:', error);
@@ -24,15 +24,6 @@
             console.log('Datos de facturas guardados en localStorage');
         } catch (error) {
             console.error('Error al guardar datos de facturas en localStorage:', error);
-        }
-    }
-
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            facturas = Array.isArray(window.datosGlobales.facturas) ? window.datosGlobales.facturas : [];
-            pedidos = Array.isArray(window.datosGlobales.pedidos) ? window.datosGlobales.pedidos : [];
-            renderizarFacturas();
-            console.log('Datos de facturas sincronizados con datosGlobales');
         }
     }
 
@@ -97,7 +88,7 @@
                     </div>
                     ${factura.pago.estadoPago === 'pendiente' ? `
                         <div class="factura-acciones">
-                            <button class="btn-pagar" data-id-factura="${factura.idFactura}">
+                        <button class="pagar-button" onclick="mostrarSimulacionPago()">
                                 Pagar ahora
                             </button>
                         </div>
@@ -115,6 +106,36 @@
         });
     }
 
+            // Mostrar modal de simulación de pago
+        function mostrarSimulacionPago() {
+            document.getElementById('simulacionPagoModal').style.display = 'block';
+        }
+
+        // Cerrar modal de simulación
+        function cerrarSimulacionPago() {
+            document.getElementById('simulacionPagoModal').style.display = 'none';
+        }
+
+        // Manejar el formulario de simulación de pago
+        document.getElementById('formSimulacionPago').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nombreCliente = document.getElementById('nombreCliente').value;
+            const montoPago = parseFloat(document.getElementById('montoPago').value);
+            const metodoPago = document.getElementById('metodoPago').value;
+
+            // Simular la respuesta de la pasarela
+            const exito = Math.random() > 0.2; // 80% de probabilidades de éxito
+
+            if (exito) {
+                alert(`¡Pago realizado con éxito! \nCliente: ${nombreCliente}\nMonto: $${montoPago}\nMétodo: ${metodoPago}`);
+                cerrarSimulacionPago();
+            } else {
+                alert(`El pago ha fallado. Por favor, intente nuevamente.`);
+            }
+        });
+
+
     function formatearFecha(fecha) {
         try {
             return new Date(fecha).toLocaleDateString('es-ES', {
@@ -128,43 +149,43 @@
         }
     }
 
-    async function procesarPago(idFactura) {
-        const factura = facturas.find(f => f.idFactura === idFactura);
-        if (!factura) return;
+    // async function procesarPago(idFactura) {
+    //     const factura = facturas.find(f => f.idFactura === idFactura);
+    //     if (!factura) return;
 
-        if (factura.pago.metodoPago === 'transferencia') {
-            try {
-                const response = await fetch('https://api.ejemplo.com/pse', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        idFactura: factura.idFactura,
-                        monto: factura.total,
-                        // Otros datos necesarios para PSE
-                    }),
-                });
+    //     if (factura.pago.metodoPago === 'transferencia') {
+    //         try {
+    //             const response = await fetch('https://api.ejemplo.com/pse', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     idFactura: factura.idFactura,
+    //                     monto: factura.total,
+    //                     // Otros datos necesarios para PSE
+    //                 }),
+    //             });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    // Redirigir al usuario a la página de pago de PSE
-                    window.location.href = result.urlPago;
-                } else {
-                    throw new Error('Error en la respuesta del servidor');
-                }
-            } catch (error) {
-                console.error('Error al procesar el pago por PSE:', error);
-                alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
-            }
-        } else if (factura.pago.metodoPago === 'efectivo') {
-            alert('El pago se realizará contra entrega en efectivo');
-        }
+    //             if (response.ok) {
+    //                 const result = await response.json();
+    //                 // Redirigir al usuario a la página de pago de PSE
+    //                 window.location.href = result.urlPago;
+    //             } else {
+    //                 throw new Error('Error en la respuesta del servidor');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error al procesar el pago por PSE:', error);
+    //             alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+    //         }
+    //     } else if (factura.pago.metodoPago === 'efectivo') {
+    //         alert('El pago se realizará contra entrega en efectivo');
+    //     }
 
-        factura.pago.estadoPago = 'procesando';
-        guardarEnLocalStorage();
-        renderizarFacturas();
-    }
+    //     factura.pago.estadoPago = 'procesando';
+    //     guardarEnLocalStorage();
+    //     renderizarFacturas();
+    // }
 
     function filtrarFacturas() {
         const estado = document.getElementById('filtro-estado')?.value || 'todos';
@@ -191,13 +212,6 @@
         cargarDatosDesdeLocalStorage();
         renderizarFacturas();
         configurarEventListeners();
-        
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-        
         console.log('Módulo de Facturas cargado completamente');
     }
 
@@ -210,6 +224,9 @@
     window.addEventListener('load', renderizarFacturas);
 
     // Exponer funciones necesarias globalmente
-    window.procesarPago = procesarPago;
+   // window.procesarPago = procesarPago;
     window.filtrarFacturas = filtrarFacturas;
+    window.mostrarSimulacionPago = mostrarSimulacionPago;
+    window.cerrarSimulacionPago = cerrarSimulacionPago;
+
 })();

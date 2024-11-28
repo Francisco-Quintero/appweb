@@ -1,20 +1,33 @@
-#usuariosSistema-container {
+body {
+    margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #547980, #45ADA8);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#usuariosSistema-container {
     max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 h2 {
-    color: #333;
+    color: #594F4F;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .form-container {
-    background-color: #f9f9f9;
+    background-color: white;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -25,19 +38,21 @@ h2 {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #594F4F;
 }
 
 .form-group input {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #9DE0AD;
     border-radius: 4px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 button {
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #45ADA8;
     color: white;
     border: none;
     border-radius: 4px;
@@ -47,7 +62,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #547980;
 }
 
 #tabs {
@@ -59,14 +74,15 @@ button:hover {
     flex: 1;
     padding: 10px;
     text-align: center;
-    background-color: #f1f1f1;
+    background-color: #9DE0AD;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    color: #594F4F;
 }
 
 .tab.active {
-    background-color: #007bff;
+    background-color: #45ADA8;
     color: white;
 }
 
@@ -81,29 +97,30 @@ button:hover {
 }
 
 #lista-usuarios li {
-    background-color: #f9f9f9;
+    background-color: white;
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #cerrar-sesion {
-    background-color: #dc3545;
+    background-color: #594F4F;
 }
 
 #cerrar-sesion:hover {
-    background-color: #c82333;
+    background-color: #45ADA8;
 }
 
-/* Nuevos estilos para el panel de administración */
 .admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: white;
     border-radius: 8px;
     margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .logo-container {
@@ -120,7 +137,7 @@ button:hover {
 }
 
 .admin-section {
-    background-color: #ffffff;
+    background-color: white;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -138,6 +155,7 @@ button:hover {
     align-items: center;
     gap: 10px;
     margin: 0;
+    color: #594F4F;
 }
 
 .lista-container {
@@ -150,7 +168,7 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #9DE0AD;
     border-radius: 4px;
     margin-bottom: 10px;
 }
@@ -173,12 +191,10 @@ button:hover {
     transition: color 0.3s ease;
 }
 
-.btn-ver { color: #007bff; }
-.btn-editar { color: #28a745; }
-.btn-eliminar { color: #dc3545; }
-.btn-ver:hover { color: #0056b3; }
-.btn-editar:hover { color: #218838; }
-.btn-eliminar:hover { color: #c82333; }
+.btn-ver { color: #45ADA8; }
+.btn-editar { color: #547980; }
+.btn-eliminar { color: #594F4F; }
+.btn-ver:hover, .btn-editar:hover, .btn-eliminar:hover { color: #9DE0AD; }
 
 .search-container {
     position: relative;
@@ -188,7 +204,7 @@ button:hover {
 .search-container input {
     width: 100%;
     padding: 8px 30px 8px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #9DE0AD;
     border-radius: 4px;
 }
 
@@ -197,14 +213,14 @@ button:hover {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
+    color: #594F4F;
 }
 
 .btn-registrar {
     display: flex;
     align-items: center;
     gap: 5px;
-    background-color: #28a745;
+    background-color: #45ADA8;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -214,10 +230,9 @@ button:hover {
 }
 
 .btn-registrar:hover {
-    background-color: #218838;
+    background-color: #547980;
 }
 
-/* Estilos para el modal */
 .modal {
     display: none;
     position: fixed;
@@ -225,18 +240,20 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(89,79,79,0.5);
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .modal-content {
-    position: relative;
-    background-color: #fff;
+    background-color: white;
     margin: 10% auto;
     padding: 20px;
     border-radius: 8px;
     width: 90%;
     max-width: 500px;
+    position: relative;
+    overflow-y: visible;
 }
 
 .close {
@@ -245,6 +262,7 @@ button:hover {
     top: 10px;
     font-size: 24px;
     cursor: pointer;
+    color: #594F4F;
 }
 
 .modal-buttons {
@@ -254,7 +272,6 @@ button:hover {
     margin-top: 20px;
 }
 
-/* Estados de domiciliario */
 .estado-badge {
     padding: 4px 8px;
     border-radius: 12px;
@@ -262,50 +279,14 @@ button:hover {
     font-weight: bold;
 }
 
-.estado-disponible { background-color: #28a745; color: white; }
-.estado-entregando { background-color: #007bff; color: white; }
-.estado-en_camino { background-color: #ffc107; color: black; }
-.estado-recogiendo { background-color: #17a2b8; color: white; }
-.estado-inactivo { background-color: #dc3545; color: white; }
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+.estado-disponible { background-color: #9DE0AD; color: #594F4F; }
+.estado-entregando { background-color: #45ADA8; color: white; }
+.estado-en_camino { background-color: #547980; color: white; }
+.estado-recogiendo { background-color: #594F4F; color: white; }
+.estado-inactivo { background-color: #FF6B6B; color: white; }
 
 .btn-ver-detalles {
-    background-color: #4CAF50;
+    background-color: #45ADA8;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -316,4 +297,26 @@ button:hover {
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-ver-detalles:hover {
+    background-color: #547980;
+}
+
+@media (max-width: 768px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+    }
+}
+
+.usuario-modal {
+    width: 300px;
+    height: 200px;
+    overflow: hidden;
 }
