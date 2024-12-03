@@ -33,9 +33,12 @@ public class Factura {
     @Column(name = "monto_total")
     private double total;
 
-    @OneToMany
-    @Column(name = "detalle")
-    private List<DetalleProducto> detalles;
+    @Column(name = "estado_Factura")
+    private String estadoFactura;
+
+    // @OneToMany
+    // @Column(name = "detalle")
+    // private List<DetalleProducto> detalles;
 
     @OneToOne
     @JoinColumn(name = "id_pedido")

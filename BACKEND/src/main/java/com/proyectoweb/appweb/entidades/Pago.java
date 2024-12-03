@@ -28,8 +28,12 @@ public class Pago {
     @Column(name = "estado_pago")
     private String estadoPago;
 
+    // @ManyToOne
+    // @JoinColumn(name = "id_pedido")
+    // private Pedido pedido;
+
     @ManyToOne
-    @JoinColumn(name = "id_pedido")
-    private Pedido pedido;
+    @JoinColumn(name = "id_factura")
+    private Factura factura;
 }
 

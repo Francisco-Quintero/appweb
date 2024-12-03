@@ -42,7 +42,7 @@ public class Pedido {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToMany
-    private List<DetalleProducto> detalles;
+    // @OneToMany
+    // private List<DetalleProducto> detalles;
 }
 

@@ -2,30 +2,33 @@
     console.log('Iniciando carga del módulo de Facturas');
 
     let facturas = [];
-    let pedidos = [];
+   // let pedidos = [];
 
-    function cargarDatosDesdeLocalStorage() {
+    // function cargarDatosDesdeLocalStorage() {
+    //     try {
+    //         const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+    //         facturas = datosGuardados.facturas || [];
+    //         pedidos = datosGuardados.pedidosPendientes || [];
+    //         console.log('Datos de facturas cargados desde localStorage');
+    //     } catch (error) {
+    //         console.error('Error al cargar datos de facturas desde localStorage:', error);
+    //     }
+    // }
+
+    
+    async function cargarDatosDesdeAPI() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            facturas = datosGuardados.facturas || [];
-            pedidos = datosGuardados.pedidosPendientes || [];
-            console.log('Datos de facturas cargados desde localStorage');
+            const response = await fetch('http://localhost:26209/api/pagos');
+            if (!response.ok) {
+                throw new Error(`Error al obtener datos: ${response.statusText}`);
+            }
+            facturas = await response.json();
+            console.log('Datos de factura cargados desde la API:', facturas);
         } catch (error) {
-            console.error('Error al cargar datos de facturas desde localStorage:', error);
+            console.error('Error al cargar datos desde la API:', error);
         }
     }
 
-    function guardarEnLocalStorage() {
-        try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.facturas = facturas;
-            datosActuales.pedidos = pedidos;
-            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
-            console.log('Datos de facturas guardados en localStorage');
-        } catch (error) {
-            console.error('Error al guardar datos de facturas en localStorage:', error);
-        }
-    }
 
     function renderizarFacturas(facturasFiltradas = null) {
         const facturasContainer = document.getElementById('lista-facturas');
@@ -47,46 +50,41 @@
         facturasContainer.style.display = 'block';
         facturasEmpty.style.display = 'none';
 
-        facturasContainer.innerHTML = facturasAMostrar.map(factura => {
-            const pedido = pedidos.find(p => p.idPedido === factura.idPedido);
-            if (!pedido) return '';
-            
+        facturasContainer.innerHTML = facturasAMostrar.map(pago => {
             return `
                 <div class="factura-item">
                     <div class="factura-header">
                         <div class="factura-info">
-                            <h3>Factura #${factura.idFactura}</h3>
+                            <h3>Factura #${pago.factura.id_factura}</h3>
                             <span class="factura-fecha">
-                                ${formatearFecha(factura.fechaEmision)}
+                                ${formatearFecha(pago.factura.fecha_emision)}
                             </span>
                         </div>
-                        <div class="factura-estado ${factura.estadoFactura.toLowerCase()}">
-                            ${factura.estadoFactura.toUpperCase()}
+                        <div class="factura-estado ${pago.factura.estadoFactura}">
+                            ${pago.factura.estadoFactura}
                         </div>
                     </div>
                     <div class="factura-detalles">
                         <div class="factura-pedido">
-                            <strong>Pedido:</strong> ${pedido.idPedido}
-                            <span class="estado-pedido ${pedido.estadoPedido.toLowerCase()}">
-                                ${pedido.estadoPedido.toUpperCase()}
+                            <strong>Pedido:</strong> ${pago.factura.pedido.idPedido}
+                            <span class="estado-pedido ${pago.factura.pedido.estadoPedido}">
+                                ${pago.factura.pedido.estadoPedido}
                             </span>
                         </div>
                         <div class="factura-pago">
-                            <strong>Método de pago:</strong> ${factura.pago.metodoPago}
-                            <span class="estado-pago ${factura.pago.estadoPago.toLowerCase()}">
-                                ${factura.pago.estadoPago.toUpperCase()}
+                            <strong>Método de pago:</strong> ${pago.metodoPago}
+                            <span class="estado-pago ${pago.estadoPago}">
+                                ${pago.estadoPago}
                             </span>
                         </div>
                         <div class="factura-montos">
-                            <div>Subtotal: $${factura.subtotal}</div>
-                            <div>IVA (19%): $${factura.impuestos}</div>
-                            <div>Envío: $${pedido.costoEnvio}</div>
+                            <div>Envío: $${pago.factura.pedido.costoEnvio}</div>
                             <div class="factura-total">
-                                Total: $${factura.total}
+                                Total: $${pago.factura.total}
                             </div>
                         </div>
                     </div>
-                    ${factura.pago.estadoPago === 'pendiente' ? `
+                    ${pago.estadoPago === 'pendiente' ? `
                         <div class="factura-acciones">
                         <button class="pagar-button" onclick="mostrarSimulacionPago()">
                                 Pagar ahora
@@ -207,9 +205,9 @@
         document.getElementById('btn-aplicar-filtros')?.addEventListener('click', filtrarFacturas);
     }
 
-    function initFacturas() {
+    async function initFacturas() {
         console.log('Inicializando módulo de Facturas');
-        cargarDatosDesdeLocalStorage();
+        await cargarDatosDesdeAPI();
         renderizarFacturas();
         configurarEventListeners();
         console.log('Módulo de Facturas cargado completamente');
@@ -221,7 +219,6 @@
         initFacturas();
     }
 
-    window.addEventListener('load', renderizarFacturas);
 
     // Exponer funciones necesarias globalmente
    // window.procesarPago = procesarPago;
