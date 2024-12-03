@@ -117,7 +117,7 @@
             });
         });
 
-        lucide.createIcons();
+       // lucide.createIcons();
         actualizarTotales();
     }
     

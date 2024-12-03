@@ -8,6 +8,7 @@ import com.proyectoweb.appweb.servicios.ProductoServicio;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RequestMapping("/api/productos")
 public class ProductoControlador {
 

@@ -14,7 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Producto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
@@ -34,4 +33,11 @@ public class Producto {
 
     @Column(name = "cantidad_medida")
     private int cantidadMedida;
+
+    @Column(name = "categoria")
+    private String categoria;
+
+    @Column(name = "imagenProducto")
+    private String imagenProducto;
+
 }

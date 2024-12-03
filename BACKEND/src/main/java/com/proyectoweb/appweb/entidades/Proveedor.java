@@ -20,17 +20,18 @@ public class Proveedor {
     @Column(name = "id_proveedor")
     private Long idProveedor;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "nombre_Contacto")
+    private String nombreContacto;
+
+    @Column(name = "nombre_Empresa")
+    private String nombreEmpresa;
 
     @Column(name = "numero_contacto")
     private String numeroContacto;
 
-    @Column(name = "productos_abastece")
-    private String productosAbastece;
+    @Column(name = "correo")
+    private String correo;
 
-    @Column(name = "precio_acuerdo")
-    private double precioAcuerdo;
 
     @Column(name = "frecuencia_abastecimiento")
     private int frecuenciaAbastecimiento;

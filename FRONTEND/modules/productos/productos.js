@@ -1,37 +1,55 @@
-// productos.js
 (function () {
     console.log('Iniciando carga del módulo de productos');
 
     let productos = [];
 
-    function cargarDatosDesdeLocalStorage() {
+    const API_URL = 'http://localhost:26209/api/productos'; 
+
+    async function cargarProductosDesdeAPI() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            productos = datosGuardados.productos || [];
-            console.log('Productos cargados desde localStorage');
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`Error al obtener productos: ${response.statusText}`);
+            productos = await response.json();
+            console.log('Productos cargados desde la API:', productos);
+            cargarProductos(); 
         } catch (error) {
-            console.error('Error al cargar datos desde localStorage:', error);
+            console.error('Error al cargar productos desde la API:', error);
         }
     }
 
-    function guardarEnLocalStorage() {
+    async function guardarProductoEnAPI(producto) {
         try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.productos = productos;
-            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
-            console.log('Datos guardados en localStorage');
+            const method = producto.idProducto ? 'PUT' : 'POST';
+            const endpoint = producto.idProducto ? `${API_URL}/${producto.idProducto}` : API_URL;
+    
+            const response = await fetch(endpoint, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(producto)
+            });
+    
+            if (!response.ok) throw new Error(`Error al guardar producto: ${response.statusText}`);
+    
+            console.log(`Producto ${producto.idProducto ? 'actualizado' : 'creado'} correctamente`);
+            cargarProductosDesdeAPI(); // Recargar productos después de guardar.
         } catch (error) {
-            console.error('Error al guardar en localStorage:', error);
+            console.error('Error al guardar producto en la API:', error);
+            alert('Hubo un error al guardar el producto. Por favor, intenta de nuevo.');
         }
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            if (Array.isArray(window.datosGlobales.productos)) {
-                productos = window.datosGlobales.productos;
-            }
-            cargarProductos();
-            console.log('Datos sincronizados con datosGlobales');
+    async function eliminarProductoEnAPI(idProducto) {
+        try {
+            const response = await fetch(`${API_URL}/${idProducto}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) throw new Error(`Error al eliminar producto: ${response.statusText}`);
+
+            console.log('Producto eliminado correctamente');
+            cargarProductosDesdeAPI(); // Recargar productos después de eliminar.
+        } catch (error) {
+            console.error('Error al eliminar producto en la API:', error);
         }
     }
 
@@ -48,14 +66,14 @@
                 return `
                     <tr>
                         <td>${producto.idProducto}</td>
-                        <td>${producto.Nombre}</td>
-                        <td>${producto.Descripcion}</td>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.descripcion}</td>
                         <td>${producto.categoria}</td>
-                        <td>${producto.valorMedida}</td>
+                        <td>${producto.cantidadMedida}</td>
                         <td>${producto.unidadMedida}</td>
                         <td>
                             <img src="${producto.imagenProducto || '/placeholder.jpg'}" 
-                                alt="${producto.Nombre}" 
+                                alt="${producto.nombre}" 
                                 class="producto-imagen"
                                 style="max-width: 50px; height: auto;">
                         </td>
@@ -76,98 +94,48 @@
             }).join('');
 
         cuerpoTabla.innerHTML = contenidoTabla;
-    }function validarFormulario() {
-        const campos = [
-            { id: 'nombreProducto', mensaje: 'El nombre del producto es obligatorio.' },
-            { id: 'descripcionProducto', mensaje: 'La descripción del producto es obligatoria.' },
-            { id: 'categoriaProducto', mensaje: 'La categoría del producto es obligatoria.' },
-            { id: 'unidadMedida', mensaje: 'La unidad de medida es obligatoria.' }
-        ];
-    
-        // Validar campos obligatorios
-        for (const campo of campos) {
-            const valor = document.getElementById(campo.id).value.trim();
-            if (valor.length === 0) {
-                alert(campo.mensaje);
-                return false;
-            }
-        }
-    
-        // Validar unidad de medida no numérica
-        const unidadMedida = document.getElementById('unidadMedida').value.trim();
-        if (/\d/.test(unidadMedida)) {
-            alert('La unidad de medida no debe contener números.');
-            return false;
-        }
-    
-        // Validar valor de medida
-        const valorMedida = document.getElementById('valorMedida').value.trim();
-        if (!isPositiveNumber(valorMedida)) {
-            alert('El valor de medida debe ser un número positivo.');
-            return false;
-        }
-    
-        // Validar URL de imagen
-        const imagenProducto = document.getElementById('imagenProducto').value.trim();
-        if (imagenProducto.length > 0 && !isValidURL(imagenProducto)) {
-            alert('La URL de la imagen no es válida.');
-            return false;
-        }
-    
-        return true;
     }
-    
-    // Función para validar números positivos
-    function isPositiveNumber(value) {
-        const number = parseFloat(value);
-        return !isNaN(number) && number > 0;
-    }
-    
-    // Función para validar URLs
-    function isValidURL(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-    
-
     function manejarEnvioFormulario(e) {
         e.preventDefault();
-
-        if(!validarFormulario()){
+    
+        // Obtener los valores del formulario
+        const nombre = document.getElementById('nombreProducto').value.trim();
+        const descripcion = document.getElementById('descripcionProducto').value.trim();
+        const categoria = document.getElementById('categoriaProducto').value.trim();
+        const valorMedida = document.getElementById('valorMedida').value;
+        const unidadMedida = document.getElementById('unidadMedida').value.trim();
+        const imagenProducto = document.getElementById('imagenProducto').value.trim();
+    
+        // Validar los campos
+        if (!nombre || !descripcion || !categoria || !valorMedida || !unidadMedida) {
+            alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
-        const idProducto = document.getElementById('idProducto').value;
-        const producto = {
-            idProducto: idProducto ? parseInt(idProducto) : productos.length + 1,
-            Nombre: document.getElementById('nombreProducto').value,
-            Descripcion: document.getElementById('descripcionProducto').value,
-            precioUnitario: null,
-            categoria: document.getElementById('categoriaProducto').value,
-            valorMedida: document.getElementById('valorMedida').value,
-            unidadMedida: document.getElementById('unidadMedida').value,
-            imagenProducto: document.getElementById('imagenProducto').value
-        };
-
-        if (idProducto) {
-            const index = productos.findIndex(p => p.idProducto === parseInt(idProducto));
-            if (index !== -1) {
-                productos[index] = producto;
-                console.log('Producto actualizado:', producto);
-            }
-        } else {
-            productos.push(producto);
-            console.log('Nuevo producto agregado:', producto);
+    
+        // Convertir valorMedida a número y validar
+        const cantidadMedida = parseFloat(valorMedida);
+        if (isNaN(cantidadMedida) || cantidadMedida <= 0) {
+            alert('El valor de medida debe ser un número positivo.');
+            return;
         }
-
-        guardarEnLocalStorage();
-        cargarProductos();
+    
+        // Crear el objeto producto con el formato correcto
+        const producto = {
+            nombre: nombre,
+            descripcion: descripcion,
+            precioUnitario: 2000, // Asumiendo un valor fijo por ahora
+            categoria: categoria,
+            cantidadMedida: cantidadMedida,
+            unidadMedida: unidadMedida,
+            imagenProducto: imagenProducto || null // Si no se proporciona una imagen, se envía null
+        };
+    
+        // Enviar el producto a la API
+        guardarProductoEnAPI(producto);
+    
+        // Cerrar el modal
         document.getElementById('modalProducto').style.display = 'none';
     }
-
 
     function configurarEventListeners() {
         document.getElementById('btnAgregarProducto').addEventListener('click', () => {
@@ -181,55 +149,12 @@
         });
 
         document.getElementById('formularioProducto').addEventListener('submit', manejarEnvioFormulario);
-        document.getElementById('btnBuscar').addEventListener('click', buscarProductos);
-        document.getElementById('unidadMedida').addEventListener('input', function(e) {
-            if (/\d/.test(this.value)) {
-                this.setCustomValidity('La unidad de medida no debe contener números.');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-
-        document.getElementById('valorMedida').addEventListener('input', function(e) {
-            if (isNaN(parseFloat(this.value)) || parseFloat(this.value) <= 0) {
-                this.setCustomValidity('El valor de medida debe ser un número positivo.');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-
-        document.getElementById('imagenProducto').addEventListener('change', function(e) {
-            if (this.value.trim().length > 0 && !isValidURL(this.value)) {
-                this.setCustomValidity('La URL de la imagen no es válida.');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    }
-
-    function buscarProductos() {  //funcion para revisar bien en la busqueda de productos
-        const termino = document.getElementById('busquedaProducto').value.toLowerCase();
-        const productosFiltrados = productos.filter(p =>
-            p.Nombre.toLowerCase().includes(termino) ||
-            p.Descripcion.toLowerCase().includes(termino) ||
-            p.categoria.toLowerCase().includes(termino)
-        );
-        cargarProductos(productosFiltrados);
     }
 
     function initProductos() {
         console.log('Inicializando módulo de productos');
-        cargarDatosDesdeLocalStorage();
-        cargarProductos();
+        cargarProductosDesdeAPI();
         configurarEventListeners();
-
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-
-        console.log('Módulo de productos cargado completamente');
     }
 
     window.moduloProductos = {
@@ -238,23 +163,16 @@
             const producto = productos.find(p => p.idProducto === idProducto);
             if (producto) {
                 document.getElementById('idProducto').value = producto.idProducto;
-                document.getElementById('nombreProducto').value = producto.Nombre;
-                //document.getElementById('categoriaProducto').value = producto.precioUnitario;
-                document.getElementById('descripcionProducto').value = producto.Descripcion;
+                document.getElementById('nombreProducto').value = producto.nombre;
+                document.getElementById('descripcionProducto').value = producto.descripcion;
                 document.getElementById('categoriaProducto').value = producto.categoria;
                 document.getElementById('imagenProducto').value = producto.imagenProducto;
-                document.getElementById('valorMedida').value = producto.valorMedida;
+                document.getElementById('valorMedida').value = producto.cantidadMedida;
                 document.getElementById('unidadMedida').value = producto.unidadMedida;
                 document.getElementById('modalProducto').style.display = 'block';
             }
         },
-        eliminarProducto: function (idProducto) {
-            if (confirm('¿Estás seguro de que quieres eliminar este producto ?')) {
-                productos = productos.filter(p => p.idProducto !== idProducto);
-                guardarEnLocalStorage();
-                cargarProductos();
-            }
-        }
+        eliminarProducto: eliminarProductoEnAPI
     };
 
     if (document.readyState === 'loading') {
@@ -262,9 +180,4 @@
     } else {
         initProductos();
     }
-
-    window.onload = cargarProductos;
-
 })();
-
-console.log('Archivo productos.js cargado completamente');

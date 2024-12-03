@@ -2,14 +2,27 @@
     console.log('Iniciando carga del módulo de Catálogo');
 
     let inventario = [];
-    let productos = [];
+    //let productos = [];
     let carrito = [];
+
+    async function cargarDatosDesdeAPI() {
+        try {
+            const response = await fetch('http://localhost:26209/api/inventarios'); // Cambia esta URL por la de tu API
+            if (!response.ok) {
+                throw new Error('Error al cargar los datos desde la API');
+            }
+            const datos = await response.json();
+            inventario = datos || [];
+            console.log('Datos cargados desde la API');
+            renderizarCatalogo();
+        } catch (error) {
+            console.error('Error al cargar datos desde la API:', error);
+        }
+    }
 
     function cargarDatosDesdeLocalStorage() {
         try {
             const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            inventario = datosGuardados.inventario || [];
-            productos = datosGuardados.productos || [];
             carrito = datosGuardados.carrito || [];
             console.log('Datos cargados desde localStorage');
         } catch (error) {
@@ -20,8 +33,6 @@
     function guardarEnLocalStorage() {
         try {
             const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.productos = productos;
-            datosActuales.inventario = inventario;
             datosActuales.carrito = carrito;
             localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
             console.log('Datos guardados en localStorage');
@@ -30,58 +41,43 @@
         }
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            inventario = Array.isArray(window.datosGlobales.inventario) ? window.datosGlobales.inventario : [];
-            productos = Array.isArray(window.datosGlobales.productos) ? window.datosGlobales.productos : [];
-            carrito = Array.isArray(window.datosGlobales.carrito) ? window.datosGlobales.carrito : [];
-            renderizarCatalogo();
-            console.log('Datos sincronizados con datosGlobales');
-        }
-    }
-
     function renderizarCatalogo() {
-        console.log('Renderizando catálogo');
-        console.log(inventario);
+        console.log('Renderizando catálogo'+ inventario);
         const catalogoContainer = document.getElementById('catalogo-productos');
         if (!catalogoContainer) {
             console.error('No se encontró el contenedor del catálogo');
             return;
         }
     
-        const productosMap = new Map(productos.map(p => [p.idProducto, p]));
         const fragment = document.createDocumentFragment();
     
         inventario.forEach(itemInventario => {
             if (itemInventario.stock > 0) {
-                const producto = productosMap.get(itemInventario.idProducto);
-                
-                if (producto) {
+                if (itemInventario) {
                     const productoCard = document.createElement('div');
                     productoCard.className = 'producto-card';
-                    const cantidadEnCarrito = obtenerCantidadEnCarrito(producto.idProducto);
-    
+                    const cantidadEnCarrito = obtenerCantidadEnCarrito(itemInventario.producto.idProducto);
                     productoCard.innerHTML = `
-                        <img src="${producto.imagenProducto}" alt="${producto.Nombre}" class="producto-imagen">
+                        <img src="${itemInventario.producto.imagenProducto}" alt="${itemInventario.producto.nombre}" class="producto-imagen">
                         <div class="producto-header">
                             <div>
-                                <div class="producto-marca">${producto.categoria}</div>
-                                <div class="producto-nombre">${producto.Nombre}</div>
+                                <div class="producto-marca">${itemInventario.producto.categoria}</div>
+                                <div class="producto-nombre">${itemInventario.producto.nombre}</div>
                             </div>
                         </div>
-                        <div class="producto-precio-gramo">Gramo a ${producto.valorMedida}" alt="${producto.unidadMedida}</div>
-                        <div class="producto-precio">$${itemInventario.precioUnitario}</div>
+                        <div class="producto-precio-gramo">Gramo a ${itemInventario.producto.cantidadMedida}" alt="${itemInventario.producto.unidadMedida}</div>
+                        <div class="producto-precio">$${itemInventario.producto.precioUnitario}</div>
                         ${cantidadEnCarrito > 0 ? `
                             <div class="producto-cantidad">
-                                <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
+                                <button class="btn-cantidad" data-id="${itemInventario.producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
                                 <input type="number" value="${cantidadEnCarrito}"
                                        class="input-cantidad"
-                                       data-id="${producto.idProducto}"
+                                       data-id="${itemInventario.producto.idProducto}"
                                        aria-label="Cantidad del producto">
-                                <button class="btn-cantidad" data-id="${producto.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
+                                <button class="btn-cantidad" data-id="${itemInventario.producto.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
                             </div>
                         ` : `
-                            <button class="btn-agregar" data-id="${producto.idProducto}">
+                            <button class="btn-agregar" data-id="${itemInventario.producto.idProducto}">
                                 Agregar
                             </button>
                         `}
@@ -94,7 +90,7 @@
         catalogoContainer.innerHTML = '';
         catalogoContainer.appendChild(fragment);
     
-        lucide.createIcons();
+       lucide.createIcons();
     }
     
     function obtenerCantidadEnCarrito(productoId) {
@@ -139,7 +135,7 @@
     }
 
     function agregarAlCarrito(productoId) {
-        const producto = productos.find(p => p.idProducto === productoId);
+        const producto = inventario.producto.find(p => p.idProducto === productoId);
         if (producto) {
             const itemExistente = carrito.find(item => item.idProducto === productoId);
             if (itemExistente) {
@@ -187,18 +183,12 @@
         });
     }
 
-    function initCatalogo() {
+    async function initCatalogo() {
         console.log('Inicializando módulo de catalogo');
+        await cargarDatosDesdeAPI();
         cargarDatosDesdeLocalStorage();
         renderizarCatalogo();
         configurarEventListeners();
-        
-        window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-        
-        if (window.datosGlobales) {
-            sincronizarConDatosGlobales();
-        }
-        
         console.log('Módulo de catalogo cargado completamente');
     }
 

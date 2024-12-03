@@ -1,4 +1,4 @@
-(function() {
+(function () {
     console.log('Iniciando carga del módulo de Perfil Domiciliario');
 
     let domiciliarioActual = null;
@@ -15,24 +15,47 @@
         }
     }
 
-    function iniciarSesion(email, password) {
-        const usuarios = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-        const domiciliario = usuarios.find(u => u.email === email && u.password === password && u.rol === 'domiciliario');
+    async function validarCredencialesConAPI(user, password) {
+        try {
+            const response = await fetch('http://localhost:26209/api/usuarios', { // Cambia esta URL por la de tu API
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user, password })
+            });
+
+            if (response.ok) {
+                return await response.json(); // Devuelve los datos del domiciliario
+            } else {
+                console.warn('Credenciales incorrectas o error en la API');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error al validar credenciales con la API:', error);
+            return null;
+        }
+    }
+
+    async function iniciarSesion(user, password) {
+        const domiciliario = await validarCredencialesConAPI(user, password);
         if (domiciliario) {
             domiciliarioActual = domiciliario;
             localStorage.setItem('sesionDomiciliario', JSON.stringify(domiciliario));
             actualizarInterfaz();
+            console.log('Sesión iniciada y guardada en localStorage:', domiciliarioActual);
             return true;
+        } else {
+            alert('Credenciales incorrectas');
+            return false;
         }
-        return false;
     }
 
     function cerrarSesion() {
         domiciliarioActual = null;
         localStorage.removeItem('sesionDomiciliario');
         actualizarInterfaz();
-        // Redirigir al módulo de perfil domiciliario
-        window.dispatchEvent(new CustomEvent('redirigirAPerfilDomiciliario'));
+        console.log('Sesión cerrada y datos eliminados de localStorage');
     }
 
     function actualizarInterfaz() {
@@ -43,7 +66,7 @@
             loginContainer.style.display = 'none';
             perfilContainer.style.display = 'block';
             document.getElementById('nombre-domiciliario').textContent = domiciliarioActual.nombre;
-            document.getElementById('email-domiciliario').textContent = domiciliarioActual.email;
+            document.getElementById('email-domiciliario').textContent = domiciliarioActual.user;
             document.getElementById('estado-domiciliario').textContent = domiciliarioActual.estado || 'Disponible';
         } else {
             loginContainer.style.display = 'block';
@@ -52,15 +75,11 @@
     }
 
     function configurarEventListeners() {
-        document.getElementById('form-login-domiciliario').addEventListener('submit', (e) => {
+        document.getElementById('form-login-domiciliario').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email-domiciliario').value;
+            const user = document.getElementById('login-email-domiciliario').value;
             const password = document.getElementById('login-password-domiciliario').value;
-            if (iniciarSesion(email, password)) {
-                console.log('Sesión iniciada con éxito');
-            } else {
-                alert('Credenciales incorrectas');
-            }
+            await iniciarSesion(user, password);
         });
 
         document.getElementById('btn-cerrar-sesion-domiciliario').addEventListener('click', cerrarSesion);

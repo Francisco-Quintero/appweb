@@ -27,6 +27,6 @@ public class Domiciliario {
 
     @OneToOne
     @JoinColumn(name = "id_usuario")
-    private Persona persona;
+    private Usuario usuario;
 }
 

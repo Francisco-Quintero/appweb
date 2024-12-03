@@ -8,31 +8,27 @@
 
     function cargarDatosDesdeLocalStorage() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('usuariosSistema') || '[]');
-            usuarios = datosGuardados;
-            console.log('Datos de usuarios del sistema cargados desde localStorage');
-
             // Cargar la sesión del usuario si existe
             const sesionGuardada = localStorage.getItem('sesionUsuario');
             if (sesionGuardada) {
                 usuarioActual = JSON.parse(sesionGuardada);
                 actualizarInterfaz();
             }
-
-            // Cargar clientes desde datosGlobales
-            const datosGlobales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            clientes = datosGlobales.usuarios || [];
         } catch (error) {
             console.error('Error al cargar datos de usuarios del sistema desde localStorage:', error);
         }
     }
 
-    function guardarEnLocalStorage() {
+    async function cargarDatosDesdeAPI() {
         try {
-            localStorage.setItem('usuariosSistema', JSON.stringify(usuarios));
-            console.log('Datos de usuarios del sistema guardados en localStorage');
+            const response = await fetch('http://localhost:26209/api/usuarios');
+            if (!response.ok) {
+                throw new Error(`Error al obtener datos: ${response.statusText}`);
+            }
+            usuarios = await response.json();
+            console.log('Datos de inventario cargados desde la API:', usuarios);
         } catch (error) {
-            console.error('Error al guardar datos de usuarios del sistema en localStorage:', error);
+            console.error('Error al cargar datos desde la API:', error);
         }
     }
 
@@ -68,7 +64,7 @@
             rol: 'admin'
         };
         usuarios.push(nuevoUsuario);
-        guardarEnLocalStorage();
+       // guardarEnLocalStorage();
         codigoEnviado = null;
         return true;
     }
@@ -84,7 +80,7 @@
             activo: true
         };
         usuarios.push(nuevoDomiciliario);
-        guardarEnLocalStorage();
+        //guardarEnLocalStorage();
         actualizarListaUsuarios();
         return true;
     }
@@ -182,13 +178,13 @@
         info.className = 'usuario-info';
         
         const nombre = document.createElement('strong');
-        nombre.textContent = usuario.nombre;
+        nombre.textContent = usuario.persona.nombre;
         
-        const email = document.createElement('p');
-        email.textContent = usuario.email;
+        const user = document.createElement('p');
+        user.textContent = usuario.user;
         
         info.appendChild(nombre);
-        info.appendChild(email);
+        info.appendChild(user);
 
         // Agregar estado si es domiciliario
         if (usuario.rol === 'domiciliario') {
@@ -238,8 +234,8 @@
         const domiciliarioFields = document.querySelectorAll('.domiciliario-fields');
 
         title.textContent = 'Detalles del Usuario';
-        document.getElementById('modal-nombre').value = usuario.nombre;
-        document.getElementById('modal-email').value = usuario.email;
+        document.getElementById('modal-nombre').value = usuario.persona.nombre;
+        document.getElementById('modal-email').value = usuario.user;
 
         // Mostrar/ocultar campos específicos de domiciliario
         domiciliarioFields.forEach(field => {
@@ -247,7 +243,7 @@
         });
 
         if (usuario.rol === 'domiciliario') {
-            document.getElementById('modal-estado').value = usuario.estado || 'disponible';
+           // document.getElementById('modal-estado').value = usuario.estado || 'disponible';
             document.getElementById('modal-activo').checked = usuario.activo !== false;
         }
 
@@ -276,12 +272,12 @@
         const usuario = usuarios.find(u => u.id === id);
         if (!usuario) return;
 
-        usuario.nombre = document.getElementById('modal-nombre').value;
-        usuario.email = document.getElementById('modal-email').value;
+        usuario.persona.nombre = document.getElementById('modal-nombre').value;
+        usuario.user = document.getElementById('modal-email').value;
         usuario.estado = document.getElementById('modal-estado').value;
         usuario.activo = document.getElementById('modal-activo').checked;
 
-        guardarEnLocalStorage();
+       // guardarEnLocalStorage();
         actualizarListaUsuarios();
     }
 
@@ -289,7 +285,7 @@
         if (!confirm('¿Está seguro de eliminar este domiciliario?')) return;
 
         usuarios = usuarios.filter(u => u.id !== id);
-        guardarEnLocalStorage();
+        //guardarEnLocalStorage();
         actualizarListaUsuarios();
     }
 
@@ -426,19 +422,21 @@
         };
     }
 
-    function initUsuariosSistema() {
+    async function initUsuariosSistema() {
         console.log('Inicializando módulo de Usuarios del Sistema');
         if (typeof emailjs === 'undefined') {
             console.warn('EmailJS no está cargado. Esperando...');
             window.addEventListener('emailjsLoaded', initUsuariosSistema);
             return;
         }
+        await cargarDatosDesdeAPI();
         cargarDatosDesdeLocalStorage();
         configurarEventListeners();
         configurarModal();
         actualizarInterfaz();
         console.log('Módulo de Usuarios del Sistema cargado completamente');
     }
+
 
     // Inicializar el módulo cuando el DOM esté listo y EmailJS esté cargado
     if (document.readyState === 'loading') {
