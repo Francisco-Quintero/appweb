@@ -2,6 +2,7 @@
     console.log('Iniciando carga del módulo de Pedidos');
 
     let pedidos = [];
+<<<<<<< HEAD
 
         
     async function cargarDatosDesdeAPI() {
@@ -14,6 +15,19 @@
             console.log('Datos de pedidos cargados desde la API:', pedidos);
         } catch (error) {
             console.error('Error al cargar datos desde la API:', error);
+=======
+    const API_URL = 'http://localhost:26209/api/pedidos'; 
+
+    async function cargarProductosDesdeAPI() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`Error al obtener productos: ${response.statusText}`);
+            pedidos = await response.json();
+            console.log('pedidos cargados desde la API:', pedidos);
+            renderizarPedidos(); 
+        } catch (error) {
+            console.error('Error al cargar productos desde la API:', error);
+>>>>>>> d7da0e0da914bc4863cf567f4af8e2a47a6da84d
         }
     }
 
@@ -39,7 +53,6 @@
 
         pedidosLista.innerHTML = pedidosAMostrar.map(pedido => {
             const pedidoItems = pedido.items.map(item => {
-                const producto = inventario.find(i => i.idProducto === item.idProducto);
                 return `
                     <div class="pedido-item-detalle">
                         <span>${producto ? producto.nombreProducto : 'Producto no encontrado'} x ${item.cantidad}</span>

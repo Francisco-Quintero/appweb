@@ -33,6 +33,7 @@ public class Factura {
     @Column(name = "monto_total")
     private double total;
 
+
     @Column(name = "estado_Factura")
     private String estadoFactura;
 

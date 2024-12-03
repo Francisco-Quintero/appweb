@@ -32,7 +32,6 @@ public class Proveedor {
     @Column(name = "correo")
     private String correo;
 
-
     @Column(name = "frecuencia_abastecimiento")
     private int frecuenciaAbastecimiento;
 }

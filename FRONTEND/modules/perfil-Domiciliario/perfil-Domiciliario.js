@@ -1,4 +1,4 @@
-(function () {
+
     console.log('Iniciando carga del módulo de Perfil Domiciliario');
 
     let domiciliarioActual = null;
@@ -15,30 +15,34 @@
         }
     }
 
-    async function validarCredencialesConAPI(user, password) {
+    async function validarCredencialesConAPI(credenciales ) {
+    
         try {
-            const response = await fetch('http://localhost:26209/api/usuarios', { // Cambia esta URL por la de tu API
+            const response = await fetch('http://localhost:26209/api/usuarios/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user, password })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credenciales),
             });
-
+    
             if (response.ok) {
-                return await response.json(); // Devuelve los datos del domiciliario
+                const usuario = await response.json();
+                if (usuario.rol === "domiciliario") {
+                    alert("¡Autenticación exitosa!");
+                    console.log("Usuario autenticado:", usuario);
+                    return usuario;
+                } else {
+                    alert("El usuario no tiene el rol de domiciliario.");
+                }
             } else {
-                console.warn('Credenciales incorrectas o error en la API');
-                return null;
+                alert("Credenciales incorrectas.");
             }
         } catch (error) {
-            console.error('Error al validar credenciales con la API:', error);
-            return null;
+            console.error("Error al autenticar:", error);
         }
     }
 
-    async function iniciarSesion(user, password) {
-        const domiciliario = await validarCredencialesConAPI(user, password);
+    async function iniciarSesion(credenciales) {
+        const domiciliario = await validarCredencialesConAPI(credenciales);
         if (domiciliario) {
             domiciliarioActual = domiciliario;
             localStorage.setItem('sesionDomiciliario', JSON.stringify(domiciliario));
@@ -77,9 +81,13 @@
     function configurarEventListeners() {
         document.getElementById('form-login-domiciliario').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const user = document.getElementById('login-email-domiciliario').value;
-            const password = document.getElementById('login-password-domiciliario').value;
-            await iniciarSesion(user, password);
+           // const user = document.getElementById('login-email-domiciliario').value;
+            // const password = document.getElementById('login-password-domiciliario').value;
+            const credenciales = {
+                user: document.getElementById('login-email-domiciliario').value,
+                password: document.getElementById('login-password-domiciliario').value,
+            };
+            await iniciarSesion(credenciales);
         });
 
         document.getElementById('btn-cerrar-sesion-domiciliario').addEventListener('click', cerrarSesion);
@@ -104,4 +112,4 @@
     window.initPerfilDomiciliario = initPerfilDomiciliario;
     window.cerrarSesionDomiciliario = cerrarSesion;
     window.hayDomiciliarioLogueado = () => !!domiciliarioActual;
-})();
+

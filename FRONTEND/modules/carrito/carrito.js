@@ -44,15 +44,6 @@
         }
     }
 
-    function sincronizarConDatosGlobales() {
-        if (window.datosGlobales) {
-            carrito = Array.isArray(window.datosGlobales.carrito) ? window.datosGlobales.carrito : [];
-            pedidos = Array.isArray(window.datosGlobales.pedidosPendientes) ? window.datosGlobales.pedidosPendientes : [];
-            facturas = Array.isArray(window.datosGlobales.facturas) ? window.datosGlobales.facturas : [];
-            renderizarCarrito();
-            console.log('Datos del carrito sincronizados con datosGlobales');
-        }
-    }
 
     async function renderizarCarrito() {
         const carritoContainer = document.getElementById('carrito-items');
@@ -74,25 +65,25 @@
         carrito.forEach(item => {
             const itemElem = document.createElement('div');
             itemElem.className = 'carrito-item';
-            const subtotalItem = item.precioUnitario * item.cantidad;
+            const subtotalItem = item.producto.precioUnitario * item.cantidad;
             
             itemElem.innerHTML = `
-                <img src="${item.imagenProducto}" alt="${item.Nombre}" class="carrito-item-imagen">
+                <img src="${item.producto.imagenProducto}" alt="${item.producto.nombre}" class="carrito-item-imagen">
                 <div class="carrito-item-detalles">
-                    <div class="carrito-item-nombre">${item.Nombre}</div>
-                    <div class="carrito-item-precio">$${subtotalItem.toLocaleString()}</div>
+                    <div class="carrito-item-nombre">${item.producto.nombre}</div>
+                    <div class="carrito-item-precio">$${subtotalItem}</div>
                     <div class="carrito-item-precio-unitario">
-                        ${item.precioGramo ? `Gramo a $${item.precioGramo}` : ''}
+                        ${item.producto.cantidadMedida ? `Gramo a $${item.producto.cantidadMedida}` : ''}
                     </div>
                 </div>
                 <div class="carrito-item-controles">
-                    <button class="btn-cantidad" data-id="${item.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
+                    <button class="btn-cantidad" data-id="${item.producto.idProducto}" data-action="restar" aria-label="Disminuir cantidad">-</button>
                     <input type="number" value="${item.cantidad}" 
                            class="input-cantidad" 
-                           data-id="${item.idProducto}"
+                           data-id="${item.producto.idProducto}"
                            aria-label="Cantidad del producto">
-                    <button class="btn-cantidad" data-id="${item.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
-                    <button id="btnEliminar" class="btn-eliminar" data-id="${item.idProducto}" aria-label="Eliminar del carrito">
+                    <button class="btn-cantidad" data-id="${item.producto.idProducto}" data-action="sumar" aria-label="Aumentar cantidad">+</button>
+                    <button id="btnEliminar" class="btn-eliminar" data-id="${item.producto.idProducto}" aria-label="Eliminar del carrito">
                         <i data-lucide="trash-2"></i>
                     </button>
                 </div>  
@@ -137,7 +128,7 @@
     }
 
     function actualizarCantidad(productoId, operacion) {
-        const itemIndex = carrito.findIndex(item => item.idProducto === productoId);
+        const itemIndex = carrito.findIndex(item => item.producto.idProducto === productoId);
         if (itemIndex !== -1) {
             if (operacion === 'sumar') {
                 carrito[itemIndex].cantidad++;
@@ -184,12 +175,12 @@
     function actualizarCarrito() {
         guardarEnLocalStorage();
         actualizarCartCount();
-        renderizarCarrito().then(() => {
-            if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
-                window.datosGlobales.actualizarCarrito(carrito);
-            }
-            console.log('Carrito actualizado:', carrito);
-        });
+        renderizarCarrito(); //.then(() => {
+        //     if (window.datosGlobales && typeof window.datosGlobales.actualizarCarrito === 'function') {
+        //         window.datosGlobales.actualizarCarrito(carrito);
+        //     }
+        //     console.log('Carrito actualizado:', carrito);
+        // });
     }
 
     function actualizarCartCount() {
@@ -357,13 +348,6 @@
         cargarDatosDesdeLocalStorage();
         renderizarCarrito().then(() => {
             configurarEventListeners();
-            
-            window.addEventListener('datosGlobalesListo', sincronizarConDatosGlobales);
-            
-            if (window.datosGlobales) {
-                sincronizarConDatosGlobales();
-            }
-            
             console.log('Módulo de carrito cargado completamente');
         });
     }
@@ -373,8 +357,6 @@
     } else {
         initCarrito();
     }
-
-    window.addEventListener('load', renderizarCarrito);
 
     // Exponer funciones necesarias globalmente
     window.generarPedido = generarPedido;

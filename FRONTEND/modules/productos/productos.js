@@ -40,18 +40,26 @@
 
     async function eliminarProductoEnAPI(idProducto) {
         try {
+            // Mostrar mensaje de confirmación
+            const confirmacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
+            if (!confirmacion) {
+                console.log("Eliminación cancelada por el usuario.");
+                return; // Salir si el usuario cancela
+            }
+    
             const response = await fetch(`${API_URL}/${idProducto}`, {
                 method: 'DELETE',
             });
-
+    
             if (!response.ok) throw new Error(`Error al eliminar producto: ${response.statusText}`);
-
-            console.log('Producto eliminado correctamente');
+    
+            console.log("Producto eliminado correctamente");
             cargarProductosDesdeAPI(); // Recargar productos después de eliminar.
         } catch (error) {
-            console.error('Error al eliminar producto en la API:', error);
+            console.error("Error al eliminar producto en la API:", error);
         }
     }
+    
 
     function cargarProductos() {
         const cuerpoTabla = document.getElementById('cuerpoTablaProductos');
