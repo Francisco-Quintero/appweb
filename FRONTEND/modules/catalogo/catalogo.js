@@ -135,7 +135,7 @@
     }
 
     function agregarAlCarrito(productoId) {
-        const producto = inventario.producto.find(p => p.idProducto === productoId);
+        const producto = inventario.find(i => i.producto.idProducto === productoId);
         if (producto) {
             const itemExistente = carrito.find(item => item.idProducto === productoId);
             if (itemExistente) {
@@ -197,6 +197,4 @@
     } else {
         initCatalogo();
     }
-
-    window.addEventListener('load', renderizarCatalogo);
 })();

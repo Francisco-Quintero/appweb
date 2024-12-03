@@ -112,16 +112,6 @@ async function inicializarDatos() {
         }
     }
 
-    function cargarProveedores() {
-        console.log('Cargando proveedores');
-        const datalistProveedores = document.getElementById('listaProveedores');
-        if (datalistProveedores) {
-            datalistProveedores.innerHTML = proveedores.map(proveedor => 
-                `<option value="${proveedor.nombreEmpresa} - ${proveedor.nombreContacto}" data-id="${proveedor.idProveedor}">`
-            ).join('');
-        }
-    }
-
     function mostrarListaProveedores() {
         const proveedorInput = document.getElementById('proveedor');
         const datalistProveedores = document.getElementById('listaProveedores');
@@ -135,7 +125,6 @@ async function inicializarDatos() {
         // await cargarDatosDesdeAPI();
         await inicializarDatos();
         cargarCompras();
-        //cargarProveedores();
         configurarEventListeners();
         console.log('Módulo de compras cargado completamente');
     }
@@ -300,7 +289,7 @@ async function inicializarDatos() {
         const compra = {
             idSuministro: listaSuministros.length + 1,
             fechaSuministro: new Date().toISOString().split('T')[0],
-            proveedor: proveedorSeleccionado,
+            proveedor: proveedor,
             productos: suministros.map(suministro => ({
                 ...suministro,
                 idProducto: suministro.idProducto 

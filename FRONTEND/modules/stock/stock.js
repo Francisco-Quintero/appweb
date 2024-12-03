@@ -32,7 +32,6 @@
                 <td>${item.producto.nombre}</td>
                 <td>${item.stock}</td>
                 <td>${item.puntoReorden}</td>
-                <td>${item.producto.precioUnitario}</td>
                 <td>${item.fechaActualizacion}</td>
                 <td>${item.estado}</td>
                 <td>

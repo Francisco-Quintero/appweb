@@ -2,30 +2,19 @@
     console.log('Iniciando carga del módulo de Pedidos');
 
     let pedidos = [];
-    let inventario = [];
+    const API_URL = 'http://localhost:26209/api/pedidos'; 
 
-    function cargarDatosDesdeLocalStorage() {
+    async function cargarProductosDesdeAPI() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            pedidos = datosGuardados.pedidosPendientes || [];
-            inventario = datosGuardados.inventario || [];
-            console.log('Datos de pedidos cargados desde localStorage');
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`Error al obtener productos: ${response.statusText}`);
+            pedidos = await response.json();
+            console.log('pedidos cargados desde la API:', pedidos);
+            renderizarPedidos(); 
         } catch (error) {
-            console.error('Error al cargar datos de pedidos desde localStorage:', error);
+            console.error('Error al cargar productos desde la API:', error);
         }
     }
-
-    function guardarEnLocalStorage() {
-        try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.pedidosPendientes = pedidos;
-            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
-            console.log('Datos de pedidos guardados en localStorage');
-        } catch (error) {
-            console.error('Error al guardar datos de pedidos en localStorage:', error);
-        }
-    }
-
 
     function renderizarPedidos(pedidosFiltrados = null) {
         const pedidosLista = document.getElementById('pedidos-lista');
@@ -50,7 +39,6 @@
 
         pedidosLista.innerHTML = pedidosAMostrar.map(pedido => {
             const pedidoItems = pedido.items.map(item => {
-                const producto = inventario.find(i => i.idProducto === item.idProducto);
                 return `
                     <div class="pedido-item-detalle">
                         <span>${producto ? producto.nombreProducto : 'Producto no encontrado'} x ${item.cantidad}</span>
