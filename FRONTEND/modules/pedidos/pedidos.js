@@ -2,30 +2,20 @@
     console.log('Iniciando carga del módulo de Pedidos');
 
     let pedidos = [];
-    let inventario = [];
 
-    function cargarDatosDesdeLocalStorage() {
+        
+    async function cargarDatosDesdeAPI() {
         try {
-            const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            pedidos = datosGuardados.pedidosPendientes || [];
-            inventario = datosGuardados.inventario || [];
-            console.log('Datos de pedidos cargados desde localStorage');
+            const response = await fetch('http://localhost:26209/api/pedidos');
+            if (!response.ok) {
+                throw new Error(`Error al obtener datos: ${response.statusText}`);
+            }
+            pedidos = await response.json();
+            console.log('Datos de pedidos cargados desde la API:', pedidos);
         } catch (error) {
-            console.error('Error al cargar datos de pedidos desde localStorage:', error);
+            console.error('Error al cargar datos desde la API:', error);
         }
     }
-
-    function guardarEnLocalStorage() {
-        try {
-            const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-            datosActuales.pedidosPendientes = pedidos;
-            localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
-            console.log('Datos de pedidos guardados en localStorage');
-        } catch (error) {
-            console.error('Error al guardar datos de pedidos en localStorage:', error);
-        }
-    }
-
 
     function renderizarPedidos(pedidosFiltrados = null) {
         const pedidosLista = document.getElementById('pedidos-lista');
@@ -46,7 +36,6 @@
 
         pedidosLista.style.display = 'block';
         pedidosEmpty.style.display = 'none';
-        console.log('Pedidos:', pedidosAMostrar);
 
         pedidosLista.innerHTML = pedidosAMostrar.map(pedido => {
             const pedidoItems = pedido.items.map(item => {

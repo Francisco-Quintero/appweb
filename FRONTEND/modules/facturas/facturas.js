@@ -2,19 +2,6 @@
     console.log('Iniciando carga del módulo de Facturas');
 
     let facturas = [];
-   // let pedidos = [];
-
-    // function cargarDatosDesdeLocalStorage() {
-    //     try {
-    //         const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
-    //         facturas = datosGuardados.facturas || [];
-    //         pedidos = datosGuardados.pedidosPendientes || [];
-    //         console.log('Datos de facturas cargados desde localStorage');
-    //     } catch (error) {
-    //         console.error('Error al cargar datos de facturas desde localStorage:', error);
-    //     }
-    // }
-
     
     async function cargarDatosDesdeAPI() {
         try {

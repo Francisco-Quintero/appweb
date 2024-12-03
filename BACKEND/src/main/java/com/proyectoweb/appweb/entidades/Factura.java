@@ -36,9 +36,9 @@ public class Factura {
     @Column(name = "estado_Factura")
     private String estadoFactura;
 
-    // @OneToMany
-    // @Column(name = "detalle")
-    // private List<DetalleProducto> detalles;
+    @OneToMany
+    @Column(name = "detalle")
+    private List<DetalleProducto> detalles;
 
     @OneToOne
     @JoinColumn(name = "id_pedido")
