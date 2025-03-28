@@ -35,6 +35,12 @@ public class ProductoControlador {
         return productoServicio.guardar(producto);
     }
 
+    @PutMapping("/{id}")
+    public Producto actualizar(@PathVariable Long id, @RequestBody Producto productoActualizado) {
+    return productoServicio.actualizar(id, productoActualizado);
+    }
+
+
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         productoServicio.eliminar(id);

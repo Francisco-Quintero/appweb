@@ -25,6 +25,24 @@ public class ProductoServicio {
         return productoRepositorio.save(producto);
     }
 
+    public Producto actualizar(Long id, Producto productoActualizado) {
+        java.util.Optional<Producto> productoExistente = productoRepositorio.findById(id);
+        
+        if (productoExistente.isPresent()) {
+            Producto producto = productoExistente.get();
+            producto.setNombre(productoActualizado.getNombre());
+            producto.setPrecioUnitario(productoActualizado.getPrecioUnitario());
+            producto.setDescripcion(productoActualizado.getDescripcion());
+            producto.setUnidadMedida(productoActualizado.getUnidadMedida());
+            producto.setCantidadMedida(productoActualizado.getCantidadMedida());
+            producto.setCategoria(productoActualizado.getCategoria());
+            producto.setImagenProducto(productoActualizado.getImagenProducto());
+            return productoRepositorio.save(producto);
+        } else {
+            throw new RuntimeException("Producto no encontrado con ID: " + id);
+        }
+    }
+
     public void eliminar(Long id) {
         productoRepositorio.deleteById(id);
     }
