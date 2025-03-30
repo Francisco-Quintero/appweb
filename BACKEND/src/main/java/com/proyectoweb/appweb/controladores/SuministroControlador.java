@@ -1,6 +1,8 @@
 package com.proyectoweb.appweb.controladores;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.proyectoweb.appweb.entidades.Suministro;
 import com.proyectoweb.appweb.servicios.SuministroServicio;
@@ -14,6 +16,12 @@ public class SuministroControlador {
     @Autowired
     private SuministroServicio suministroServicio;
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<Suministro>> guardarSuministros(@RequestBody List<Suministro> suministros) {
+        List<Suministro> suministrosGuardados = suministroServicio.guardarTodos(suministros);
+        return ResponseEntity.status(HttpStatus.CREATED).body(suministrosGuardados);
+    }
+
     @GetMapping
     public List<Suministro> listarTodos() {
         return suministroServicio.listarTodos();
@@ -23,6 +31,7 @@ public class SuministroControlador {
     public Suministro obtenerPorId(@PathVariable Long id) {
         return suministroServicio.obtenerPorId(id);
     }
+
 
     @PostMapping
     public Suministro guardar(@RequestBody Suministro suministro) {

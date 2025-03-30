@@ -40,7 +40,7 @@
 
     async function eliminarProveedor(id) {
         try {
-            const confirmacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
+            const confirmacion = confirm("¿Estás seguro de que deseas eliminar este proveedor?");
             if (!confirmacion) {
                 console.log("Eliminación cancelada por el usuario.");
                 return; // Salir si el usuario cancela
@@ -145,15 +145,9 @@
 
         if (!validarFormulario()) return;
 
-        let id = document.getElementById('idProveedor')?.value;
-
-        // Si no hay un ID, generar uno único
-        if (!id) {
-            id = proveedor.length + 1; // Genera un ID único basado en la marca de tiempo
-        }
-
+        const id = document.getElementById('idProveedor')?.value;
         const proveedor = {
-            idProveedor: parseInt(id),
+            idProveedor: id ? parseInt(id) : null,
             nombreEmpresa: document.getElementById('nombreEmpresa').value || '',
             nombreContacto: document.getElementById('nombreContacto').value || '',
             correo: document.getElementById('correoProveedor').value || '',

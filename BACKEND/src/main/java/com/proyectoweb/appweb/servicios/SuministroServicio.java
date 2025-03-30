@@ -24,6 +24,10 @@ public class SuministroServicio {
     public Suministro guardar(Suministro suministro) {
         return suministroRepositorio.save(suministro);
     }
+    
+    public List<Suministro> guardarTodos(List<Suministro> suministros) {
+        return suministroRepositorio.saveAll(suministros);
+    }
 
     public void eliminar(Long id) {
         suministroRepositorio.deleteById(id);

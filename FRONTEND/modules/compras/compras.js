@@ -1,52 +1,93 @@
-(function() {
-    
+(function () {
+
     console.log('Iniciando carga del módulo de compras');
     const apiUrlProveedores = "http://localhost:26209/api/proveedores";
     const apiUrlProductos = "http://localhost:26209/api/productos";
-    const apiUrlCompras = "http://localhost:26209/api/suministros";
+    const apiUrlSuminnistros = "http://localhost:26209/api/suministros";
     const apiUrlInventario = "http://localhost:26209/api/inventarios";
     let indiceEditando = null;
     let listaSuministros = [];
     let suministros = [];
     let listaProductos = [];
-    let listaProveedores  = [];
+    let listaProveedores = [];
     let listaInventario = [];
 
-    async function fetchProveedores() {
-        const response = await fetch(apiUrlProveedores);
-        listaProveedores = await response.json();
-    }
-    
-    async function fetchInventario() {
-        const response = await fetch(apiUrlInventario);
-        listaInventario = await response.json();
+    // async function cargarSuministrosAPI() {
+    //     try {
+    //         const response = await fetch(apiUrlSuminnistros);
+    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
+    //         listaSuministros = await response.json();
+    //         //cargarSuministros(); 
+    //     } catch (error) {
+    //         console.error('Error al cargar suministros desde la API:', error);
+    //     }
+    // }
+
+    // async function cargarProveedoresAPI() {
+    //     try {
+    //         const response = await fetch(apiUrlProveedores);
+    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
+    //         listaProveedores = await response.json();
+    //         //cargarProveedores(); 
+    //     } catch (error) {
+    //         console.error('Error al cargar proveedores desde la API:', error);
+    //     }
+    // }
+
+    // async function cargarInventarioAPI() {
+    //     try {
+    //         const response = await fetch(apiUrlInventario);
+    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
+    //         listaInventario = await response.json();
+    //         //cargarInventario(); 
+    //     } catch (error) {
+    //         console.error('Error al cargar inventarios desde la API:', error);
+    //     }
+    // }
+
+    // async function cargarProductosAPI() {
+    //     try {
+    //         const response = await fetch(apiUrlProductos);
+    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
+    //         listaProductos = await response.json();
+    //         //cargarProductos(); 
+    //     } catch (error) {
+    //         console.error('Error al cargar productos desde la API:', error);
+    //     }
+    // }
+
+    async function cargarDatosDesdeAPI(apiUrl, listaDestino, mensajeError) {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`Error al obtener datos: ${response.statusText}`);
+            const datos = await response.json();
+            listaDestino.length = 0; // Limpia la lista antes de llenarla
+            listaDestino.push(...datos); // Agrega los nuevos datos
+        } catch (error) {
+            console.error(mensajeError || 'Error al cargar datos desde la API:', error);
+        }
     }
 
-    async function fetchProductos() {
-        const response = await fetch(apiUrlProductos);
-        listaProductos = await response.json();
+    async function inicializarDatos() {
+        try {
+            await Promise.all([
+                cargarDatosDesdeAPI(apiUrlProveedores, listaProveedores, 'Error al cargar proveedores'),
+                cargarDatosDesdeAPI(apiUrlInventario, listaInventario, 'Error al cargar inventarios'),
+                cargarDatosDesdeAPI(apiUrlProductos, listaProductos, 'Error al cargar productos'),
+                cargarDatosDesdeAPI(apiUrlSuminnistros, listaSuministros, 'Error al cargar suministros')
+            ]);
+            console.log("Datos iniciales cargados.");
+        } catch (error) {
+            console.error("Error al cargar los datos:", error);
+        }
     }
 
-    async function fetchCompras() {
-        const response = await fetch(apiUrlCompras);
-        listaSuministros = await response.json();
-    }
 
-async function inicializarDatos() {
-    try {
-        await Promise.all([fetchProveedores(),fetchInventario(), fetchProductos(), fetchCompras()]);
-        console.log("Datos iniciales cargados.");
-    } catch (error) {
-        console.error("Error al cargar los datos:", error);
-    }
-}
-
-
-    function cargarCompras() { 
+    function cargarCompras() {
         console.log('Cargando compras en la tabla');
         const cuerpoTabla = document.getElementById('cuerpoTablaCompras');
         const comprasEmpty = document.getElementById('compras-empty');
-        
+
         if (!cuerpoTabla) {
             console.error('No se encontró el elemento cuerpoTablaCompras');
             return;
@@ -86,11 +127,11 @@ async function inicializarDatos() {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-        
+
         console.log('Compras cargadas en la tabla');
     }
 
-    function configurarEventListeners(){
+    function configurarEventListeners() {
         document.getElementById('btnNuevaCompra')?.addEventListener('click', mostrarFormularioCompra);
         //document.getElementById('busquedaCompra')?.addEventListener('input', buscarCompras);
         document.getElementById('btnCerrarModal')?.addEventListener('click', cerrarModal);
@@ -101,7 +142,7 @@ async function inicializarDatos() {
             const resultados = buscarProductos(e.target.value);
             mostrarResultadosBusqueda(resultados);
         });
-        
+
         const proveedorInput = document.getElementById('proveedor');
         if (proveedorInput) {
             proveedorInput.addEventListener('focus', mostrarListaProveedores);
@@ -151,7 +192,7 @@ async function inicializarDatos() {
 
     function buscarProductos(termino) {
         console.log('Buscando productos:', termino);
-        return listaProductos.filter(producto => 
+        return listaProductos.filter(producto =>
             producto.nombre.toLowerCase().includes(termino.toLowerCase()) ||
             producto.descripcion.toLowerCase().includes(termino.toLowerCase())
         );
@@ -180,28 +221,28 @@ async function inicializarDatos() {
         const nombre = document.getElementById('busquedaProducto').value;
         const cantidad = parseInt(document.getElementById('cantidad').value);
         const precioCompraTotal = parseFloat(document.getElementById('precioCompraTotal').value);
-    
+
         if (!nombre || isNaN(cantidad) || isNaN(precioCompraTotal) || cantidad <= 0 || precioCompraTotal <= 0) {
             alert('Por favor, complete todos los campos correctamente');
             return;
         }
-    
+
         const producto = listaProductos.find(p => p.nombre === nombre);
         if (!producto) {
             alert('Producto no encontrado');
             return;
         }
-    
+
         function redondearArriba(precio) {
-            const factor = Math.pow(10, Math.floor(Math.log10(precio)) - 1); 
-            return Math.ceil(precio / factor) * factor; 
+            const factor = Math.pow(10, Math.floor(Math.log10(precio)) - 1);
+            return Math.ceil(precio / factor) * factor;
         }
-        
+
         const precioUnitarioFinal = precioCompraTotal / cantidad;
         const precioRedondeado = redondearArriba(precioUnitarioFinal);
-    
+
         const nuevoProducto = {
-            idProducto: producto.idProducto, 
+            idProducto: producto.idProducto,
             nombre: producto.nombre,
             cantidadMedida: producto.cantidadMedida,
             unidadMedida: producto.unidadMedida,
@@ -209,7 +250,7 @@ async function inicializarDatos() {
             precioCompraTotal: precioCompraTotal,
             precioUnitarioFinal: precioRedondeado
         };
-    
+
         if (indiceEditando !== null) {
             suministros[indiceEditando] = nuevoProducto;
             indiceEditando = null;
@@ -269,56 +310,87 @@ async function inicializarDatos() {
         document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
     }
 
+    async function guardarSuministroEnAPI(suministro) {
+        try {
+            const method = suministro.idSuministro ? 'PUT' : 'POST';
+            const endpoint = suministro.idSuministro ? `${apiUrlSuminnistros}/${suministro.idSuministro}` : apiUrlSuminnistros;
+    
+            const response = await fetch(endpoint, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(suministro)
+            });
+    
+            if (!response.ok) throw new Error(`Error al guardar suministro: ${response.statusText}`);
+            cargarDatosDesdeAPI(apiUrlSuminnistros, listaSuministros, 'Error al cargar suministros'); // Recargar productos después de guardar.
+        } catch (error) {
+            console.error('Error al guardar suministro en la API:', error);
+            alert('Hubo un error al guardar el suministro. Por favor, intenta de nuevo.');
+        }
+    }
+    
+    async function guardarSuministrosBatch(suministros) {
+        try {
+            const response = await fetch('http://localhost:26209/api/suministros/batch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(suministros)
+            });
+    
+            if (!response.ok) throw new Error(`Error al guardar suministros: ${response.statusText}`);
+    
+            console.log('Suministros guardados correctamente');
+            alert('Suministros guardados con éxito');
+        } catch (error) {
+            console.error('Error al guardar suministros en batch:', error);
+            alert('Hubo un error al guardar los suministros. Por favor, intenta de nuevo.');
+        }
+    }
+
     function guardarCompra() {
         console.log('Guardando compra');
         const proveedorInput = document.getElementById('proveedor');
         const proveedorSeleccionado = proveedorInput.value;
-        const observaciones = document.getElementById('observaciones').value;
     
         if (!proveedorSeleccionado || suministros.length === 0) {
             alert('Por favor, seleccione un proveedor y agregue al menos un producto');
             return;
         }
     
+        // Buscar el proveedor seleccionado por su nombre
         const proveedor = listaProveedores.find(p => `${p.nombreEmpresa} - ${p.nombreContacto}` === proveedorSeleccionado);
         if (!proveedor) {
             alert('Proveedor no encontrado');
             return;
         }
     
-        const compra = {
-            idSuministro: listaSuministros.length + 1,
+        // Crear un array de suministros con solo los IDs necesarios
+        const listaSuministros = suministros.map(producto => ({
             fechaSuministro: new Date().toISOString().split('T')[0],
-            proveedor: proveedor,
-            productos: suministros.map(suministro => ({
-                ...suministro,
-                idProducto: suministro.idProducto 
-            })),
-            precioCompra: parseFloat(document.getElementById('total').textContent.slice(1)),
-            estado: 'Pendiente',
-            cantidad: suministros.length
-            //observaciones: observaciones
-        };
+            proveedor: { idProveedor: proveedor.idProveedor }, // Solo el ID del proveedor
+            producto: { idProducto: producto.idProducto }, // Solo el ID del producto
+            precioCompra: producto.precioCompraTotal,
+            cantidad: producto.cantidad
+        }));
     
-        listaSuministros.push(compra);
+        // Enviar los suministros al backend en batch
+        guardarSuministrosBatch(listaSuministros);
+    
+        // Actualizar la frecuencia del proveedor
         incrementarComprasProveedor(proveedor);
-        
-        // Actualizar inventario para cada producto
-        // listaSuministros.producto.forEach(producto => {
-        //     actualizarInventario(producto);
-        // });
-        //guardar con una peticion
+    
+        // Recargar la tabla de compras y cerrar el formulario
         cargarCompras();
         cerrarFormularioCompra();
         alert('Compra guardada con éxito');
-        }
+    }
 
-    
+
     function actualizarInventario(producto) {
         console.log('Actualizando inventario para:', producto);
-        
-        let inventarioExistente = listaInventario.find(item => 
-            (item.idProducto && item.idProducto === producto.idProducto) || 
+
+        let inventarioExistente = listaInventario.find(item =>
+            (item.idProducto && item.idProducto === producto.idProducto) ||
             (item.producto.nombre && item.producto.nombre.toLowerCase() === producto.nombre.toLowerCase())
         );
 
@@ -349,17 +421,17 @@ async function inicializarDatos() {
             console.error('Producto no encontrado en la lista de productos:', producto.idProducto);
         }
     }
-    
+
     async function incrementarComprasProveedor(proveedor) {
         try {
             // Incrementar la frecuencia localmente
             proveedor.frecuenciaAbastecimiento = (proveedor.frecuenciaAbastecimiento || 0) + 1;
-    
+
             // Construir el cuerpo de la petición
             const body = {
                 frecuenciaAbastecimiento: proveedor.frecuenciaAbastecimiento
             };
-    
+
             const response = await fetch(`/api/proveedores/${proveedor.idProveedor}`, {
                 method: 'PATCH',
                 headers: {
@@ -367,23 +439,23 @@ async function inicializarDatos() {
                 },
                 body: JSON.stringify(body)
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Error al actualizar el proveedor: ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             const index = listaProveedores.findIndex(p => p.idProveedor == proveedor.idProveedor);
             if (index !== -1) {
-                listaProveedores[index] = data; 
+                listaProveedores[index] = data;
             }
-    
+
             console.log('Proveedor actualizado correctamente:', data);
         } catch (error) {
             console.error('Error al actualizar el proveedor:', error);
         }
     }
-    
+
 
     // function buscarCompras() {
     //     console.log('Buscando compras');
@@ -393,7 +465,7 @@ async function inicializarDatos() {
     //         c.fechaSuministro.includes(termino) ||
     //         c.estado.toLowerCase().includes(termino)
     //     );
-        
+
     //     const cuerpoTabla = document.getElementById('cuerpoTablaCompras');
     //     cuerpoTabla.innerHTML = comprasFiltradas.map(compra => `
     //         <tr>
@@ -455,7 +527,7 @@ async function inicializarDatos() {
 
     function buscarProveedor(termino) {
         console.log('Buscando proveedor:', termino);
-        return listaProveedores.filter(proveedor => 
+        return listaProveedores.filter(proveedor =>
             `${proveedor.nombreEmpresa} ${proveedor.nombreContacto}`.toLowerCase().includes(termino.toLowerCase())
         );
     }
@@ -463,7 +535,7 @@ async function inicializarDatos() {
     function mostrarResultadosProveedores(resultados) {
         const datalistProveedores = document.getElementById('listaProveedores');
         if (datalistProveedores) {
-            datalistProveedores.innerHTML = resultados.map(proveedor => 
+            datalistProveedores.innerHTML = resultados.map(proveedor =>
                 `<option value="${proveedor.nombreEmpresa} - ${proveedor.nombreContacto}" data-id="${proveedor.idProveedor}">`
             ).join('');
         }

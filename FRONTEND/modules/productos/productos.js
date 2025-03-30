@@ -23,10 +23,16 @@
             const method = producto.idProducto ? 'PUT' : 'POST';
             const endpoint = producto.idProducto ? `${API_URL}/${producto.idProducto}` : API_URL;
     
+            // Crear una copia del objeto producto sin el campo idProducto si es un POST
+            const productoParaEnviar = { ...producto };
+            if (!producto.idProducto) {
+                delete productoParaEnviar.idProducto; // Eliminar idProducto para creación
+            }
+    
             const response = await fetch(endpoint, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(producto)
+                body: JSON.stringify(productoParaEnviar)
             });
     
             if (!response.ok) throw new Error(`Error al guardar producto: ${response.statusText}`);
@@ -109,6 +115,7 @@
         e.preventDefault();
     
         // Obtener los valores del formulario
+        const idProducto = document.getElementById('idProducto').value || null;
         const nombre = document.getElementById('nombreProducto').value.trim();
         const descripcion = document.getElementById('descripcionProducto').value.trim();
         const categoria = document.getElementById('categoriaProducto').value.trim();
@@ -131,6 +138,7 @@
     
         // Crear el objeto producto con el formato correcto
         const producto = {
+            idProducto: idProducto,
             nombre: nombre,
             descripcion: descripcion,
             precioUnitario: 2000, // Asumiendo un valor fijo por ahora
