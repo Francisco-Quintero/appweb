@@ -3,6 +3,7 @@
 
     let productos = [];
 
+
     const API_URL = 'http://localhost:26209/api/productos'; 
 
     async function cargarProductosDesdeAPI() {
@@ -103,6 +104,7 @@
 
         cuerpoTabla.innerHTML = contenidoTabla;
     }
+    
     function manejarEnvioFormulario(e) {
         e.preventDefault();
     

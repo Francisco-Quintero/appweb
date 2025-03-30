@@ -18,7 +18,7 @@ import lombok.Setter;
 public class Domiciliario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_domiciliario")
     private Long idDomiciliario;
 

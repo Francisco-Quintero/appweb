@@ -1,0 +1,239 @@
+[33mcommit 8e1b0ec45bab9bc156fc63575bbc59d1b47d5fb0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Fri Mar 28 00:52:05 2025 -0500
+
+    nueva base de datos
+
+[33mcommit 02ad54c2d106cdf9a08a8c8887d26b0cf4161114[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Fri Mar 28 00:51:17 2025 -0500
+
+    vulnerabilidad elimina
+
+[33mcommit 1e824be8395c1460a5b8f0e1728a94aafa1abc60[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Fri Mar 28 00:25:37 2025 -0500
+
+    Creacion automatica de la base de datos
+
+[33mcommit ec95776dd8cf79282774bf5097fb45845c0ad8c1[m
+Merge: 0df1044 ae4b7c5
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Thu Mar 27 23:53:43 2025 -0500
+
+    Merge branch 'main' of https://github.com/Francisco-Quintero/appweb
+
+[33mcommit 0df10448b088e9df6164f1f4bf27b7da92e9cb0e[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Thu Mar 27 23:53:30 2025 -0500
+
+    history
+
+[33mcommit ae4b7c5cc24fa5a2f81cc60b345adb168d28c37e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Thu Mar 27 23:49:04 2025 -0500
+
+    Nueva Base
+
+[33mcommit e55458855978751dfd1139d88688a88ee587c884[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Thu Mar 27 21:17:54 2025 -0500
+
+    elimine el history
+
+[33mcommit d108d3dc02bf5386b5cb845849764c298f5b3487[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Dec 3 17:46:13 2024 -0500
+
+    detalles para pedido
+
+[33mcommit 43185539ee5130a1a1d508661e158ef40d2a9bb6[m
+Merge: 2dfcd94 d7da0e0
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Dec 3 17:44:56 2024 -0500
+
+    Merge branch 'main' of https://github.com/Francisco-Quintero/appweb
+
+[33mcommit 2dfcd9422f051e30c4ab7628f8980e2dbd7d32ac[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Dec 3 17:41:32 2024 -0500
+
+    Detalle de producto
+
+[33mcommit d7da0e0da914bc4863cf567f4af8e2a47a6da84d[m
+Author: EstebanRodri22 <estebandavidrodriguez.23@gmai.com>
+Date:   Tue Dec 3 17:23:47 2024 -0500
+
+    compras arreglado, y carrito
+
+[33mcommit b07b729bac227af9b22efe1e87a8b9f79b4b5157[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Dec 3 09:42:10 2024 -0500
+
+    Modulo de Factura funcional. Ya carga la factura
+
+[33mcommit e198a27356081e34f17befa550a31e94e2ecbdbf[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Dec 3 00:16:29 2024 -0500
+
+    modulo de productos funcionales
+
+[33mcommit e66a79a4bad459f90c30f8eba21f7b474ef93315[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Thu Nov 28 09:14:14 2024 -0500
+
+    programa casi funcional
+
+[33mcommit 2169b59fc947985963563fbc6af1331ab96cf425[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 26 21:45:46 2024 -0500
+
+    medio funcional todo el frontend
+
+[33mcommit 07c7d248c796e341c70ddd791d0790e3de9b29a9[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Mon Nov 25 23:18:58 2024 -0500
+
+    modulo de proveedores con validaciones
+
+[33mcommit 5999a65a9ab81a0ff347ee7586d70bb4594547df[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Mon Nov 25 15:53:22 2024 -0500
+
+    ya funciona los usuarios del sistema, y los domiciliarios
+
+[33mcommit dd9942763fef63c10a5c9bd64ebb202e1dfdac89[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sun Nov 24 22:04:46 2024 -0500
+
+    modulos de ventas y asignacion de pedidos listos. faltan validaciones en todos los modulos y algunos modulos por funcionar para el domiciliario
+
+[33mcommit 69f2903252e000da8b1c92eca75e10f1953da0b2[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sat Nov 23 21:38:11 2024 -0500
+
+    creacion de usuarios para el administrador funcional pero con unos errores que no lo estorban
+
+[33mcommit 9085d248eb09780083ca04c474cd049d66941931[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Thu Nov 21 14:41:46 2024 -0500
+
+    ya carga el catalogo dinamicamente desde el modulo stock
+
+[33mcommit 5e97bcfc7587559160577c2c9f5f353eb0b32afd[m
+Merge: c76c965 f51f37a
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Thu Nov 21 09:21:38 2024 -0500
+
+    Merge branch 'main' of https://github.com/Francisco-Quintero/appweb
+
+[33mcommit c76c9653bbc9771f541a630eecc632f24af6a10f[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Thu Nov 21 09:20:41 2024 -0500
+
+    stock funcional
+
+[33mcommit f51f37a6299ccb22425faa8ec0e65e4eba3482e7[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Thu Nov 21 08:27:17 2024 -0500
+
+    Ultimas modificaciones del Back y Endpoints funcionales
+
+[33mcommit 904636068e3753a5cf1f969b14c7a2d58bd92988[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Thu Nov 21 00:40:58 2024 -0500
+
+    agregue la funcionalidad de datos globales para las compras
+
+[33mcommit 578c41d4a209cb8dbcfa71213216c07f2fd0ca7c[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Nov 19 23:11:02 2024 -0500
+
+    Actualización de entidades con referencias @Column y @Table
+
+[33mcommit 35a5f46fa8fc08685a31cdd6cbfae5692e1356ef[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 15:33:40 2024 -0500
+
+    mejorando vista de la tienda
+
+[33mcommit bd23727709e547cb664d738a399f4f6066ea8717[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 14:54:49 2024 -0500
+
+    vista del domiciliario mejorada
+
+[33mcommit 7f6000be007b872c7a966295b860b7bce5e669c0[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 13:49:34 2024 -0500
+
+    mejoras al ver los scroll
+
+[33mcommit f5072be5207296c1a9f7d13d8534cbfe1583b9ed[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 11:15:50 2024 -0500
+
+    añadiendo paleta de colores algunas vistas
+
+[33mcommit 06a0b09ef48356837e5befaee54610a3cd68198b[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Nov 19 11:13:52 2024 -0500
+
+    Ignore
+
+[33mcommit 3f33f2d15340f3d221c04dd9e6893e5f2262a8b3[m
+Merge: 61351f0 5941ab9
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 10:12:09 2024 -0500
+
+    Merge branch 'main' of https://github.com/Francisco-Quintero/appweb
+
+[33mcommit 61351f04fb1e46f0db839496d778e4f54d056991[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Tue Nov 19 10:11:48 2024 -0500
+
+    modificacion para crear datos globales
+
+[33mcommit 5941ab9110b5bb96797a5d080419d8ec5f930208[m
+Author: Francisco Quintero <franciscoquintero779@gmail.com>
+Date:   Tue Nov 19 07:48:24 2024 -0500
+
+    Primera pruebas y correcciones - Endpoints
+
+[33mcommit f3edf0f31adaabf19242389fdaaea61a45ab72de[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Mon Nov 18 12:39:15 2024 -0500
+
+    se junto todo en un html principal, para usar variable globales con Local storage
+
+[33mcommit 7fac3809ef428bbdd6266572fea77f5643a0c7e6[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sun Nov 17 16:05:46 2024 -0500
+
+    en la vista de la tienda se creo el modulo de ruta-entrega
+
+[33mcommit 8a94be72e2e30485e49d32edf02b63fe324e1425[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sun Nov 17 14:55:42 2024 -0500
+
+    ajuste los archivos de tienda para que no haya errores al cargarlos
+
+[33mcommit 8c4afaa9748f110bf83fdf82a07e5f47b3a3c087[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sun Nov 17 11:46:22 2024 -0500
+
+    vista del domiciliario funcionando, falta hacerle mas pruebas para buscar errores de carga u otra cosa
+
+[33mcommit 330304ac1751523d915379d54d0515309f594d9b[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sun Nov 17 01:57:35 2024 -0500
+
+    Vista del domiciliario con sus modulos completos, falta hacer llo del usuario y la configuraciones del perfil
+
+[33mcommit 9c1319ca216d5a0e7e3397e1ec7ffc2679acda67[m
+Author: Esteban <estebandrodriguez@unicesar.edu.co>
+Date:   Sat Nov 16 17:36:02 2024 -0500
+
+    modulo de ventas creado falta mejorar
+
+[33mcommit 00655f4fde

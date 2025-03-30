@@ -18,7 +18,7 @@ import lombok.Setter;
 public class DetalleProducto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_detalle")
     private Long idDetalle;
 

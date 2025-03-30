@@ -21,7 +21,7 @@ import java.util.List;
 public class HistorialVenta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_historial")
     private Long idHistorial;
 

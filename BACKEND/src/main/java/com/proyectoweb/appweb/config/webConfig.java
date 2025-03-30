@@ -15,7 +15,7 @@ public class webConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Coincide con las rutas de tu API
-                        .allowedOrigins("http://127.0.0.1:5500") // Frontend URL
+                        .allowedOrigins("http://127.0.0.1:5500","http://127.0.0.1:3000") // Frontend URL
                         .allowedMethods("GET", "POST", "PUT", "DELETE") // Métodos permitidos
                         .allowedHeaders("*") // Todos los encabezados
                         .allowCredentials(true); // Permitir cookies o credenciales

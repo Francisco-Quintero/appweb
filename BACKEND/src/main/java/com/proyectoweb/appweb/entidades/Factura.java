@@ -23,7 +23,7 @@ import java.util.List;
 public class Factura {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_factura")
     private Long id_factura;
 

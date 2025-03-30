@@ -20,7 +20,7 @@ import java.util.Date;
 public class Suministro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_suministro")
     private Long idSuministro;
 

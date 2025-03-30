@@ -1,60 +1,62 @@
 // proveedores.js
-(function() {
+(function () {
     console.log('Iniciando carga del módulo de proveedores');
 
     let proveedores = [];
+    const API_URL = 'http://localhost:26209/api/proveedores';
 
-    const ApiService = {
-        baseUrl: 'http://localhost:26209/api/proveedores', 
 
-        async obtenerProveedores() {
-            try {
-                const respuesta = await fetch(`${this.baseUrl}`);
-                if (!respuesta.ok) {
-                    throw new Error(`Error al obtener proveedores: ${respuesta.statusText}`);
-                }
-                const datos = await respuesta.json();
-                console.log('Proveedores obtenidos desde la API:', datos);
-                return datos;
-            } catch (error) {
-                console.error('Error al obtener proveedores desde la API:', error);
-                return [];
-            }
-        },
+    async function cargarProveedoresDesdeAPI() {
+        try {
+            const respuesta = await fetch(API_URL);
+            if (!respuesta.ok) throw new Error(`Error al obtener proveedores: ${respuesta.statusText}`);
 
-        async guardarProveedor(proveedor) {
-            try {
-                const respuesta = await fetch(`${this.baseUrl}`, {
-                    method: proveedor.idProveedor ? 'PUT' : 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(proveedor),
-                });
-                if (!respuesta.ok) {
-                    throw new Error(`Error al guardar proveedor: ${respuesta.statusText}`);
-                }
-                const datos = await respuesta.json();
-                console.log('Proveedor guardado con éxito:', datos);
-                return datos;
-            } catch (error) {
-                console.error('Error al guardar el proveedor:', error);
-                return null;
-            }
-        },
-
-        async eliminarProveedor(id) {
-            try {
-                const respuesta = await fetch(`${this.baseUrl}/${id}`, { method: 'DELETE' });
-                if (!respuesta.ok) {
-                    throw new Error(`Error al eliminar proveedor: ${respuesta.statusText}`);
-                }
-                console.log(`Proveedor con ID ${id} eliminado con éxito`);
-                return true;
-            } catch (error) {
-                console.error('Error al eliminar el proveedor:', error);
-                return false;
-            }
+            proveedores = await respuesta.json();
+            cargarProveedores();
+        } catch (error) {
+            console.error('Error al obtener proveedores desde la API:', error);
         }
     }
+
+    async function guardarProveedor(proveedor) {
+        try {
+            const method = proveedor.idProveedor ? 'PUT' : 'POST';
+            const endpoint = proveedor.idProveedor ? `${API_URL}/${proveedor.idProveedor}` : API_URL;
+
+            const response = await fetch(endpoint, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(proveedor)
+            });
+
+            if (!response.ok) throw new Error(`Error al guardar producto: ${response.statusText}`);
+
+            console.log(`Producto ${proveedor.idProveedor ? 'actualizado' : 'creado'} correctamente`);
+            cargarProveedoresDesdeAPI(); // Recargar proveedores después de guardar.
+        } catch (error) {
+            console.error('Error al guardar el proveedor:', error);
+        }
+    }
+
+    async function eliminarProveedor(id) {
+        try {
+            const confirmacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
+            if (!confirmacion) {
+                console.log("Eliminación cancelada por el usuario.");
+                return; // Salir si el usuario cancela
+            }
+            const respuesta = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+            });
+            if (!respuesta.ok) throw new Error(`Error al eliminar proveedor: ${respuesta.statusText}`);
+
+            console.log(`Proveedor con ID ${id} eliminado con éxito`);
+            cargarProveedoresDesdeAPI();
+        } catch (error) {
+            console.error('Error al eliminar el proveedor:', error);
+        }
+    }
+
 
     async function cargarProveedores(proveedoresFiltrados = proveedores) {
         const cuerpoTabla = document.getElementById('cuerpoTablaProveedores');
@@ -102,7 +104,7 @@
         });
 
         document.getElementById('formularioProveedor')?.addEventListener('submit', manejarEnvioFormulario);
-        
+
         // Modificar el evento de búsqueda para que se active con cada pulsación de tecla
         document.getElementById('busquedaProveedor')?.addEventListener('input', buscarProveedores);
     }
@@ -114,37 +116,44 @@
             { id: 'correoProveedor', mensaje: 'Por favor, ingrese un correo electrónico válido.', validador: validarCorreo },
             { id: 'telefonoProveedor', mensaje: 'Por favor, ingrese un número de teléfono válido.', validador: validarTelefono }
         ];
-    
+
         for (const campo of campos) {
             const valor = document.getElementById(campo.id).value.trim();
-    
+
             if (valor.length === 0 || (campo.validador && !campo.validador(valor))) {
                 alert(campo.mensaje);
                 return false;
             }
         }
-    
+
         return true;
     }
-    
+
     function validarCorreo(correo) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(correo);
     }
-    
+
     function validarTelefono(telefono) {
         const re = /^\+?(\d{1,3})?[-. ]?\d{3}[-. ]?\d{3}[-. ]?\d{4}$/;
         return re.test(telefono);
     }
-    
+
 
     async function manejarEnvioFormulario(e) {
         e.preventDefault();
 
         if (!validarFormulario()) return;
 
-        const id = document.getElementById('idProveedor')?.value;
+        let id = document.getElementById('idProveedor')?.value;
+
+        // Si no hay un ID, generar uno único
+        if (!id) {
+            id = proveedor.length + 1; // Genera un ID único basado en la marca de tiempo
+        }
+
         const proveedor = {
+            idProveedor: parseInt(id),
             nombreEmpresa: document.getElementById('nombreEmpresa').value || '',
             nombreContacto: document.getElementById('nombreContacto').value || '',
             correo: document.getElementById('correoProveedor').value || '',
@@ -152,18 +161,15 @@
             frecuenciaAbastecimiento: id ? (proveedores.find(p => p.idProveedor === parseInt(id))?.frecuenciaAbastecimiento || 0) : 1
         };
 
-        const resultado = await ApiService.guardarProveedor(proveedor);
-        if (resultado) {
-            proveedores = await ApiService.obtenerProveedores();
-            cargarProveedores();
-            document.getElementById('modalProveedor').style.display = 'none';
-        }
+        guardarProveedor(proveedor);
+
+        document.getElementById('modalProveedor').style.display = 'none';
     }
 
 
     function buscarProveedores() {
         const termino = document.getElementById('busquedaProveedor')?.value.toLowerCase() || '';
-        const proveedoresFiltrados = proveedores.filter(p => 
+        const proveedoresFiltrados = proveedores.filter(p =>
             p.nombreEmpresa.toLowerCase().includes(termino) ||
             p.nombreContacto.toLowerCase().includes(termino) ||
             p.correo.toLowerCase().includes(termino) ||
@@ -173,19 +179,12 @@
         console.log(`Se encontraron ${proveedoresFiltrados.length} proveedores`);
     }
 
-        // Inicialización del módulo
-        async function initProveedores() {
-            console.log('Inicializando módulo de proveedores');
-    
-            try {
-                proveedores = await ApiService.obtenerProveedores();
-                cargarProveedores();
-                configurarEventListeners();
-                console.log('Módulo de proveedores cargado completamente');
-            } catch (error) {
-                console.error('Error durante la inicialización:', error);
-            }
-        }
+    // Inicialización del módulo
+    async function initProveedores() {
+        console.log('Inicializando módulo de proveedores');
+        cargarProveedoresDesdeAPI();
+        configurarEventListeners();
+    }
 
 
     window.moduloProveedores = {
@@ -202,16 +201,7 @@
                 document.getElementById('modalProveedor').style.display = 'block';
             }
         },
-        eliminar: async function (id) {
-            console.log('Eliminando proveedor con ID:', id);
-            if (confirm('¿Estás seguro de que quieres eliminar este proveedor?')) {
-                const exito = await ApiService.eliminarProveedor(id);
-                if (exito) {
-                    proveedores = await ApiService.obtenerProveedores();
-                    cargarProveedores();
-                }
-            }
-        }
+        eliminar: eliminarProveedor
     };
 
     if (document.readyState === 'loading') {

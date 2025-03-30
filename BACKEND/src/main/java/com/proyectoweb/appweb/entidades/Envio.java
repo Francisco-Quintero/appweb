@@ -20,7 +20,7 @@ import java.util.Date;
 public class Envio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_envio")
     private Long idEnvio;
 
