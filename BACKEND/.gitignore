@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-/main/java/com/proyectoweb/appweb/resources/aplication.properties
+**/application.properties
