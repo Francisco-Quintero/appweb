@@ -28,4 +28,20 @@ public class InventarioServicio {
     public void eliminar(Long id) {
         inventarioRepositorio.deleteById(id);
     }
+
+    public Inventario actualizarParcial(Long id, Inventario inventarioParcial) {
+        // Buscar el inventario existente por ID
+        Inventario inventarioExistente = inventarioRepositorio.findById(id).orElse(null);
+        if (inventarioExistente == null) {
+            return null; // Si no se encuentra, devolver null
+        }
+    
+        // Actualizar solo los campos no nulos del inventario parcial
+        if (inventarioParcial.getStock() != null) {
+            inventarioExistente.setStock(inventarioParcial.getStock());
+        }
+    
+        // Guardar y devolver el inventario actualizado
+        return inventarioRepositorio.save(inventarioExistente);
+    }
 }

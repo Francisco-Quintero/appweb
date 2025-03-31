@@ -33,5 +33,5 @@ public class Proveedor {
     private String correo;
 
     @Column(name = "frecuencia_abastecimiento")
-    private int frecuenciaAbastecimiento;
+    private Integer frecuenciaAbastecimiento;
 }

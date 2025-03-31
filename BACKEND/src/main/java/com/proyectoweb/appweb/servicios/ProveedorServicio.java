@@ -28,4 +28,28 @@ public class ProveedorServicio {
     public void eliminar(Long id) {
         proveedorRepositorio.deleteById(id);
     }
+
+    public Proveedor actualizarParcial(Long id, Proveedor proveedorParcial) {
+        return proveedorRepositorio.findById(id).map(proveedorExistente -> {
+            // Actualizar solo los campos no nulos del proveedor parcial
+            if (proveedorParcial.getNombreEmpresa() != null) {
+                proveedorExistente.setNombreEmpresa(proveedorParcial.getNombreEmpresa());
+            }
+            if (proveedorParcial.getNombreContacto() != null) {
+                proveedorExistente.setNombreContacto(proveedorParcial.getNombreContacto());
+            }
+            if (proveedorParcial.getCorreo() != null) {
+                proveedorExistente.setCorreo(proveedorParcial.getCorreo());
+            }
+            if (proveedorParcial.getNumeroContacto() != null) {
+                proveedorExistente.setNumeroContacto(proveedorParcial.getNumeroContacto());
+            }
+            if (proveedorParcial.getFrecuenciaAbastecimiento() != null) {
+                proveedorExistente.setFrecuenciaAbastecimiento(proveedorParcial.getFrecuenciaAbastecimiento());
+            }
+    
+            // Guardar y devolver el proveedor actualizado
+            return proveedorRepositorio.save(proveedorExistente);
+        }).orElse(null); // Si no se encuentra el proveedor, devolver null
+    }
 }

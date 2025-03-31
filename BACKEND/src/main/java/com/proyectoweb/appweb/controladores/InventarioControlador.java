@@ -1,6 +1,8 @@
 package com.proyectoweb.appweb.controladores;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.proyectoweb.appweb.entidades.Inventario;
 import com.proyectoweb.appweb.servicios.InventarioServicio;
@@ -26,8 +28,19 @@ public class InventarioControlador {
     }
 
     @PostMapping
-    public Inventario guardar(@RequestBody Inventario inventario) {
-        return inventarioServicio.guardar(inventario);
+    public ResponseEntity<Inventario> guardar(@RequestBody Inventario inventario) {
+        Inventario nuevoInventario = inventarioServicio.guardar(inventario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoInventario);
+    }
+
+    
+    @PatchMapping("/{id}")
+    public ResponseEntity<Inventario> actualizarParcial(@PathVariable Long id, @RequestBody Inventario inventarioParcial) {
+        Inventario inventarioActualizado = inventarioServicio.actualizarParcial(id, inventarioParcial);
+        if (inventarioActualizado == null) {
+            return ResponseEntity.notFound().build(); // Devuelve 404 si no se encuentra el inventario
+        }
+        return ResponseEntity.ok(inventarioActualizado); // Devuelve 200 con el inventario actualizado
     }
 
     @DeleteMapping("/{id}")
@@ -35,4 +48,3 @@ public class InventarioControlador {
         inventarioServicio.eliminar(id);
     }
 }
-

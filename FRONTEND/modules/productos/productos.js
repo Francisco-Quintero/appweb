@@ -38,7 +38,8 @@
             if (!response.ok) throw new Error(`Error al guardar producto: ${response.statusText}`);
     
             console.log(`Producto ${producto.idProducto ? 'actualizado' : 'creado'} correctamente`);
-            cargarProductosDesdeAPI(); // Recargar productos después de guardar.
+            cargarProductosDesdeAPI();
+             // Recargar productos después de guardar.
         } catch (error) {
             console.error('Error al guardar producto en la API:', error);
             alert('Hubo un error al guardar el producto. Por favor, intenta de nuevo.');

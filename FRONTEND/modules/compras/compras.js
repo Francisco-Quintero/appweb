@@ -12,50 +12,6 @@
     let listaProveedores = [];
     let listaInventario = [];
 
-    // async function cargarSuministrosAPI() {
-    //     try {
-    //         const response = await fetch(apiUrlSuminnistros);
-    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
-    //         listaSuministros = await response.json();
-    //         //cargarSuministros(); 
-    //     } catch (error) {
-    //         console.error('Error al cargar suministros desde la API:', error);
-    //     }
-    // }
-
-    // async function cargarProveedoresAPI() {
-    //     try {
-    //         const response = await fetch(apiUrlProveedores);
-    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
-    //         listaProveedores = await response.json();
-    //         //cargarProveedores(); 
-    //     } catch (error) {
-    //         console.error('Error al cargar proveedores desde la API:', error);
-    //     }
-    // }
-
-    // async function cargarInventarioAPI() {
-    //     try {
-    //         const response = await fetch(apiUrlInventario);
-    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
-    //         listaInventario = await response.json();
-    //         //cargarInventario(); 
-    //     } catch (error) {
-    //         console.error('Error al cargar inventarios desde la API:', error);
-    //     }
-    // }
-
-    // async function cargarProductosAPI() {
-    //     try {
-    //         const response = await fetch(apiUrlProductos);
-    //         if (!response.ok) throw new Error(`Error al obtener las compras: ${response.statusText}`);
-    //         listaProductos = await response.json();
-    //         //cargarProductos(); 
-    //     } catch (error) {
-    //         console.error('Error al cargar productos desde la API:', error);
-    //     }
-    // }
-
     async function cargarDatosDesdeAPI(apiUrl, listaDestino, mensajeError) {
         try {
             const response = await fetch(apiUrl);
@@ -187,6 +143,7 @@
         document.getElementById('formularioCompra').reset();
         indiceEditando = null;
         suministros = [];
+        listaSuministros = [];
         actualizarTablaProductos();
     }
 
@@ -238,7 +195,7 @@
             return Math.ceil(precio / factor) * factor;
         }
 
-        const precioUnitarioFinal = precioCompraTotal / cantidad;
+        const precioUnitarioFinal = (precioCompraTotal *0.2) / cantidad;
         const precioRedondeado = redondearArriba(precioUnitarioFinal);
 
         const nuevoProducto = {
@@ -307,39 +264,18 @@
 
         document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
         document.getElementById('ganancia').textContent = `$${ganancia.toFixed(2)}`;
-        document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('total').textContent = `$${total.toFixed(2)}`;
     }
 
-    async function guardarSuministroEnAPI(suministro) {
-        try {
-            const method = suministro.idSuministro ? 'PUT' : 'POST';
-            const endpoint = suministro.idSuministro ? `${apiUrlSuminnistros}/${suministro.idSuministro}` : apiUrlSuminnistros;
-    
-            const response = await fetch(endpoint, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(suministro)
-            });
-    
-            if (!response.ok) throw new Error(`Error al guardar suministro: ${response.statusText}`);
-            cargarDatosDesdeAPI(apiUrlSuminnistros, listaSuministros, 'Error al cargar suministros'); // Recargar productos después de guardar.
-        } catch (error) {
-            console.error('Error al guardar suministro en la API:', error);
-            alert('Hubo un error al guardar el suministro. Por favor, intenta de nuevo.');
-        }
-    }
-    
     async function guardarSuministrosBatch(suministros) {
         try {
-            const response = await fetch('http://localhost:26209/api/suministros/batch', {
+            const response = await fetch(`${apiUrlSuminnistros}/batch`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(suministros)
             });
     
             if (!response.ok) throw new Error(`Error al guardar suministros: ${response.statusText}`);
-    
-            console.log('Suministros guardados correctamente');
             alert('Suministros guardados con éxito');
         } catch (error) {
             console.error('Error al guardar suministros en batch:', error);
@@ -376,7 +312,10 @@
         // Enviar los suministros al backend en batch
         guardarSuministrosBatch(listaSuministros);
     
-        // Actualizar la frecuencia del proveedor
+        suministros.forEach(producto => {
+            actualizarInventario(producto);
+        });
+
         incrementarComprasProveedor(proveedor);
     
         // Recargar la tabla de compras y cerrar el formulario
@@ -385,41 +324,92 @@
         alert('Compra guardada con éxito');
     }
 
+    async function actualizarEnAPI(inventario) {
+        try {
+            const response = await fetch(`${apiUrlInventario}/${inventario.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    stock: inventario.stock,
+                    //fechaActualizacion: inventario.fechaActualizacion
+                })
+            });
 
-    function actualizarInventario(producto) {
+            if (!response.ok) {
+                throw new Error(`Error al actualizar el inventario: ${response.statusText}`);
+            }
+
+            const inventarioActualizado = await response.json();
+            console.log('Inventario actualizado en el backend:', inventarioActualizado);
+
+            // Actualizar la lista local con los datos del backend
+            const index = listaInventario.findIndex(item => item.idInventario === inventario.idInventario);
+            if (index !== -1) {
+                listaInventario[index] = inventarioActualizado;
+            }
+        } catch (error) {
+            console.error('Error al actualizar el inventario en el backend:', error);
+        }
+    }
+
+    async function crearInventario(inventario) {
+        try {
+            const response = await fetch(apiUrlInventario, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inventario)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al crear el inventario: ${response.statusText}`);
+            }
+
+            const inventarioCreado = await response.json();
+            console.log('Inventario creado en el backend:', inventarioCreado);
+
+            // Agregar el nuevo inventario a la lista local
+            listaInventario.push(inventarioCreado);
+        } catch (error) {
+            console.error('Error al crear el inventario en el backend:', error);
+        }
+    }
+
+
+    async function actualizarInventario(producto) {
         console.log('Actualizando inventario para:', producto);
 
         let inventarioExistente = listaInventario.find(item =>
-            (item.idProducto && item.idProducto === producto.idProducto) ||
-            (item.producto.nombre && item.producto.nombre.toLowerCase() === producto.nombre.toLowerCase())
+            (item.producto.idProducto === producto.idProducto)
         );
 
         if (inventarioExistente) {
             console.log('Inventario existente encontrado:', inventarioExistente);
             inventarioExistente.stock = (inventarioExistente.stock || 0) + producto.cantidad;
-            //inventarioExistente.producto.precioUnitario = producto.precioUnitarioFinal;
-            inventarioExistente.fechaActualizacion = new Date().toISOString().split('T')[0];
-            inventarioExistente.idProducto = producto.idProducto;
+            //inventarioExistente.fechaActualizacion = new Date().toISOString().split('T')[0];
+            await actualizarEnAPI(inventarioExistente);
         } else {
             console.log('Creando nuevo item de inventario');
             const nuevoInventario = {
-                idInventario: listaInventario.length + 1,
-                idProducto: producto.idProducto,
-                nombreProducto: producto.nombre,
+                producto: { idProducto: producto.idProducto }, 
                 stock: producto.cantidad,
                 puntoReorden: 0,
-                fechaActualizacion: new Date().toISOString().split('T')[0],
-                estado: 'Normal'
+                // fechaActualizacion: new Date().toISOString().split('T')[0],
+                // estado: 'Normal'
             };
-            inventario.push(nuevoInventario);
+
+            await crearInventario(nuevoInventario);
         }
-        const productoDeLista = listaProductos.find(p => p.idProducto === producto.idProducto);
-        if (productoDeLista) {
-            productoDeLista.precioUnitario = producto.precioUnitarioFinal;
-            console.log('Producto actualizado en la lista:', productoDeLista);
-        } else {
-            console.error('Producto no encontrado en la lista de productos:', producto.idProducto);
-        }
+        // const productoDeLista = listaProductos.find(p => p.idProducto === producto.idProducto);
+        // if (productoDeLista) {
+        //     productoDeLista.precioUnitario = producto.precioUnitarioFinal;
+        //     console.log('Producto actualizado en la lista:', productoDeLista);
+        // } else {
+        //     console.error('Producto no encontrado en la lista de productos:', producto.idProducto);
+        // }
     }
 
     async function incrementarComprasProveedor(proveedor) {
@@ -432,7 +422,7 @@
                 frecuenciaAbastecimiento: proveedor.frecuenciaAbastecimiento
             };
 
-            const response = await fetch(`/api/proveedores/${proveedor.idProveedor}`, {
+            const response = await fetch(`${apiUrlProveedores}/${proveedor.idProveedor}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -455,42 +445,6 @@
             console.error('Error al actualizar el proveedor:', error);
         }
     }
-
-
-    // function buscarCompras() {
-    //     console.log('Buscando compras');
-    //     const termino = document.getElementById('busquedaCompra').value.toLowerCase();
-    //     const comprasFiltradas = compras.filter(c => 
-    //         c.proveedor.toLowerCase().includes(termino) ||
-    //         c.fechaSuministro.includes(termino) ||
-    //         c.estado.toLowerCase().includes(termino)
-    //     );
-
-    //     const cuerpoTabla = document.getElementById('cuerpoTablaCompras');
-    //     cuerpoTabla.innerHTML = comprasFiltradas.map(compra => `
-    //         <tr>
-    //             <td>${compra.id}</td>
-    //             <td>${compra.fechaSuministro}</td>
-    //             <td>${compra.proveedor}</td>
-    //             <td>$${compra.total.toFixed(2)}</td>
-    //             <td>
-    //                 <span class="estado-compra estado-${compra.estado.toLowerCase()}">
-    //                     ${compra.estado}
-    //                 </span>
-    //             </td>
-    //             <td>
-    //                 <button onclick="window.verDetallesCompra(${compra.id})" class="btn-icono" title="Ver detalles">
-    //                     <i data-lucide="eye"></i>
-    //                 </button>
-    //             </td>
-    //         </tr>
-    //     `).join('');
-
-    //     // Reinicializar los iconos de Lucide
-    //     if (typeof lucide !== 'undefined') {
-    //         lucide.createIcons();
-    //     }
-    // }
 
     function verDetallesCompra(id) {
         console.log('Viendo detalles de la compra:', id);

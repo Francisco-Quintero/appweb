@@ -23,7 +23,7 @@ public class Inventario {
     private Long id;
 
     @Column(name = "stock")
-    private int stock;
+    private Integer stock;
 
     @Column(name = "punto_reorden")
     private int puntoReorden;
