@@ -1,93 +1,109 @@
-function inicializarTienda() {
+// Importar módulos
+import { initCatalogo } from '../modules/catalogo/catalogo.js';
+import { initCarrito } from '../modules/carrito/carrito.js'; // Importar el módulo carrito
+
+// Estado global centralizado
+const estadoGlobal = {
+    usuarioLogueado: false,
+    carrito: [],
+    inventario: [],
+    setUsuarioLogueado(logueado) {
+        this.usuarioLogueado = logueado;
+        document.body.classList.toggle('usuario-logueado', logueado);
+    },
+    actualizarCarrito(nuevoCarrito) {
+        this.carrito = nuevoCarrito;
+        console.log('Carrito actualizado:', this.carrito);
+    },
+    actualizarInventario(nuevoInventario) {
+        this.inventario = nuevoInventario;
+        console.log('Inventario actualizado:', this.inventario);
+    }
+};
+
+// Función para inicializar la tienda
+export async function inicializarTienda() {
+    console.log('Inicializando tienda...');
+
+    // Configurar eventos de usuario
+    configurarEventosUsuario();
+
+    document.querySelectorAll('[data-module]').forEach((enlace) => {
+        enlace.addEventListener('click', (event) => {
+            event.preventDefault();
+            const nombreModulo = enlace.getAttribute('data-module');
+            cambiarModulo(nombreModulo);
+        });
+    });
+
+    // Cargar el módulo inicial
+    await cambiarModulo('catalogo');
+}
+
+// Función para cambiar entre módulos
+async function cambiarModulo(nombreModulo) {
+    console.log(`Cambiando al módulo: ${nombreModulo}`);
+    const contenedorPrincipal = document.getElementById('contenedor-principal');
+
+    // Limpiar el contenedor principal
+    contenedorPrincipal.innerHTML = '';
+
+    // Cargar el HTML del módulo
+    const response = await fetch(`modules/${nombreModulo}/${nombreModulo}.html`);
+    if (!response.ok) {
+        throw new Error(`Error al cargar el HTML del módulo ${nombreModulo}`);
+    }
+    const html = await response.text();
+    contenedorPrincipal.innerHTML = html;
+
+    switch (nombreModulo) {
+        case 'catalogo':
+            await initCatalogo(estadoGlobal);
+            break;
+        case 'carrito':
+            await initCarrito(estadoGlobal); // Inicializar el módulo carrito
+            break;
+        // Agregar otros módulos aquí
+        // case 'carrito':
+        //     await initCarrito(estadoGlobal);
+        //     break;
+        default:
+            console.error(`Módulo desconocido: ${nombreModulo}`);
+    }
+}
+
+// Configurar eventos relacionados con el usuario
+function configurarEventosUsuario() {
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
-    // Verificar si hay un usuario logueado al iniciar
-    if (window.verificarUsuarioParaPedido && window.verificarUsuarioParaPedido()) {
-        console.log('Usuario ya logueado');
-        document.body.classList.add('usuario-logueado');
-    } else {
-        console.log('Usuario no logueado');
-        document.body.classList.remove('usuario-logueado');
-    }
-
-    // Escuchar eventos de login y logout
-    window.addEventListener('usuarioLogueado', function() {
-        console.log('Usuario ha iniciado sesión');
-        document.body.classList.add('usuario-logueado');
-    });
-
-    window.addEventListener('usuarioDeslogueado', function() {
-        console.log('Usuario ha cerrado sesión');
-        document.body.classList.remove('usuario-logueado');
-    });
-
-
-    // Función para cargar módulos
-    function cargarModulo(nombreModulo) {
-        const contenedorPrincipal = document.getElementById('contenedor-principal');
-
-        // Eliminar scripts y estilos previos del módulo
-        document.querySelectorAll(`script[data-module="${nombreModulo}"]`).forEach(el => el.remove());
-        document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
-
-        fetch(`modules/${nombreModulo}/${nombreModulo}.html`)
-            .then(response => response.text())
-            .then(html => {
-                contenedorPrincipal.innerHTML = html;
-                
-                // Cargar el CSS del módulo
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = `modules/${nombreModulo}/${nombreModulo}.css`;
-                link.setAttribute('data-module', nombreModulo);
-                document.head.appendChild(link);
-                
-                // Cargar el script del módulo
-                const script = document.createElement('script');
-                script.src = `modules/${nombreModulo}/${nombreModulo}.js`;
-                script.setAttribute('data-module', nombreModulo);
-                script.onload = function() {
-                    console.log("cargando el modulo de " + nombreModulo);
-                    if (nombreModulo === 'catalogo' && typeof renderizarCatalogo === 'function' && typeof window.datosGlobales !== 'undefined') {
-                        renderizarCatalogo(window.datosGlobales);
-                    }
-                };
-                document.body.appendChild(script);
-            })
-            .catch(error => console.error(`Error al cargar el módulo ${nombreModulo}:`, error));
-    }
-
-    // Configurar navegación
-    document.querySelectorAll('[data-module]').forEach(enlace => {
-        enlace.addEventListener('click', function(e) {
-            e.preventDefault();
-            const nombreModulo = this.getAttribute('data-module');
-            cargarModulo(nombreModulo);
-        });
-    });
-
-    // Configurar menú de usuario
     if (userMenuButton && userDropdown) {
-        userMenuButton.addEventListener('click', function() {
+        userMenuButton.addEventListener('click', () => {
             userDropdown.classList.toggle('show');
         });
 
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', (event) => {
             if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
                 userDropdown.classList.remove('show');
             }
         });
     }
 
-    // Cargar el módulo inicial
-    cargarModulo('catalogo');
+    
+
+    // Escuchar eventos de login y logout
+    window.addEventListener('usuarioLogueado', () => {
+        console.log('Usuario ha iniciado sesión');
+        estadoGlobal.setUsuarioLogueado(true);
+    });
+
+    window.addEventListener('usuarioDeslogueado', () => {
+        console.log('Usuario ha cerrado sesión');
+        estadoGlobal.setUsuarioLogueado(false);
+    });
 }
 
-// Esperar a que los datos globales estén disponibles
-if (typeof window.datosGlobales !== 'undefined') {
+// Inicializar la tienda cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
     inicializarTienda();
-} else {
-    window.addEventListener('datosGlobalesDisponibles', inicializarTienda);
-}
-
+});
