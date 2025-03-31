@@ -1,6 +1,8 @@
 // Importar módulos
 import { initCatalogo } from '../modules/catalogo/catalogo.js';
-import { initCarrito } from '../modules/carrito/carrito.js'; // Importar el módulo carrito
+import { initCarrito } from '../modules/carrito/carrito.js'; 
+import { initPedidos } from '../modules/pedidos/pedidos.js';
+import { initFacturas } from '../modules/facturas/facturas.js';
 
 // Estado global centralizado
 const estadoGlobal = {
@@ -63,10 +65,12 @@ async function cambiarModulo(nombreModulo) {
         case 'carrito':
             await initCarrito(estadoGlobal); // Inicializar el módulo carrito
             break;
-        // Agregar otros módulos aquí
-        // case 'carrito':
-        //     await initCarrito(estadoGlobal);
-        //     break;
+        case 'pedidos':
+            await initPedidos(estadoGlobal);
+            break;
+        case 'facturas':
+            await initFacturas(estadoGlobal);
+            break;
         default:
             console.error(`Módulo desconocido: ${nombreModulo}`);
     }

@@ -1,3 +1,4 @@
+import { renderizarCatalogo } from '../catalogo/catalogo.js';
 export async function initCarrito(estadoGlobal) {
     console.log('Inicializando módulo de carrito...');
 
@@ -143,7 +144,7 @@ function configurarEventListeners(estadoGlobal) {
 
 // Actualizar la cantidad de un producto en el carrito
 function actualizarCantidad(productoId, accion, estadoGlobal) {
-    const itemIndex = estadoGlobal.carrito.findIndex((item) => item.producto.idProducto === productoId);
+    const itemIndex = estadoGlobal.carrito.findIndex((item) => item.idProducto === productoId);
     if (itemIndex !== -1) {
         if (accion === 'sumar') {
             estadoGlobal.carrito[itemIndex].cantidad++;
@@ -154,26 +155,33 @@ function actualizarCantidad(productoId, accion, estadoGlobal) {
                 estadoGlobal.carrito.splice(itemIndex, 1);
             }
         }
+
+        // Guardar en localStorage y sincronizar módulos
         guardarEnLocalStorage(estadoGlobal);
         renderizarCarrito(estadoGlobal);
+        renderizarCatalogo(estadoGlobal);
     }
 }
 
+// Actualizar la cantidad directamente
 // Actualizar la cantidad directamente
 function actualizarCantidadDirecta(productoId, nuevaCantidad, estadoGlobal) {
     nuevaCantidad = parseInt(nuevaCantidad);
     if (isNaN(nuevaCantidad) || nuevaCantidad < 0) nuevaCantidad = 0;
 
     if (nuevaCantidad === 0) {
-        estadoGlobal.carrito = estadoGlobal.carrito.filter((item) => item.producto.idProducto !== productoId);
+        estadoGlobal.carrito = estadoGlobal.carrito.filter((item) => item.idProducto !== productoId);
     } else {
-        const itemIndex = estadoGlobal.carrito.findIndex((item) => item.producto.idProducto === productoId);
+        const itemIndex = estadoGlobal.carrito.findIndex((item) => item.idProducto === productoId);
         if (itemIndex !== -1) {
             estadoGlobal.carrito[itemIndex].cantidad = nuevaCantidad;
         }
     }
+
+    // Guardar en localStorage y sincronizar módulos
     guardarEnLocalStorage(estadoGlobal);
     renderizarCarrito(estadoGlobal);
+    renderizarCatalogo(estadoGlobal);
 }
 
 // Eliminar un producto del carrito

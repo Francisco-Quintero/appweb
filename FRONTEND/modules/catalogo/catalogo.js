@@ -1,6 +1,8 @@
 // Inicializar el módulo de catálogo
 export async function initCatalogo(estadoGlobal) {
     console.log('Inicializando módulo de catálogo...');
+
+    cargarDatosDesdeLocalStorage(estadoGlobal);
     // Esperar a que el contenedor esté disponible
     const catalogoContainer = document.getElementById('catalogo-productos');
     if (!catalogoContainer) {
@@ -28,6 +30,16 @@ export async function initCatalogo(estadoGlobal) {
     // Configurar eventos del catálogo
     configurarEventosCatalogo(estadoGlobal);
 }
+// Cargar datos desde localStorage
+function cargarDatosDesdeLocalStorage(estadoGlobal) {
+    try {
+        const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+        estadoGlobal.carrito = datosGuardados.carrito || [];
+        console.log('Datos del carrito cargados desde localStorage');
+    } catch (error) {
+        console.error('Error al cargar datos del carrito desde localStorage:', error);
+    }
+}
 
 // Cargar datos del inventario desde la API
 async function cargarDatosDesdeAPI() {
@@ -44,7 +56,7 @@ async function cargarDatosDesdeAPI() {
 }
 
 // Renderizar el catálogo
-function renderizarCatalogo(estadoGlobal) {
+export function renderizarCatalogo(estadoGlobal) {
     const catalogoContainer = document.getElementById('catalogo-productos');
     if (!catalogoContainer) {
         console.error('No se encontró el contenedor del catálogo');
@@ -139,11 +151,16 @@ function agregarProductoAlCarrito(idProducto, estadoGlobal) {
     if (productoEnCarrito) {
         productoEnCarrito.cantidad += 1;
     } else {
-        estadoGlobal.carrito.push({ idProducto, cantidad: 1 });
+        const producto = estadoGlobal.inventario.find((item) => item.producto.idProducto === idProducto);
+        if (producto) {
+            estadoGlobal.carrito.push({ idProducto, cantidad: 1, producto: producto.producto });
+        }
     }
 
     console.log('Producto agregado al carrito:', idProducto);
+    guardarEnLocalStorage(estadoGlobal);
     renderizarCatalogo(estadoGlobal);
+    renderizarCarrito(estadoGlobal);
 }
 
 // Restar un producto del carrito
@@ -158,5 +175,21 @@ function restarProductoDelCarrito(idProducto, estadoGlobal) {
     }
 
     console.log('Producto restado del carrito:', idProducto);
+
+    // Guardar en localStorage y sincronizar módulos
+    guardarEnLocalStorage(estadoGlobal);
     renderizarCatalogo(estadoGlobal);
+    renderizarCarrito(estadoGlobal);
+}
+
+// Guardar datos en localStorage
+function guardarEnLocalStorage(estadoGlobal) {
+    try {
+        const datosActuales = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
+        datosActuales.carrito = estadoGlobal.carrito;
+        localStorage.setItem('datosGlobales', JSON.stringify(datosActuales));
+        console.log('Datos del carrito guardados en localStorage');
+    } catch (error) {
+        console.error('Error al guardar datos del carrito en localStorage:', error);
+    }
 }
