@@ -1,5 +1,7 @@
 package com.proyectoweb.appweb.entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +33,10 @@ public class DetalleProducto {
     @JoinColumn(name = "id_producto")
     @ManyToOne
     private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "id_pedido")
+    @JsonBackReference 
+    private Pedido pedido;
 }
 

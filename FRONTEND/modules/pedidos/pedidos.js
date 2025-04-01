@@ -40,7 +40,6 @@ async function cargarDatosDesdeAPI() {
     }
 }
 
-// Renderizar los pedidos
 function renderizarPedidos(estadoGlobal, pedidosFiltrados = null) {
     const pedidosLista = document.getElementById('pedidos-lista');
     const pedidosEmpty = document.getElementById('pedidos-empty');
@@ -62,16 +61,19 @@ function renderizarPedidos(estadoGlobal, pedidosFiltrados = null) {
     pedidosEmpty.style.display = 'none';
 
     pedidosLista.innerHTML = pedidosAMostrar.map(pedido => {
-        const pedidoItems = pedido.items.map(item => {
-            const producto = estadoGlobal.inventario.find(p => p.idProducto === item.idProducto);
+        // Renderizar los detalles del pedido
+        const pedidoItems = pedido.detalles.map(detalle => {
+            const producto = detalle.producto;
             return `
                 <div class="pedido-item-detalle">
-                    <span>${producto ? producto.nombre : 'Producto no encontrado'} x ${item.cantidad}</span>
-                    <span>$${item.total}</span>
+                    <span>${producto ? producto.nombre : 'Producto no encontrado'} x ${detalle.cantidad}</span>
+                    <span>Descuento: ${detalle.descuento || 0}%</span>
+                    <span>Precio unitario: $${producto ? producto.precioUnitario : 0}</span>
                 </div>
             `;
         }).join('');
 
+        // Renderizar el pedido completo
         return `
             <div class="pedido-item">
                 <div class="pedido-header">
@@ -81,15 +83,34 @@ function renderizarPedidos(estadoGlobal, pedidosFiltrados = null) {
                         ${pedido.estadoPedido.toUpperCase()}
                     </span>
                 </div>
+                <div class="pedido-cliente">
+                    <strong>Cliente:</strong> ${pedido.cliente.usuario.persona.nombre} ${pedido.cliente.usuario.persona.apellido}
+                    <br>
+                    <strong>Dirección:</strong> ${pedido.cliente.direccion}
+                    <br>
+                    <strong>Correo:</strong> ${pedido.cliente.correo}
+                </div>
                 <div class="pedido-items">
                     ${pedidoItems}
                 </div>
                 <div class="pedido-total">
-                    <strong>Total: $${pedido.total}</strong>
+                    <strong>Costo de envío:</strong> $${pedido.costoEnvio}
+                    <br>
+                    <strong>Total:</strong> $${calcularTotalPedido(pedido)}
                 </div>
             </div>
         `;
     }).join('');
+}
+
+function calcularTotalPedido(pedido) {
+    return pedido.detalles.reduce((total, detalle) => {
+        const producto = detalle.producto;
+        const precioUnitario = producto ? producto.precioUnitario : 0;
+        const descuento = detalle.descuento || 0;
+        const precioConDescuento = precioUnitario * (1 - descuento / 100);
+        return total + precioConDescuento * detalle.cantidad;
+    }, pedido.costoEnvio || 0); // Incluye el costo de envío
 }
 
 // Formatear fecha
@@ -115,13 +136,13 @@ function filtrarPedidos(estadoGlobal) {
 
     const pedidosFiltrados = estadoGlobal.pedidos.filter(pedido => {
         const cumpleFecha = (!desde || new Date(pedido.fechaPedido) >= new Date(desde)) &&
-                            (!hasta || new Date(pedido.fechaPedido) <= new Date(hasta));
+            (!hasta || new Date(pedido.fechaPedido) <= new Date(hasta));
         const cumpleEstado = estado === 'todos' || pedido.estadoPedido === estado;
         const cumpleBusqueda = pedido.idPedido.toLowerCase().includes(busqueda) ||
-                               pedido.items.some(item => {
-                                   const producto = estadoGlobal.inventario.find(p => p.idProducto === item.idProducto);
-                                   return producto && producto.nombre.toLowerCase().includes(busqueda);
-                               });
+            pedido.items.some(item => {
+                const producto = estadoGlobal.inventario.find(p => p.idProducto === item.idProducto);
+                return producto && producto.nombre.toLowerCase().includes(busqueda);
+            });
 
         return cumpleFecha && cumpleEstado && cumpleBusqueda;
     });

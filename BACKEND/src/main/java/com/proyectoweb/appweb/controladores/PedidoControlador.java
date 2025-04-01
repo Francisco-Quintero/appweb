@@ -38,5 +38,16 @@ public class PedidoControlador {
     public void eliminar(@PathVariable Long id) {
         pedidoServicio.eliminar(id);
     }
+
+        // Nuevo endpoint para agregar productos a un pedido
+        @PostMapping("/{pedidoId}/productos/{productoId}")
+        public Pedido agregarProductoAPedido(
+                @PathVariable Long pedidoId,
+                @PathVariable Long productoId,
+                @RequestParam int cantidad,
+                @RequestParam(required = false) Double descuento) {
+    
+            return pedidoServicio.agregarProductoAPedido(pedidoId, productoId, cantidad, descuento);
+        }
 }
 

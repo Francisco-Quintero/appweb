@@ -27,7 +27,7 @@ export async function initFacturas(estadoGlobal) {
 // Cargar datos de facturas desde la API
 async function cargarDatosDesdeAPI() {
     try {
-        const response = await fetch('http://localhost:26209/api/pagos');
+        const response = await fetch('http://localhost:26209/api/facturas');
         if (!response.ok) {
             throw new Error(`Error al obtener datos: ${response.statusText}`);
         }
@@ -61,43 +61,43 @@ function renderizarFacturas(estadoGlobal, facturasFiltradas = null) {
     facturasContainer.style.display = 'block';
     facturasEmpty.style.display = 'none';
 
-    facturasContainer.innerHTML = facturasAMostrar.map(pago => {
+    facturasContainer.innerHTML = facturasAMostrar.map(factura => {
         return `
             <div class="factura-item">
                 <div class="factura-header">
                     <div class="factura-info">
-                        <h3>Factura #${pago.factura.id_factura}</h3>
+                        <h3>Factura #${factura.idFactura}</h3>
                         <span class="factura-fecha">
-                            ${formatearFecha(pago.factura.fecha_emision)}
+                            ${formatearFecha(factura.fechaEmision)}
                         </span>
                     </div>
-                    <div class="factura-estado ${pago.factura.estadoFactura}">
-                        ${pago.factura.estadoFactura}
+                    <div class="factura-estado ${factura.estadoFactura}">
+                        ${factura.estadoFactura}
                     </div>
                 </div>
                 <div class="factura-detalles">
                     <div class="factura-pedido">
-                        <strong>Pedido:</strong> ${pago.factura.pedido.idPedido}
-                        <span class="estado-pedido ${pago.factura.pedido.estadoPedido}">
-                            ${pago.factura.pedido.estadoPedido}
+                        <strong>Pedido:</strong> ${factura.pedido.idPedido}
+                        <span class="estado-pedido ${factura.pedido.estadoPedido}">
+                            ${factura.pedido.estadoPedido}
                         </span>
                     </div>
                     <div class="factura-pago">
-                        <strong>Método de pago:</strong> ${pago.metodoPago}
-                        <span class="estado-pago ${pago.estadoPago}">
-                            ${pago.estadoPago}
+                        <strong>Método de pago:</strong> ${factura.pagos.metodoPago}
+                        <span class="estado-pago ${factura.pagos.estadoPago}">
+                            ${factura.pagos.estadoPago}
                         </span>
                     </div>
                     <div class="factura-montos">
-                        <div>Envío: $${pago.factura.pedido.costoEnvio}</div>
+                        <div>Envío: $${factura.pedido.costoEnvio}</div>
                         <div class="factura-total">
-                            Total: $${pago.factura.total}
+                            Total: $${factura.total}
                         </div>
                     </div>
                 </div>
-                ${pago.estadoPago === 'pendiente' ? `
+                ${factura.pagos.estadoPago === 'pendiente' ? `
                     <div class="factura-acciones">
-                        <button class="pagar-button" data-id-factura="${pago.factura.id_factura}">
+                        <button class="pagar-button" data-id-factura="${factura.idFactura}">
                             Pagar ahora
                         </button>
                     </div>

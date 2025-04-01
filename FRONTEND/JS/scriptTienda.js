@@ -9,6 +9,9 @@ const estadoGlobal = {
     usuarioLogueado: false,
     carrito: [],
     inventario: [],
+    pedidos: [],
+    facturas: [],
+    
     setUsuarioLogueado(logueado) {
         this.usuarioLogueado = logueado;
         document.body.classList.toggle('usuario-logueado', logueado);

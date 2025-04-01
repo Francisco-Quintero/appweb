@@ -1,5 +1,6 @@
 package com.proyectoweb.appweb.entidades;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,8 +13,11 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "pedido")
@@ -36,13 +40,17 @@ public class Pedido {
     private Double costoEnvio;
 
     @Column(name = "hora_creacion")
-    private Date horaCreacion;
+    private Time horaCreacion;
 
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToMany
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+     @JsonManagedReference
     private List<DetalleProducto> detalles;
-}
 
+    @ManyToOne
+    @JoinColumn(name = "id_historial")
+    private HistorialVenta historialVenta;
+}
