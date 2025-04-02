@@ -84,11 +84,11 @@ function renderizarPedidos(estadoGlobal, pedidosFiltrados = null) {
                     </span>
                 </div>
                 <div class="pedido-cliente">
-                    <strong>Cliente:</strong> ${pedido.cliente.usuario.persona.nombre} ${pedido.cliente.usuario.persona.apellido}
+                    <strong>Cliente:</strong> ${pedido.usuario.nombre} ${pedido.usuario.apellido}
                     <br>
-                    <strong>Dirección:</strong> ${pedido.cliente.direccion}
+                    <strong>Dirección:</strong> ${pedido.usuario.direccion}
                     <br>
-                    <strong>Correo:</strong> ${pedido.cliente.correo}
+                    <strong>Correo:</strong> ${pedido.usuario.correo}
                 </div>
                 <div class="pedido-items">
                     ${pedidoItems}

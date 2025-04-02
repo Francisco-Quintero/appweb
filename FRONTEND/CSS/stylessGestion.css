@@ -60,6 +60,15 @@ body, html {
     overflow: hidden; /* Añadir esta línea */
 }
 
+.volver-tienda {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
 .main-content {
     display: flex;
     flex-direction: column;

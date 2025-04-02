@@ -5,19 +5,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.proyectoweb.appweb.entidades.Cliente;
+
 import com.proyectoweb.appweb.entidades.DetalleProducto;
 import com.proyectoweb.appweb.entidades.Pedido;
 import com.proyectoweb.appweb.entidades.Producto;
-import com.proyectoweb.appweb.repositorio.ClienteRepositorio;
+import com.proyectoweb.appweb.entidades.Usuario;
+
 import com.proyectoweb.appweb.repositorio.PedidoRepositorio;
 import com.proyectoweb.appweb.repositorio.ProductoRepositorio;
+import com.proyectoweb.appweb.repositorio.UsuarioRepositorio;
 
 @Service
 public class PedidoServicio {
 
     @Autowired
-    private ClienteRepositorio clienteRepositorio;
+    private UsuarioRepositorio usuarioRepositorio;
 
       @Autowired
     private ProductoRepositorio productoRepositorio;
@@ -41,9 +43,9 @@ public class PedidoServicio {
         pedidoRepositorio.deleteById(id);
     }
 
-    public List<Pedido> listarPorCliente(Long id) {
-        Cliente cliente = clienteRepositorio.findById(id).orElse(null);
-        return pedidoRepositorio.findByCliente(cliente);
+    public List<Pedido> listarPorUsuario(Long id) {
+        Usuario usuario = usuarioRepositorio.findById(id).orElse(null);
+        return pedidoRepositorio.findByUsuario(usuario);
     }
 
         public Pedido agregarProductoAPedido(Long pedidoId, Long productoId, int cantidad, Double descuento) {

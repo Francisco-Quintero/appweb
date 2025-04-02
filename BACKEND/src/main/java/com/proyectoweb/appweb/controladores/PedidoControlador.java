@@ -24,9 +24,9 @@ public class PedidoControlador {
         return pedidoServicio.obtenerPorId(id);
     }
 
-    @GetMapping("/clientes/{id}")
-    public List<Pedido> obtenerPorIdCliente(@PathVariable Long id) {
-        return pedidoServicio.listarPorCliente(id);
+    @GetMapping("/usuarios/{id}")
+    public List<Pedido> obtenerPorIdUsuario(@PathVariable Long id) {
+        return pedidoServicio.listarPorUsuario(id);
     }
     
     @PostMapping
