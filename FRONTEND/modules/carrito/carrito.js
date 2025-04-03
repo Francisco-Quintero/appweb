@@ -164,7 +164,7 @@ function actualizarCantidad(productoId, accion, estadoGlobal) {
 }
 
 // Actualizar la cantidad directamente
-// Actualizar la cantidad directamente
+
 function actualizarCantidadDirecta(productoId, nuevaCantidad, estadoGlobal) {
     nuevaCantidad = parseInt(nuevaCantidad);
     if (isNaN(nuevaCantidad) || nuevaCantidad < 0) nuevaCantidad = 0;

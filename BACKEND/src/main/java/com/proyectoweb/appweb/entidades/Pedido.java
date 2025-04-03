@@ -42,17 +42,13 @@ public class Pedido {
     @Column(name = "hora_creacion")
     private Time horaCreacion;
 
-    // @ManyToOne
-    // @JoinColumn(name = "id_cliente")
-    // private Cliente cliente;
-
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-     @JsonManagedReference
-    private List<DetalleProducto> detalles;
+    @JsonManagedReference
+    private List<DetallePedido> detalles; // Relación con los detalles del pedido
 
     @ManyToOne
     @JoinColumn(name = "id_historial")
