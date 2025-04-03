@@ -1,4 +1,5 @@
 import { renderizarCatalogo } from '../catalogo/catalogo.js';
+import { BASE_URL } from '../../JS/auth.js';
 export async function initCarrito(estadoGlobal) {
     console.log('Inicializando módulo de carrito...');
 
@@ -19,6 +20,7 @@ function cargarDatosDesdeLocalStorage(estadoGlobal) {
     try {
         const datosGuardados = JSON.parse(localStorage.getItem('datosGlobales') || '{}');
         estadoGlobal.carrito = datosGuardados.carrito || [];
+        estadoGlobal.usuario = datosGuardados.usuario || null; // Cargar la información del usuario
         console.log('Datos del carrito cargados desde localStorage');
     } catch (error) {
         console.error('Error al cargar datos del carrito desde localStorage:', error);
@@ -137,8 +139,9 @@ function configurarEventListeners(estadoGlobal) {
         });
     }
 
-    if (btnGenerarPedido) {
-        btnGenerarPedido.addEventListener('click', () => generarPedido(estadoGlobal));
+    const botonHacerPedido = document.querySelector('.btn-hacer-pedido');
+    if (botonHacerPedido) {
+        botonHacerPedido.addEventListener('click', () => generarPedido(estadoGlobal));
     }
 }
 
@@ -192,17 +195,69 @@ function eliminarDelCarrito(productoId, estadoGlobal) {
 }
 
 // Generar un pedido
-function generarPedido(estadoGlobal) {
+// Generar un pedido
+async function generarPedido(estadoGlobal) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        alert('Debes iniciar sesión para generar un pedido');
+        return;
+    }
+
     if (estadoGlobal.carrito.length === 0) {
         alert('El carrito está vacío');
         return;
     }
 
-    // Aquí puedes implementar la lógica para generar un pedido
-    console.log('Pedido generado:', estadoGlobal.carrito);
+        // Obtener la hora en formato HH:mm:ss
+        const now = new Date();
+        const horaCreacion = now.toTimeString().split(' ')[0];
 
-    // Vaciar el carrito después de generar el pedido
-    estadoGlobal.carrito = [];
-    guardarEnLocalStorage(estadoGlobal);
-    renderizarCarrito(estadoGlobal);
+    // Construir el JSON del pedido
+    const pedido = {
+        fechaPedido: new Date().toISOString(),
+        estadoPedido: "Pendiente",
+        costoEnvio: 2000, // Puedes calcularlo dinámicamente si es necesario
+        horaCreacion: horaCreacion,
+        usuario: {
+            id: user.id// Usar el ID del usuario logueado
+        },
+        detalles: estadoGlobal.carrito.map((item) => ({
+            producto: {
+                idProducto: item.producto.idProducto
+            },
+            cantidad: item.cantidad,
+            precioUnitario: item.producto.precioUnitario
+        }))
+    };
+    console.log('Pedido a enviar:', JSON.stringify(pedido, null, 2));
+    try {
+        // Enviar el pedido al backend
+        const response = await fetch('http://localhost:26209/api/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Este encabezado es obligatorio
+            },
+            body: JSON.stringify(pedido)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            alert(`Error al generar el pedido: ${error.message}`);
+            return;
+        }
+
+        const pedidoGuardado = await response.json();
+        console.log('Pedido generado:', pedidoGuardado);
+
+        // Vaciar el carrito después de generar el pedido
+        estadoGlobal.carrito = [];
+        guardarEnLocalStorage(estadoGlobal);
+        renderizarCarrito(estadoGlobal);
+
+        alert('Pedido generado exitosamente');
+    } catch (error) {
+        console.error('Error al generar el pedido:', error);
+        alert('Ocurrió un error al generar el pedido');
+    }
 }
+    

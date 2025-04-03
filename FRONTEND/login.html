@@ -29,6 +29,18 @@
             </form>
             <p>¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión aquí</a></p>
         </div>
+
+        <!-- Información del Usuario Logueado -->
+        <div id="userInfoSection" style="display: none;">
+            <h1>Bienvenido, <span id="userWelcome"></span></h1>
+            <p>Rol: <span id="userRole"></span></p>
+            <button id="logoutButton">Cerrar Sesión</button>
+            <h2>Cambiar Contraseña</h2>
+            <form id="changePasswordForm">
+                <input type="password" id="newPassword" placeholder="Nueva Contraseña" required>
+                <button type="submit">Cambiar Contraseña</button>
+            </form>
+        </div>
     </div>
     <script src="js/login.js"></script>
 </body>

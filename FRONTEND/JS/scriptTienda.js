@@ -1,19 +1,21 @@
 // Importar módulos
 import { initCatalogo } from '../modules/catalogo/catalogo.js';
-import { initCarrito } from '../modules/carrito/carrito.js'; 
+import { initCarrito } from '../modules/carrito/carrito.js';
 import { initPedidos } from '../modules/pedidos/pedidos.js';
 import { initFacturas } from '../modules/facturas/facturas.js';
 
 // Estado global centralizado
 const estadoGlobal = {
     usuarioLogueado: false,
+    usuario: null,
     carrito: [],
     inventario: [],
     pedidos: [],
     facturas: [],
-    
-    setUsuarioLogueado(logueado) {
+
+    setUsuarioLogueado(logueado, usuario = null) {
         this.usuarioLogueado = logueado;
+        this.usuario = usuario;
         document.body.classList.toggle('usuario-logueado', logueado);
     },
     actualizarCarrito(nuevoCarrito) {
@@ -32,6 +34,12 @@ export async function inicializarTienda() {
 
     // Configurar eventos de usuario
     configurarEventosUsuario();
+
+    // Cargar la información del usuario desde el localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        estadoGlobal.setUsuarioLogueado(true, user);
+    }
 
     document.querySelectorAll('[data-module]').forEach((enlace) => {
         enlace.addEventListener('click', (event) => {
@@ -96,7 +104,7 @@ function configurarEventosUsuario() {
         });
     }
 
-    
+
 
     // Escuchar eventos de login y logout
     window.addEventListener('usuarioLogueado', () => {

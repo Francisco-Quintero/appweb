@@ -7,3 +7,5 @@ export function verificarSesion() {
     }
     return JSON.parse(user); // Retornar el usuario autenticado
 }
+
+export const BASE_URL = 'http://localhost:26209/api';
