@@ -216,10 +216,10 @@ async function generarPedido(estadoGlobal) {
     const pedido = {
         fechaPedido: new Date().toISOString(),
         estadoPedido: "Pendiente",
-        costoEnvio: 2000, // Puedes calcularlo dinámicamente si es necesario
+        costoEnvio: 2000, 
         horaCreacion: horaCreacion,
         usuario: {
-            id: user.id// Usar el ID del usuario logueado
+            id: user.id
         },
         detalles: estadoGlobal.carrito.map((item) => ({
             producto: {

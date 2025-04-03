@@ -1,109 +1,144 @@
+// Importar módulos
+import { initDashboard } from '../modules/dashboard/dashboard.js';
 
-function inicializarGestion() {
-    
-    const userMenuButton = document.getElementById('userMenuButton');
-    const userDropdown = document.getElementById('userDropdown');
+// Estado global centralizado
+const estadoGlobal = {
+    usuarioLogueado: false,
+    usuario: null,
+    carrito: [],
+    inventario: [],
+    pedidosPendientes: [],
+    historialVentas: [],
+    proveedores: [],
 
-    function cargarLibreriaEmailJS() {
-        return new Promise((resolve, reject) => {
-            if (window.emailjs) {
-                resolve();
-            } else {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-                script.onload = () => {
-                    emailjs.init('R6MTXZtcPcos0kbQw');
-                    resolve();
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            }
-        });
+    setUsuarioLogueado(logueado, usuario = null) {
+        this.usuarioLogueado = logueado;
+        this.usuario = usuario;
+        document.body.classList.toggle('usuario-logueado', logueado);
+    },
+    actualizarInventario(nuevoInventario) {
+        this.inventario = nuevoInventario;
+        console.log('Inventario actualizado:', this.inventario);
+    },
+    actualizarPedidosPendientes(nuevosPedidos) {
+        this.pedidosPendientes = nuevosPedidos;
+        console.log('Pedidos pendientes actualizados:', this.pedidosPendientes);
+    },
+    actualizarHistorialVentas(nuevoHistorial) {
+        this.historialVentas = nuevoHistorial;
+        console.log('Historial de ventas actualizado:', this.historialVentas);
+    },
+    actualizarProveedores(nuevosProveedores) {
+        this.proveedores = nuevosProveedores;
+        console.log('Proveedores actualizados:', this.proveedores);
+    }
+};
+
+// Función para inicializar la gestión
+export async function inicializarGestion() {
+    console.log('Inicializando gestión...');
+
+    // Configurar eventos de usuario
+    configurarEventosUsuario();
+
+    // Cargar la información del usuario desde el localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        estadoGlobal.setUsuarioLogueado(true, user);
     }
 
-    function cargarModulo(nombreModulo) {
-        if (!window.hayUsuarioLogueado() && nombreModulo !== 'usuarios') {
-            alert('Debe iniciar sesión para acceder a este módulo.');
-            cargarModulo('usuarios');
-            return;
-        }
+    // Obtener datos iniciales desde la base de datos
+    await cargarDatosIniciales();
 
-        const contenedorPrincipal = document.getElementById('main-container');
-
-        // Eliminar scripts y estilos previos del módulo
-        document.querySelectorAll('script[data-module]').forEach(el => {
-            if (!el.hasAttribute('data-global')) {
-                el.remove();
-            }
-        });
-        document.querySelectorAll(`link[data-module="${nombreModulo}"]`).forEach(el => el.remove());
-
-        cargarLibreriaEmailJS()
-            .then(() => fetch(`modules/${nombreModulo}/${nombreModulo}.html`))
-            .then(response => response.text())
-            .then(html => {
-                contenedorPrincipal.innerHTML = html;
-
-                // Cargar el CSS del módulo
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = `modules/${nombreModulo}/${nombreModulo}.css`;
-                link.setAttribute('data-module', nombreModulo);
-                document.head.appendChild(link);
-
-                // Cargar el script del módulo
-                const script = document.createElement('script');
-                script.src = `modules/${nombreModulo}/${nombreModulo}.js`;
-                script.setAttribute('data-module', nombreModulo);
-                script.onload = function () {
-                    console.log("Módulo cargado:", nombreModulo);
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
-                    // Despachar evento personalizado cuando el módulo se cargue
-                    const event = new Event(`${nombreModulo}Cargado`);
-                    document.dispatchEvent(event);
-                };
-                document.body.appendChild(script);
-            })
-            .catch(error => console.error(`Error al cargar el módulo ${nombreModulo}:`, error));
-    }
-
-    // Configurar navegación
-    document.querySelectorAll('[data-module]').forEach(enlace => {
-        enlace.addEventListener('click', function (e) {
-            e.preventDefault();
-            const nombreModulo = this.getAttribute('data-module');
-            cargarModulo(nombreModulo);
-            document.getElementById('section-title').textContent = this.textContent;
+    document.querySelectorAll('[data-module]').forEach((enlace) => {
+        enlace.addEventListener('click', (event) => {
+            event.preventDefault();
+            const nombreModulo = enlace.getAttribute('data-module');
+            cambiarModulo(nombreModulo);
         });
     });
 
-    // Configurar menú de usuario
+    // Cargar el módulo inicial (dashboard)
+    await cambiarModulo('dashboard');
+}
+
+// Función para cargar datos iniciales desde la base de datos
+async function cargarDatosIniciales() {
+    try {
+        const [inventario, pedidosPendientes, historialVentas, proveedores] = await Promise.all([
+            fetch('http://localhost:26209/api/inventario').then(res => res.json()),
+            fetch('http://localhost:26209/api/pedidos/pendientes').then(res => res.json()),
+            fetch('http://localhost:26209/api/ventas/historial').then(res => res.json()),
+            fetch('http://localhost:26209/api/proveedores').then(res => res.json())
+        ]);
+
+        estadoGlobal.actualizarInventario(inventario);
+        estadoGlobal.actualizarPedidosPendientes(pedidosPendientes);
+        estadoGlobal.actualizarHistorialVentas(historialVentas);
+        estadoGlobal.actualizarProveedores(proveedores);
+
+        console.log('Datos iniciales cargados desde la base de datos');
+    } catch (error) {
+        console.error('Error al cargar datos iniciales desde la base de datos:', error);
+    }
+}
+
+// Función para cambiar entre módulos
+async function cambiarModulo(nombreModulo) {
+    console.log(`Cambiando al módulo: ${nombreModulo}`);
+    const contenedorPrincipal = document.getElementById('main-container');
+
+    // Limpiar el contenedor principal
+    contenedorPrincipal.innerHTML = '';
+
+    // Cargar el HTML del módulo
+    const response = await fetch(`modules/${nombreModulo}/${nombreModulo}.html`);
+    if (!response.ok) {
+        throw new Error(`Error al cargar el HTML del módulo ${nombreModulo}`);
+    }
+    const html = await response.text();
+    contenedorPrincipal.innerHTML = html;
+
+    // Inicializar el módulo correspondiente
+    switch (nombreModulo) {
+        case 'dashboard':
+            await initDashboard(estadoGlobal);
+            break;
+        default:
+            console.error(`Módulo desconocido: ${nombreModulo}`);
+    }
+}
+
+// Configurar eventos relacionados con el usuario
+function configurarEventosUsuario() {
+    const userMenuButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+
     if (userMenuButton && userDropdown) {
-        userMenuButton.addEventListener('click', function () {
+        userMenuButton.addEventListener('click', () => {
             userDropdown.classList.toggle('show');
         });
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', (event) => {
             if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
                 userDropdown.classList.remove('show');
             }
         });
     }
 
-    // Escuchar evento de cierre de sesión
-    window.addEventListener('redirigirAUsuarios', function() {
-        cargarModulo('usuarios');
+    // Escuchar eventos de login y logout
+    window.addEventListener('usuarioLogueado', () => {
+        console.log('Usuario ha iniciado sesión');
+        estadoGlobal.setUsuarioLogueado(true);
     });
 
-    // Cargar el módulo inicial
-    cargarModulo('usuarios');
+    window.addEventListener('usuarioDeslogueado', () => {
+        console.log('Usuario ha cerrado sesión');
+        estadoGlobal.setUsuarioLogueado(false);
+    });
 }
 
-// Esperar a que los datos globales estén disponibles
-if (typeof window.datosGlobales !== 'undefined') {
+// Inicializar la gestión cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
     inicializarGestion();
-} else {
-    window.addEventListener('datosGlobalesDisponibles', inicializarGestion);
-}
+});

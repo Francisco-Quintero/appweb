@@ -3,6 +3,7 @@ import { initCatalogo } from '../modules/catalogo/catalogo.js';
 import { initCarrito } from '../modules/carrito/carrito.js';
 import { initPedidos } from '../modules/pedidos/pedidos.js';
 import { initFacturas } from '../modules/facturas/facturas.js';
+// import { initCompras } from '../modules/compras/compras.js';
 
 // Estado global centralizado
 const estadoGlobal = {
@@ -12,6 +13,7 @@ const estadoGlobal = {
     inventario: [],
     pedidos: [],
     facturas: [],
+    proveedores: [],
 
     setUsuarioLogueado(logueado, usuario = null) {
         this.usuarioLogueado = logueado;
@@ -25,6 +27,18 @@ const estadoGlobal = {
     actualizarInventario(nuevoInventario) {
         this.inventario = nuevoInventario;
         console.log('Inventario actualizado:', this.inventario);
+    },
+    actualizarPedidos(nuevosPedidos) {
+        this.pedidos = nuevosPedidos;
+        console.log('Pedidos actualizados:', this.pedidos);
+    },
+    actualizarFacturas(nuevasFacturas) {
+        this.facturas = nuevasFacturas;
+        console.log('Facturas actualizadas:', this.facturas);
+    },
+    actualizarProveedores(nuevosProveedores) {
+        this.proveedores = nuevosProveedores;
+        console.log('Proveedores actualizados:', this.proveedores);
     }
 };
 
@@ -41,6 +55,9 @@ export async function inicializarTienda() {
         estadoGlobal.setUsuarioLogueado(true, user);
     }
 
+    // Cargar datos iniciales desde la API
+    await cargarDatosIniciales();
+
     document.querySelectorAll('[data-module]').forEach((enlace) => {
         enlace.addEventListener('click', (event) => {
             event.preventDefault();
@@ -51,6 +68,27 @@ export async function inicializarTienda() {
 
     // Cargar el módulo inicial
     await cambiarModulo('catalogo');
+}
+
+// Función para cargar datos iniciales desde la API
+async function cargarDatosIniciales() {
+    try {
+        const [inventario, pedidos, facturas, proveedores] = await Promise.all([
+            fetch('http://localhost:26209/api/inventarios').then(res => res.json()),
+            fetch('http://localhost:26209/api/pedidos').then(res => res.json()),
+            fetch('http://localhost:26209/api/facturas').then(res => res.json()),
+            fetch('http://localhost:26209/api/proveedores').then(res => res.json())
+        ]);
+
+        estadoGlobal.actualizarInventario(inventario);
+        estadoGlobal.actualizarPedidos(pedidos);
+        estadoGlobal.actualizarFacturas(facturas);
+        estadoGlobal.actualizarProveedores(proveedores);
+
+        console.log('Datos iniciales cargados desde la API');
+    } catch (error) {
+        console.error('Error al cargar datos iniciales desde la API:', error);
+    }
 }
 
 // Función para cambiar entre módulos
@@ -74,13 +112,16 @@ async function cambiarModulo(nombreModulo) {
             await initCatalogo(estadoGlobal);
             break;
         case 'carrito':
-            await initCarrito(estadoGlobal); // Inicializar el módulo carrito
+            await initCarrito(estadoGlobal);
             break;
         case 'pedidos':
             await initPedidos(estadoGlobal);
             break;
         case 'facturas':
             await initFacturas(estadoGlobal);
+            break;
+        case 'compras':
+            await initCompras(estadoGlobal);
             break;
         default:
             console.error(`Módulo desconocido: ${nombreModulo}`);
@@ -103,8 +144,6 @@ function configurarEventosUsuario() {
             }
         });
     }
-
-
 
     // Escuchar eventos de login y logout
     window.addEventListener('usuarioLogueado', () => {

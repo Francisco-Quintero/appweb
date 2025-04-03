@@ -1,4 +1,4 @@
-(function () {
+
 
     console.log('Iniciando carga del módulo de compras');
     const apiUrlProveedores = "http://localhost:26209/api/proveedores";
@@ -506,5 +506,5 @@
     }
 
     console.log('Archivo compras.js cargado completamente');
-})();
+
 
