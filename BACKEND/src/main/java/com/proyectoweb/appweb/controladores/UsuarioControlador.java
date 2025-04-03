@@ -21,7 +21,9 @@ public class UsuarioControlador {
     @Autowired
     private UsuarioServicio usuarioServicio;
 
+    @Autowired
     private RolServicio rolServicio;
+
     // Listar todos los usuarios
     @GetMapping
     public List<Usuario> listarTodos() {
@@ -35,7 +37,7 @@ public class UsuarioControlador {
     }
 
     // Guardar un nuevo usuario
-    @PostMapping
+    @PostMapping("/guardar")
     public Usuario guardar(@RequestBody Usuario usuario) {
         return usuarioServicio.guardar(usuario);
     }
@@ -59,22 +61,51 @@ public class UsuarioControlador {
                 .body(Map.of("error", "Credenciales inválidas"));
     }
 
-@PostMapping("/registro")
-public ResponseEntity<?> registrar(@RequestBody Usuario nuevoUsuario) {
-    if (usuarioServicio.existeUsername(nuevoUsuario.getUsername())) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "El nombre de usuario ya está en uso"));
+    @PostMapping("/registro")
+    public ResponseEntity<?> registrar(@RequestBody Usuario nuevoUsuario) {
+        if (usuarioServicio.existeUsername(nuevoUsuario.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "El nombre de usuario ya está en uso"));
+        }
+
+        // Buscar el rol de cliente
+        Rol rolCliente = rolServicio.obtenerPorNombre("cliente");
+        if (rolCliente == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "El rol de cliente no está configurado"));
+        }
+
+        nuevoUsuario.setRol(rolCliente);
+        Usuario usuarioGuardado = usuarioServicio.guardar(nuevoUsuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioGuardado);
     }
 
-    // Buscar el rol de cliente
-    Rol rolCliente = rolServicio.obtenerPorNombre("cliente");
-    if (rolCliente == null) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "El rol de cliente no está configurado"));
-    }
+    @PostMapping("/registrar-domiciliario")
+    public ResponseEntity<?> registrarDomiciliario(@RequestBody Usuario nuevoUsuario) {
+        try {
+            // Verificar si el username ya existe
+            if (usuarioServicio.existeUsername(nuevoUsuario.getUsername())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "El nombre de usuario ya está en uso"));
+            }
 
-    nuevoUsuario.setRol(rolCliente);
-    Usuario usuarioGuardado = usuarioServicio.guardar(nuevoUsuario);
-    return ResponseEntity.status(HttpStatus.CREATED).body(usuarioGuardado);
-}
+            // Buscar el rol de domiciliario
+            Rol rolDomiciliario = rolServicio.obtenerPorNombre("domiciliario");
+            if (rolDomiciliario == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "El rol de domiciliario no está configurado"));
+            }
+
+            // Asignar el rol al usuario
+            nuevoUsuario.setRol(rolDomiciliario);
+
+            // Guardar el usuario
+            Usuario usuarioGuardado = usuarioServicio.guardar(nuevoUsuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioGuardado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error interno del servidor: " + e.getMessage()));
+        }
+    }
 }

@@ -72,4 +72,8 @@ public class PedidoServicio {
         Usuario usuario = usuarioRepositorio.findById(id).orElse(null);
         return pedidoRepositorio.findByUsuario(usuario);
     }
+
+    public List<Pedido> obtenerPedidosPorEstados(List<String> estados) {
+        return pedidoRepositorio.findByEstadoPedidoIn(estados);
+    }
 }

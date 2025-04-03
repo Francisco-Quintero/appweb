@@ -1,5 +1,11 @@
 // Importar módulos
 import { initDashboard } from '../modules/dashboard/dashboard.js';
+import { initProductos } from '../modules/productos/productos.js';
+import { initProveedores } from '../modules/Proveedores/proveedores.js';
+import { initCompras } from '../modules/compras/compras.js';
+import { initStock } from '../modules/stock/stock.js';
+import { initUsuarios } from '../modules/Usuarios/Usuarios.js';
+import { initVentas } from '../modules/ventas/ventas.js';
 
 // Estado global centralizado
 const estadoGlobal = {
@@ -7,9 +13,13 @@ const estadoGlobal = {
     usuario: null,
     carrito: [],
     inventario: [],
-    pedidosPendientes: [],
+    productos: [], // Nueva propiedad para productos
+    pedidos: [], // Cambiado de pedidosPendientes a pedidos
     historialVentas: [],
     proveedores: [],
+    suministros: [],
+    usuarios: [],
+    ventasActivas: [],
 
     setUsuarioLogueado(logueado, usuario = null) {
         this.usuarioLogueado = logueado;
@@ -20,9 +30,13 @@ const estadoGlobal = {
         this.inventario = nuevoInventario;
         console.log('Inventario actualizado:', this.inventario);
     },
-    actualizarPedidosPendientes(nuevosPedidos) {
-        this.pedidosPendientes = nuevosPedidos;
-        console.log('Pedidos pendientes actualizados:', this.pedidosPendientes);
+    actualizarProductos(nuevosProductos) { // Nueva función para productos
+        this.productos = nuevosProductos;
+        console.log('Productos actualizados:', this.productos);
+    },
+    actualizarPedidos(nuevosPedidos) { // Cambiado de actualizarPedidosPendientes
+        this.pedidos = nuevosPedidos;
+        console.log('Pedidos actualizados:', this.pedidos);
     },
     actualizarHistorialVentas(nuevoHistorial) {
         this.historialVentas = nuevoHistorial;
@@ -31,6 +45,18 @@ const estadoGlobal = {
     actualizarProveedores(nuevosProveedores) {
         this.proveedores = nuevosProveedores;
         console.log('Proveedores actualizados:', this.proveedores);
+    },
+    actualizarSuministros(nuevosSuministros) { // Nueva función para suministros
+        this.suministros = nuevosSuministros;
+        console.log('Suministros actualizados:', this.suministros);
+    },
+    actualizarUsuarios(nuevosUsuarios) { // Nueva función para usuarios
+        this.usuarios = nuevosUsuarios;
+        console.log('Usuarios actualizados:', this.usuarios);
+    },
+    actualizarVentasActivas(nuevasVentas) {
+        this.ventasActivas = nuevasVentas;
+        console.log('Ventas activas actualizadas:', this.ventasActivas);
     }
 };
 
@@ -65,17 +91,21 @@ export async function inicializarGestion() {
 // Función para cargar datos iniciales desde la base de datos
 async function cargarDatosIniciales() {
     try {
-        const [inventario, pedidosPendientes, historialVentas, proveedores] = await Promise.all([
-            fetch('http://localhost:26209/api/inventario').then(res => res.json()),
-            fetch('http://localhost:26209/api/pedidos/pendientes').then(res => res.json()),
-            fetch('http://localhost:26209/api/ventas/historial').then(res => res.json()),
-            fetch('http://localhost:26209/api/proveedores').then(res => res.json())
+        const [productos, pedidos, proveedores, inventario, suministros, usuarios] = await Promise.all([
+            fetch('http://localhost:26209/api/productos').then(res => res.json()),
+            fetch('http://localhost:26209/api/pedidos').then(res => res.json()),
+            fetch('http://localhost:26209/api/proveedores').then(res => res.json()),
+            fetch('http://localhost:26209/api/inventarios').then(res => res.json()),
+            fetch('http://localhost:26209/api/suministros').then(res => res.json()),
+            fetch('http://localhost:26209/api/usuarios').then(res => res.json()) // Nueva llamada para usuarios
         ]);
 
-        estadoGlobal.actualizarInventario(inventario);
-        estadoGlobal.actualizarPedidosPendientes(pedidosPendientes);
-        estadoGlobal.actualizarHistorialVentas(historialVentas);
+        estadoGlobal.actualizarProductos(productos);
+        estadoGlobal.actualizarPedidos(pedidos);
         estadoGlobal.actualizarProveedores(proveedores);
+        estadoGlobal.actualizarInventario(inventario);
+        estadoGlobal.actualizarSuministros(suministros);
+        estadoGlobal.actualizarUsuarios(usuarios); // Actualizar usuarios
 
         console.log('Datos iniciales cargados desde la base de datos');
     } catch (error) {
@@ -103,6 +133,24 @@ async function cambiarModulo(nombreModulo) {
     switch (nombreModulo) {
         case 'dashboard':
             await initDashboard(estadoGlobal);
+            break;
+        case 'productos':
+            await initProductos(estadoGlobal);
+            break;
+        case 'proveedores':
+            await initProveedores(estadoGlobal);
+            break;
+        case 'compras':
+            await initCompras(estadoGlobal);
+            break;
+        case 'stock':
+            await initStock(estadoGlobal);
+            break;
+        case 'Usuarios':
+            await initUsuarios(estadoGlobal);
+            break;
+        case 'ventas':
+            await initVentas(estadoGlobal);
             break;
         default:
             console.error(`Módulo desconocido: ${nombreModulo}`);
