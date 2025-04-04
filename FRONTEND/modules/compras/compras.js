@@ -184,7 +184,8 @@ function limpiarFormularioProducto() {
     document.getElementById('resultadosBusqueda').innerHTML = '';
 }
 
-function guardarCompra(estadoGlobal) {
+// Guardar una compra
+async function guardarCompra(estadoGlobal) {
     console.log('Guardando compra');
     const proveedorInput = document.getElementById('proveedor');
     const proveedorSeleccionado = proveedorInput.value;
@@ -200,7 +201,63 @@ function guardarCompra(estadoGlobal) {
         return;
     }
 
-    console.log('Compra guardada con éxito');
+    // Construir el objeto de la compra
+    const compra = {
+        fechaSuministro: new Date().toISOString(),
+        proveedor: proveedor,
+        productos: estadoGlobal.suministros.map(suministro => ({
+            idProducto: suministro.idProducto,
+            cantidad: suministro.cantidad,
+            precioCompraTotal: suministro.precioCompraTotal
+        }))
+    };
+
+    try {
+        // Enviar la compra al backend
+        const response = await fetch('http://localhost:26209/api/suministros', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(compra)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            alert(`Error al guardar la compra: ${error.message}`);
+            return;
+        }
+
+        const compraGuardada = await response.json();
+        console.log('Compra guardada:', compraGuardada);
+
+        // Actualizar el estado global
+        estadoGlobal.actualizarSuministros([...estadoGlobal.suministros, compraGuardada]);
+
+        // Actualizar el inventario para cada producto de la compra
+        compraGuardada.productos.forEach(producto => {
+            const inventarioExistente = estadoGlobal.inventario.find(i => i.producto.idProducto === producto.idProducto);
+
+            if (inventarioExistente) {
+                // Si el inventario ya existe, actualizar el stock
+                inventarioExistente.stock += producto.cantidad;
+            } else {
+                // Si no existe, crear un nuevo inventario
+                estadoGlobal.inventario.push({
+                    producto: producto,
+                    stock: producto.cantidad
+                });
+            }
+        });
+
+        // Notificar cambios en el inventario
+        estadoGlobal.notificar('inventarioActualizado', estadoGlobal.inventario);
+
+        alert('Compra guardada exitosamente');
+    } catch (error) {
+        console.error('Error al guardar la compra:', error);
+        alert('Ocurrió un error al guardar la compra');
+    }
 }
 
 window.eliminarProducto = function (indice) {
@@ -208,3 +265,48 @@ window.eliminarProducto = function (indice) {
     estadoGlobal.suministros.splice(indice, 1);
     actualizarTablaProductos(estadoGlobal);
 };
+
+// Mostrar el formulario para agregar una nueva compra
+function mostrarFormularioCompra() {
+    console.log('Mostrando formulario de nueva compra');
+    const modal = document.getElementById('modalNuevaCompra');
+    if (modal) {
+        modal.style.display = 'block';
+    } else {
+        console.error('No se encontró el modal para nueva compra');
+    }
+}
+
+// Cerrar el modal de nueva compra
+function cerrarModal() {
+    console.log('Cerrando modal de nueva compra');
+    const modal = document.getElementById('modalNuevaCompra');
+    if (modal) {
+        modal.style.display = 'none';
+    } else {
+        console.error('No se encontró el modal para cerrar');
+    }
+}
+
+// Cerrar el formulario de nueva compra
+function cerrarFormularioCompra() {
+    console.log('Cerrando formulario de nueva compra');
+    const modal = document.getElementById('modalNuevaCompra');
+    if (modal) {
+        // Limpiar los campos del formulario
+        document.getElementById('proveedor').value = '';
+        document.getElementById('busquedaProducto').value = '';
+        document.getElementById('cantidad').value = '';
+        document.getElementById('precioCompraTotal').value = '';
+        document.getElementById('resultadosBusqueda').innerHTML = '';
+        document.querySelector('#tablaProductos tbody').innerHTML = '';
+
+        // Vaciar los suministros en el estado global
+        estadoGlobal.suministros = [];
+
+        // Cerrar el modal
+        modal.style.display = 'none';
+    } else {
+        console.error('No se encontró el modal para cerrar');
+    }
+}

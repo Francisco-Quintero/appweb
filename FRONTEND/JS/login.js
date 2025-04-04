@@ -63,6 +63,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     });
 
     if (response.ok) {
+        const nuevoUsuario = await response.json();
+
+        // Actualizar el estado global
+        estadoGlobal.usuarios.push(nuevoUsuario);
+
+        // Notificar cambios en el estado global
+        estadoGlobal.notificar('usuariosActualizados', estadoGlobal.usuarios);
+
         alert('Usuario registrado exitosamente. Ahora puedes iniciar sesión.');
         mostrarLogin();
     } else {

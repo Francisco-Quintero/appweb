@@ -208,15 +208,15 @@ async function generarPedido(estadoGlobal) {
         return;
     }
 
-        // Obtener la hora en formato HH:mm:ss
-        const now = new Date();
-        const horaCreacion = now.toTimeString().split(' ')[0];
+    // Obtener la hora en formato HH:mm:ss
+    const now = new Date();
+    const horaCreacion = now.toTimeString().split(' ')[0];
 
     // Construir el JSON del pedido
     const pedido = {
         fechaPedido: new Date().toISOString(),
         estadoPedido: "Pendiente",
-        costoEnvio: 2000, 
+        costoEnvio: 2000,
         horaCreacion: horaCreacion,
         usuario: {
             id: user.id
@@ -254,10 +254,12 @@ async function generarPedido(estadoGlobal) {
         guardarEnLocalStorage(estadoGlobal);
         renderizarCarrito(estadoGlobal);
 
+        // Notificar cambios al estado global
+        estadoGlobal.actualizarPedidos([...estadoGlobal.pedidos, pedidoGuardado]);
+        estadoGlobal.actualizarInventario(pedidoGuardado.detalles.map(detalle => detalle.producto));
         alert('Pedido generado exitosamente');
     } catch (error) {
         console.error('Error al generar el pedido:', error);
         alert('Ocurrió un error al generar el pedido');
     }
 }
-    

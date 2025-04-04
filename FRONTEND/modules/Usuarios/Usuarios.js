@@ -226,6 +226,8 @@ async function registrarDomiciliario(nombre, email, password, estadoGlobal) {
 
         const domiciliarioGuardado = await response.json();
         estadoGlobal.usuarios.push(domiciliarioGuardado); // Actualizamos el estado global
+        
+        estadoGlobal.notificar('usuariosActualizados', estadoGlobal.usuarios); // Notificamos el cambio
         actualizarListaUsuarios(estadoGlobal); // Actualizamos la lista en la interfaz
         alert('Domiciliario registrado con éxito');
     } catch (error) {

@@ -3,44 +3,7 @@ import { initCatalogo } from '../modules/catalogo/catalogo.js';
 import { initCarrito } from '../modules/carrito/carrito.js';
 import { initPedidos } from '../modules/pedidos/pedidos.js';
 import { initFacturas } from '../modules/facturas/facturas.js';
-// import { initCompras } from '../modules/compras/compras.js';
-
-// Estado global centralizado
-const estadoGlobal = {
-    usuarioLogueado: false,
-    usuario: null,
-    carrito: [],
-    inventario: [],
-    pedidos: [],
-    facturas: [],
-    proveedores: [],
-
-    setUsuarioLogueado(logueado, usuario = null) {
-        this.usuarioLogueado = logueado;
-        this.usuario = usuario;
-        document.body.classList.toggle('usuario-logueado', logueado);
-    },
-    actualizarCarrito(nuevoCarrito) {
-        this.carrito = nuevoCarrito;
-        console.log('Carrito actualizado:', this.carrito);
-    },
-    actualizarInventario(nuevoInventario) {
-        this.inventario = nuevoInventario;
-        console.log('Inventario actualizado:', this.inventario);
-    },
-    actualizarPedidos(nuevosPedidos) {
-        this.pedidos = nuevosPedidos;
-        console.log('Pedidos actualizados:', this.pedidos);
-    },
-    actualizarFacturas(nuevasFacturas) {
-        this.facturas = nuevasFacturas;
-        console.log('Facturas actualizadas:', this.facturas);
-    },
-    actualizarProveedores(nuevosProveedores) {
-        this.proveedores = nuevosProveedores;
-        console.log('Proveedores actualizados:', this.proveedores);
-    }
-};
+import estadoGlobal from './estadoGlobal.js';
 
 // Función para inicializar la tienda
 export async function inicializarTienda() {
@@ -49,15 +12,27 @@ export async function inicializarTienda() {
     // Configurar eventos de usuario
     configurarEventosUsuario();
 
-    // Cargar la información del usuario desde el localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        estadoGlobal.setUsuarioLogueado(true, user);
-    }
+    // Asegurarse de que los datos iniciales estén cargados
+    await estadoGlobal.cargarDatosIniciales();
 
-    // Cargar datos iniciales desde la API
-    await cargarDatosIniciales();
+    // Escuchar cambios en el estado global y actualizar la interfaz según sea necesario
+    estadoGlobal.registrarObservador('inventarioActualizado', (inventario) => {
+        console.log('Inventario actualizado en tienda:', inventario);
+    });
 
+    estadoGlobal.registrarObservador('pedidosActualizados', (pedidos) => {
+        console.log('Pedidos actualizados en tienda:', pedidos);
+    });
+
+    estadoGlobal.registrarObservador('facturasActualizadas', (facturas) => {
+        console.log('Facturas actualizadas en tienda:', facturas);
+    });
+
+    estadoGlobal.registrarObservador('proveedoresActualizados', (proveedores) => {
+        console.log('Proveedores actualizados en tienda:', proveedores);
+    });
+
+    // Configurar navegación entre módulos
     document.querySelectorAll('[data-module]').forEach((enlace) => {
         enlace.addEventListener('click', (event) => {
             event.preventDefault();
@@ -68,27 +43,6 @@ export async function inicializarTienda() {
 
     // Cargar el módulo inicial
     await cambiarModulo('catalogo');
-}
-
-// Función para cargar datos iniciales desde la API
-async function cargarDatosIniciales() {
-    try {
-        const [inventario, pedidos, facturas, proveedores] = await Promise.all([
-            fetch('http://localhost:26209/api/inventarios').then(res => res.json()),
-            fetch('http://localhost:26209/api/pedidos').then(res => res.json()),
-            fetch('http://localhost:26209/api/facturas').then(res => res.json()),
-            fetch('http://localhost:26209/api/proveedores').then(res => res.json())
-        ]);
-
-        estadoGlobal.actualizarInventario(inventario);
-        estadoGlobal.actualizarPedidos(pedidos);
-        estadoGlobal.actualizarFacturas(facturas);
-        estadoGlobal.actualizarProveedores(proveedores);
-
-        console.log('Datos iniciales cargados desde la API');
-    } catch (error) {
-        console.error('Error al cargar datos iniciales desde la API:', error);
-    }
 }
 
 // Función para cambiar entre módulos
@@ -107,6 +61,7 @@ async function cambiarModulo(nombreModulo) {
     const html = await response.text();
     contenedorPrincipal.innerHTML = html;
 
+    // Inicializar el módulo correspondiente
     switch (nombreModulo) {
         case 'catalogo':
             await initCatalogo(estadoGlobal);
@@ -119,9 +74,6 @@ async function cambiarModulo(nombreModulo) {
             break;
         case 'facturas':
             await initFacturas(estadoGlobal);
-            break;
-        case 'compras':
-            await initCompras(estadoGlobal);
             break;
         default:
             console.error(`Módulo desconocido: ${nombreModulo}`);

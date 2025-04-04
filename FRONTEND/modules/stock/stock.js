@@ -144,6 +144,9 @@ async function guardarInventario(e, estadoGlobal) {
             estadoGlobal.inventario.push(actualizado);
         }
 
+        // Notificar cambios en el estado global
+        estadoGlobal.notificar('inventarioActualizado', estadoGlobal.inventario);
+
         cargarInventarioEnTabla(estadoGlobal);
         cerrarModal();
     } catch (error) {

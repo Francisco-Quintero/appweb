@@ -194,7 +194,7 @@ function cargarDomiciliarios(estadoGlobal) {
 
 function configurarFormularioAsignarDomiciliario(estadoGlobal) {
     const formAsignarDomiciliario = document.getElementById('formAsignarDomiciliario');
-    formAsignarDomiciliario.addEventListener('submit', (event) => {
+    formAsignarDomiciliario.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const idPedido = formAsignarDomiciliario.getAttribute('data-id-pedido');
@@ -205,17 +205,41 @@ function configurarFormularioAsignarDomiciliario(estadoGlobal) {
             return;
         }
 
-        // Actualizar el estado localmente (puedes reemplazar esto con una llamada al backend)
-        const pedido = estadoGlobal.pedidos.find(p => p.idPedido === parseInt(idPedido));
-        if (pedido) {
-            const domiciliario = estadoGlobal.usuarios.find(u => u.id === parseInt(idDomiciliario));
-            pedido.domiciliario = domiciliario;
+        try {
+            // Actualizar el pedido en el backend
+            const response = await fetch(`http://localhost:26209/api/pedidos/${idPedido}/asignar-domiciliario`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idDomiciliario: parseInt(idDomiciliario) }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al asignar domiciliario: ${response.statusText}`);
+            }
+
+            const pedidoActualizado = await response.json();
+
+            // Actualizar el estado global
+            const index = estadoGlobal.pedidos.findIndex(p => p.idPedido === parseInt(idPedido));
+            if (index !== -1) {
+                estadoGlobal.pedidos[index] = pedidoActualizado;
+            }
+
+            // Notificar cambios en el estado global
+            estadoGlobal.notificar('pedidosActualizados', estadoGlobal.pedidos);
 
             // Actualizar las tablas
+            cargarVentasActivas(estadoGlobal);
+            cargarHistorialVentas(estadoGlobal);
             renderizarVentasActivas(estadoGlobal);
             renderizarHistorialVentas(estadoGlobal);
 
-            alert(`Domiciliario asignado: ${domiciliario.nombre} ${domiciliario.apellido}`);
+            alert(`Domiciliario asignado correctamente: ${pedidoActualizado.domiciliario.nombre} ${pedidoActualizado.domiciliario.apellido}`);
+        } catch (error) {
+            console.error('Error al asignar domiciliario:', error);
+            alert('Hubo un error al asignar el domiciliario. Por favor, intenta de nuevo.');
         }
 
         // Cerrar el modal

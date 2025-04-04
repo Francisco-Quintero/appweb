@@ -31,6 +31,7 @@ async function cargarProductosDesdeAPI(estadoGlobal) {
 }
 
 // Función para renderizar los productos en la tabla
+// Función para renderizar los productos en la tabla
 function renderizarProductos(estadoGlobal) {
     const cuerpoTabla = document.getElementById('cuerpoTablaProductos');
     if (!cuerpoTabla) {
@@ -59,12 +60,10 @@ function renderizarProductos(estadoGlobal) {
                     </td>
                     <td>
                         <div class="acciones-tabla">
-                            <button onclick="window.moduloProductos.editarProducto(${producto.idProducto})" 
-                                    class="btn-icono" title="Editar">
+                            <button class="btn-editar" data-id="${producto.idProducto}" title="Editar">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
-                            <button onclick="window.moduloProductos.eliminarProducto(${producto.idProducto})" 
-                                    class="btn-icono btn-icono-eliminar" title="Eliminar">
+                            <button class="btn-eliminar" data-id="${producto.idProducto}" title="Eliminar">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                             </button>
                         </div>
@@ -74,7 +73,76 @@ function renderizarProductos(estadoGlobal) {
         }).join('');
 
     cuerpoTabla.innerHTML = contenidoTabla;
+
+    // Asignar eventos a los botones de edición y eliminación
+    cuerpoTabla.querySelectorAll('.btn-editar').forEach(button => {
+        button.addEventListener('click', () => {
+            const idProducto = parseInt(button.dataset.id);
+            editarProducto(idProducto, estadoGlobal);
+        });
+    });
+
+    cuerpoTabla.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', () => {
+            const idProducto = parseInt(button.dataset.id);
+            eliminarProducto(idProducto, estadoGlobal);
+        });
+    });
 }
+
+// Función para eliminar un producto
+async function eliminarProducto(idProducto, estadoGlobal) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:26209/api/productos/${idProducto}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) throw new Error(`Error al eliminar producto: ${response.statusText}`);
+
+        console.log(`Producto con ID ${idProducto} eliminado correctamente`);
+
+        // Actualizar el estado global
+        estadoGlobal.productos = estadoGlobal.productos.filter(p => p.idProducto !== idProducto);
+
+        // Notificar cambios en el estado global
+        estadoGlobal.notificar('productosActualizados', estadoGlobal.productos);
+
+        // Renderizar los productos actualizados
+        renderizarProductos(estadoGlobal);
+    } catch (error) {
+        console.error('Error al eliminar producto:', error);
+        alert('Hubo un error al eliminar el producto. Por favor, intenta de nuevo.');
+    }
+}
+
+// Función para editar un producto
+function editarProducto(idProducto, estadoGlobal) {
+    console.log('Editando producto con ID:', idProducto);
+
+    // Buscar el producto en el estado global
+    const producto = estadoGlobal.productos.find(p => p.idProducto === idProducto);
+    if (!producto) {
+        console.error('No se encontró el producto con el ID proporcionado');
+        return;
+    }
+
+    // Cargar los datos del producto en el formulario
+    document.getElementById('idProducto').value = producto.idProducto;
+    document.getElementById('nombreProducto').value = producto.nombre;
+    document.getElementById('descripcionProducto').value = producto.descripcion;
+    document.getElementById('categoriaProducto').value = producto.categoria;
+    document.getElementById('valorMedida').value = producto.cantidadMedida;
+    document.getElementById('unidadMedida').value = producto.unidadMedida;
+    document.getElementById('imagenProducto').value = producto.imagenProducto || '';
+
+    // Mostrar el modal del formulario
+    document.getElementById('modalProducto').style.display = 'block';
+}
+
 // Función para manejar el envío del formulario
 function manejarEnvioFormulario(e, estadoGlobal) {
     e.preventDefault();
@@ -138,6 +206,10 @@ async function guardarProductoEnAPI(producto, estadoGlobal) {
 
         // Recargar los productos desde la API
         await cargarProductosDesdeAPI(estadoGlobal);
+
+        
+        // Notificar cambios en el estado global
+        estadoGlobal.notificar('productosActualizados', estadoGlobal.productos);
 
         // Renderizar los productos actualizados
         renderizarProductos(estadoGlobal);
