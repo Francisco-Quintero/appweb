@@ -84,6 +84,12 @@ const estadoGlobal = {
         this.facturas = nuevasFacturas;
         this.notificar('facturasActualizadas', nuevasFacturas);
     },
+    isUsuarioLogueado() {
+        return this.usuarioLogueado;
+    },
+    getUsuario() {
+        return this.usuario;
+    },
 
     // Función para cargar datos iniciales desde la API
     async cargarDatosIniciales() {

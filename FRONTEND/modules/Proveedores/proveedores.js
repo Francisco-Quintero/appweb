@@ -1,12 +1,5 @@
 export async function initProveedores(estadoGlobal) {
     console.log('Inicializando módulo de proveedores...');
-
-    // Verificar si los datos de proveedores están disponibles en el estado global
-    if (estadoGlobal.proveedores.length === 0) {
-        console.warn('Los proveedores no están disponibles en el estado global. Intentando cargar desde la API...');
-        await cargarProveedoresDesdeAPI(estadoGlobal);
-    }
-
     // Renderizar los proveedores
     renderizarProveedores(estadoGlobal);
 
@@ -14,23 +7,6 @@ export async function initProveedores(estadoGlobal) {
     configurarEventListeners(estadoGlobal);
 }
 
-// Función para cargar proveedores desde la API y actualizar el estado global
-async function cargarProveedoresDesdeAPI(estadoGlobal) {
-    const API_URL = 'http://localhost:26209/api/proveedores';
-    try {
-        const respuesta = await fetch(API_URL);
-        if (!respuesta.ok) throw new Error(`Error al obtener proveedores: ${respuesta.statusText}`);
-
-        const proveedores = await respuesta.json();
-
-        // Actualizar el estado global
-        estadoGlobal.actualizarProveedores(proveedores);
-
-        console.log('Proveedores cargados desde la API y actualizados en el estado global:', proveedores);
-    } catch (error) {
-        console.error('Error al cargar proveedores desde la API:', error);
-    }
-}
 
 // Función para renderizar los proveedores en la tabla
 function renderizarProveedores(estadoGlobal) {
