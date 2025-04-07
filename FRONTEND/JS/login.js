@@ -1,5 +1,5 @@
 // Mostrar la sección correspondiente al cargar la página
-import { BASE_URL } from "./auth";
+const BASE_URL = 'http://localhost:26209/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user'));

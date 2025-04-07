@@ -6,9 +6,13 @@ import { initFacturas } from "../modules/facturas/facturas.js"
 import estadoGlobal from "./estadoGlobal.js"
 // Eliminamos la importación de lucide
 
+const BASE_URL = "http://localhost:26209/api" // URL base de la API
 // Función para inicializar la tienda
 export async function inicializarTienda() {
     console.log("Inicializando tienda...")
+
+    // Verificar el estado de sesión
+    verificarEstadoSesion();
 
     // Inicializar Lucide icons - usamos la variable global
     if (window.lucide) {
@@ -18,7 +22,7 @@ export async function inicializarTienda() {
     }
 
     // Configurar eventos de usuario
-     configurarEventosUsuario()
+    configurarEventosUsuario()
 
     // Configurar eventos de navegación responsiva
     configurarNavegacionResponsiva()
@@ -176,19 +180,22 @@ async function cambiarModulo(nombreModulo) {
 }
 
 // Configurar eventos relacionados con el usuario
- function configurarEventosUsuario() {
-     // Escuchar eventos de login y logout
-     window.addEventListener("usuarioLogueado", () => {
-         console.log("Usuario ha iniciado sesión")
-         estadoGlobal.setUsuarioLogueado(true)
-         actualizarInterfazUsuario()
-     })
+function configurarEventosUsuario() {
+    const loginButton = document.getElementById("loginButton");
 
-     window.addEventListener("usuarioDeslogueado", () => {
-         console.log("Usuario ha cerrado sesión")
-         estadoGlobal.setUsuarioLogueado(false)
-         actualizarInterfazUsuario()
-    })
+    if (loginButton) {
+        loginButton.addEventListener("click", () => {
+            if (estadoGlobal.isUsuarioLogueado()) {
+                // Si el usuario está logueado, mostrar su información o redirigir
+                console.log("Usuario ya logueado. Mostrando información de usuario.");
+                mostrarMenuUsuario();
+            } else {
+                // Si no está logueado, mostrar el modal de login
+                console.log("Usuario no logueado. Mostrando modal de login.");
+                mostrarModal();
+            }
+        });
+    }
 }
 
 // Configurar navegación responsiva
@@ -237,21 +244,29 @@ function configurarModalLogin() {
             }
         })
 
+
         // Manejar envío del formulario
         loginForm.addEventListener("submit", (event) => {
             event.preventDefault()
-            const email = document.getElementById("email").value
+            const username = document.getElementById("username").value
             const password = document.getElementById("password").value
 
-            console.log("Intentando iniciar sesión con:", email)
+            console.log("Intentando iniciar sesión con:", username)
 
             // Simulación de inicio de sesión
-            setTimeout(() => {
+            setTimeout(async () => {
                 // Aquí se conectaría con el backend para autenticar
-                const exito = true // Simulamos éxito en la autenticación
 
-                if (exito) {
+                const response = await fetch(`${BASE_URL}/usuarios/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
                     // Disparar evento de usuario logueado
+                    const user = await response.json();
+                    localStorage.setItem('user', JSON.stringify(user));
                     window.dispatchEvent(new Event("usuarioLogueado"))
 
                     // Cerrar modal
@@ -271,21 +286,32 @@ function configurarModalLogin() {
     }
 }
 
-// Función para actualizar la interfaz de usuario según el estado
-function actualizarInterfazUsuario() {
-    const loginButton = document.getElementById("loginButton")
+function verificarEstadoSesion() {
+    const usuarioGuardado = localStorage.getItem('user');
+    if (usuarioGuardado) {
+        const usuario = JSON.parse(usuarioGuardado);
+        console.log(`Usuario logueado: ${usuario.username}`);
+        actualizarInterfazUsuario(true, usuario);
+    } else {
+        console.log('No hay usuario logueado.');
+        actualizarInterfazUsuario(false);
+    }
+}
 
-    if (estadoGlobal.isUsuarioLogueado()) {
+// Función para actualizar la interfaz de usuario según el estado
+function actualizarInterfazUsuario(estaLogueado, usuario = null) {
+    const loginButton = document.getElementById("loginButton");
+
+    if (estaLogueado) {
         // Usuario logueado
         if (loginButton) {
             loginButton.innerHTML = `
                 <i data-lucide="user-check"></i>
                 <span class="action-text">Mi Cuenta</span>
-            `
+            `;
 
             // Cambiar comportamiento del botón
-            loginButton.removeEventListener("click", mostrarModal)
-            loginButton.addEventListener("click", mostrarMenuUsuario)
+            loginButton.onclick = () => mostrarMenuUsuario(usuario);
         }
     } else {
         // Usuario no logueado
@@ -293,20 +319,18 @@ function actualizarInterfazUsuario() {
             loginButton.innerHTML = `
                 <i data-lucide="user"></i>
                 <span class="action-text">Iniciar Sesión</span>
-            `
+            `;
 
             // Restaurar comportamiento del botón
-            loginButton.removeEventListener("click", mostrarMenuUsuario)
-            loginButton.addEventListener("click", mostrarModal)
+            loginButton.onclick = mostrarModal;
         }
     }
 
     // Reinicializar iconos
     if (window.lucide) {
-        window.lucide.createIcons()
+        window.lucide.createIcons();
     }
 }
-
 // Función para mostrar el modal de login
 function mostrarModal() {
     const loginModal = document.getElementById("loginModal")

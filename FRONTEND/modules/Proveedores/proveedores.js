@@ -145,7 +145,7 @@ async function guardarProveedorEnAPI(proveedor, estadoGlobal) {
         console.log(`Proveedor ${proveedor.idProveedor ? 'actualizado' : 'creado'} correctamente`);
 
         // Recargar los proveedores desde la API
-        await cargarProveedoresDesdeAPI(estadoGlobal);
+       // await cargarProveedoresDesdeAPI(estadoGlobal);
 
         // Notificar cambios en el estado global
         estadoGlobal.notificar('proveedoresActualizados', estadoGlobal.proveedores);

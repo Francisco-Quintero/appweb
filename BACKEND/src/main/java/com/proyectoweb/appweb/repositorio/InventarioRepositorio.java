@@ -9,4 +9,5 @@ import com.proyectoweb.appweb.entidades.Producto;
 
 public interface InventarioRepositorio extends JpaRepository <Inventario, Long> {
     Optional<Inventario> findByProducto(Producto producto);
+    Inventario findByProducto_IdProducto(Long idProducto); // Método para buscar por ID del producto
 }

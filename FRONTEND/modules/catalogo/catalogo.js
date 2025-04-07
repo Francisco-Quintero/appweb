@@ -2,7 +2,7 @@
 export async function initCatalogo(estadoGlobal) {
     console.log('Inicializando módulo de catálogo...');
 
-    cargarDatosDesdeLocalStorage(estadoGlobal);
+
     // Esperar a que el contenedor esté disponible
     const catalogoContainer = document.getElementById('catalogo-productos');
     if (!catalogoContainer) {
@@ -11,19 +11,20 @@ export async function initCatalogo(estadoGlobal) {
     }
 
     // Verificar si los datos del inventario ya están en el estado global
-    if (estadoGlobal.inventario.length === 0) {
-        console.log('Cargando datos del inventario desde la API...');
-        try {
-            const inventario = await cargarDatosDesdeAPI();
-            estadoGlobal.actualizarInventario(inventario);
-        } catch (error) {
-            console.error('Error al cargar los datos del inventario:', error);
-            return; // Detener la inicialización si ocurre un error
-        }
-    } else {
-        console.log('Usando datos del inventario almacenados en el estado global');
-    }
+    // if (estadoGlobal.inventario.length === 0) {
+    //     console.log('Cargando datos del inventario desde la API...');
+    //     try {
+    //         const inventario = await cargarDatosDesdeAPI();
+    //         estadoGlobal.actualizarInventario(inventario);
+    //     } catch (error) {
+    //         console.error('Error al cargar los datos del inventario:', error);
+    //         return; // Detener la inicialización si ocurre un error
+    //     }
+    // } else {
+    //     console.log('Usando datos del inventario almacenados en el estado global');
+    // }
 
+    cargarDatosDesdeLocalStorage(estadoGlobal);
     // Renderizar el catálogo
     renderizarCatalogo(estadoGlobal);
 
@@ -65,14 +66,17 @@ export function renderizarCatalogo(estadoGlobal) {
 
     const fragment = document.createDocumentFragment();
 
-    estadoGlobal.inventario.forEach((itemInventario) => {
-        if (itemInventario.stock > 0) {
-            const productoCard = crearProductoCard(itemInventario, estadoGlobal);
-            fragment.appendChild(productoCard);
-        }
-    });
+    if (estadoGlobal.inventario.length === 0) {
+        catalogoContainer.innerHTML = '<p>No hay productos disponibles en este momento.</p>';
+        return;
+    }
 
     catalogoContainer.innerHTML = '';
+
+    estadoGlobal.inventario.forEach((itemInventario) => {
+        const productoCard = crearProductoCard(itemInventario, estadoGlobal);
+        fragment.appendChild(productoCard);
+    });
     catalogoContainer.appendChild(fragment);
 }
 

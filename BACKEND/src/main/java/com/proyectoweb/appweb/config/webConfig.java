@@ -11,16 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class webConfig {
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    @Bean    public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://192.168.1.36:3000","http://192.168.1.38:3000") // URLs del frontend
-                        .allowedMethods("GET", "POST", "PUT", "DELETE") // Métodos permitidos
-                        .allowedHeaders("*") // Permitir todos los encabezados
-                        .allowCredentials(true); // Permitir cookies o credenciales
+                .allowedOrigins(
+                    "http://127.0.0.1:5500", // Localhost para desarrollo
+                    "https://2493-204-157-232-55.ngrok-free.app")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true); // Permitir credenciales
             }
         };
     }
