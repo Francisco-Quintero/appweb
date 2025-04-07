@@ -18,7 +18,8 @@ public class webConfig {
                 registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://127.0.0.1:5500", // Localhost para desarrollo
-                    "https://2493-204-157-232-55.ngrok-free.app")
+                    "https://2493-204-157-232-55.ngrok-free.app",
+                    "http://192.168.1.38:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true); // Permitir credenciales

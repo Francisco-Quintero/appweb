@@ -8,28 +8,40 @@
 </head>
 <body>
     <div id="modulo-ventas" class="ventas-container">
-        <h2>Gestión de Ventas</h2>
+        <div class="ventas-header">
+            <h2><i data-lucide="shopping-cart"></i> Gestión de Ventas</h2>
+            <p class="ventas-descripcion">Administra las ventas y pedidos de tu negocio</p>
+        </div>
         
         <div class="acciones-ventas">
             <div class="contenedor-busqueda">
-                <input type="text" id="busquedaVenta" placeholder="Buscar venta...">
-                <button id="btnBuscar">
+                <div class="input-icon">
                     <i data-lucide="search"></i>
+                    <input type="text" id="busquedaVenta" placeholder="Buscar venta por ID o cliente...">
+                </div>
+                <button id="btnBuscar" class="btn btn-secundario">
+                    <i data-lucide="filter"></i>
+                    <span class="texto-btn">Filtrar</span>
                 </button>
             </div>
-            <button id="btnVerHistorial" class="btn btn-secundario">Ver Historial</button>
+            <button id="btnVerHistorial" class="btn btn-primario">
+                <i data-lucide="history"></i>
+                <span class="texto-btn">Ver Historial</span>
+            </button>
         </div>
 
-        <div id="ventasActivas">
-            <h3>Ventas Activas</h3>
-            <div class="tabla-container">
+        <div id="ventasActivas" class="panel-ventas">
+            <div class="panel-header">
+                <h3><i data-lucide="activity"></i> Ventas Activas</h3>
+            </div>
+            <div class="tabla-responsive">
                 <table class="tabla-ventas">
                     <thead>
                         <tr>
-                            <th>ID Pedido</th>
+                            <th>ID</th>
                             <th>Fecha</th>
                             <th>Cliente</th>
-                            <th>Costo Envío</th>
+                            <th>Envío</th>
                             <th>Estado</th>
                             <th>Domiciliario</th>
                             <th>Acciones</th>
@@ -42,22 +54,29 @@
             </div>
 
             <!-- Mensaje cuando no hay ventas -->
-            <div id="ventas-empty" class="ventas-empty" style="display: none;">
-                <p>No hay ventas activas</p>
+            <div id="ventas-empty" class="empty-state" style="display: none;">
+                <i data-lucide="shopping-cart-x"></i>
+                <p>No hay ventas activas en este momento</p>
             </div>
         </div>
 
-        <div id="historialVentas" style="display: none;">
-            <h3>Historial de Ventas</h3>
-            <button id="btnVolverActivas" class="btn btn-secundario">Volver a Ventas Activas</button>
-            <div class="tabla-container">
+        <div id="historialVentas" class="panel-ventas" style="display: none;">
+            <div class="panel-header">
+                <h3><i data-lucide="history"></i> Historial de Ventas</h3>
+                <button id="btnVolverActivas" class="btn btn-secundario">
+                    <i data-lucide="arrow-left"></i>
+                    <span class="texto-btn">Volver a Ventas Activas</span>
+                </button>
+            </div>
+            <div class="tabla-responsive">
                 <table class="tabla-ventas">
                     <thead>
                         <tr>
-                            <th>ID Pedido</th>
+                            <th>ID</th>
                             <th>Fecha</th>
                             <th>Cliente</th>
-                            <th>Costo Envío</th>
+                            <th>Productos</th>
+                            <th>Envío</th>
                             <th>Domiciliario</th>
                             <th>Acciones</th>
                         </tr>
@@ -69,7 +88,8 @@
             </div>
 
             <!-- Mensaje cuando no hay historial -->
-            <div id="historial-empty" class="ventas-empty" style="display: none;">
+            <div id="historial-empty" class="empty-state" style="display: none;">
+                <i data-lucide="history-x"></i>
                 <p>No hay ventas en el historial</p>
             </div>
         </div>
@@ -78,8 +98,10 @@
         <div id="modalVenta" class="modal">
             <div class="contenido-modal">
                 <div class="modal-header">
-                    <h3>Detalles de la Venta</h3>
-                    <button id="btnCerrarModal" class="btn-cerrar">&times;</button>
+                    <h3><i data-lucide="clipboard-list"></i> Detalles de la Venta</h3>
+                    <button id="btnCerrarModal" class="btn-cerrar">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
                 <div id="detallesVenta" class="detalles-venta">
                     <!-- Los detalles se cargarán aquí dinámicamente -->
@@ -91,17 +113,27 @@
         <div id="modalAsignarDomiciliario" class="modal">
             <div class="contenido-modal">
                 <div class="modal-header">
-                    <h3>Asignar Domiciliario</h3>
-                    <button id="btnCerrarModalAsignar" class="btn-cerrar">&times;</button>
+                    <h3><i data-lucide="user-check"></i> Asignar Domiciliario</h3>
+                    <button id="btnCerrarModalAsignar" class="btn-cerrar">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
                 <form id="formAsignarDomiciliario">
                     <div class="campo">
                         <label for="selectDomiciliario">Seleccionar Domiciliario:</label>
-                        <select id="selectDomiciliario" required>
-                            <option value="">Seleccione un domiciliario</option>
-                        </select>
+                        <div class="input-icon">
+                            <i data-lucide="user"></i>
+                            <select id="selectDomiciliario" required>
+                                <option value="">Seleccione un domiciliario</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primario">Asignar</button>
+                    <div class="acciones-formulario">
+                        <button type="submit" class="btn btn-primario">
+                            <i data-lucide="check"></i>
+                            <span>Asignar</span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

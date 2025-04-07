@@ -185,14 +185,15 @@ function configurarEventosUsuario() {
 
     if (loginButton) {
         loginButton.addEventListener("click", () => {
-            if (estadoGlobal.isUsuarioLogueado()) {
-                // Si el usuario está logueado, mostrar su información o redirigir
-                console.log("Usuario ya logueado. Mostrando información de usuario.");
-                mostrarMenuUsuario();
+            // Verificar si hay un usuario en el localStorage
+            const usuarioGuardado = localStorage.getItem('user');
+            if (usuarioGuardado) {
+                const usuario = JSON.parse(usuarioGuardado);
+                console.log(`Usuario logueado: ${usuario.username}`);
+                mostrarMenuUsuario(usuario); // Mostrar menú de usuario
             } else {
-                // Si no está logueado, mostrar el modal de login
-                console.log("Usuario no logueado. Mostrando modal de login.");
-                mostrarModal();
+                console.log("No hay usuario logueado. Mostrando modal de login.");
+                mostrarModal(); // Mostrar modal de login
             }
         });
     }
