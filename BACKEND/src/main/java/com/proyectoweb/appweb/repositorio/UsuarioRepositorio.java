@@ -1,6 +1,7 @@
 package com.proyectoweb.appweb.repositorio;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +16,7 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 
     Optional<Usuario> findByUsername(String username);
+
+    List<Usuario> findByRolNombre(String rolNombre);
 }
 

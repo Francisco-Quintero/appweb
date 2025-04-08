@@ -7,6 +7,7 @@ import com.proyectoweb.appweb.entidades.Pedido;
 import com.proyectoweb.appweb.servicios.PedidoServicio;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -30,9 +31,26 @@ public class PedidoControlador {
         return pedidoServicio.listarPorUsuario(id);
     }
 
-        @GetMapping("/ventas-activas")
+    @PutMapping("/{id}/asignar-domiciliario")
+    public ResponseEntity<Pedido> asignarDomiciliario(@PathVariable Long id, @RequestBody Map<String, Long> request) {
+        Long idDomiciliario = request.get("idDomiciliario");
+    
+        // Validar que el ID del domiciliario no sea null
+        if (idDomiciliario == null) {
+            return ResponseEntity.badRequest().body(null); // Devuelve 400 si el ID es null
+        }
+    
+        Pedido pedidoActualizado = pedidoServicio.asignarDomiciliario(id, idDomiciliario);
+        if (pedidoActualizado == null) {
+            return ResponseEntity.notFound().build(); // Devuelve 404 si no se encuentra el pedido
+        }
+        return ResponseEntity.ok(pedidoActualizado); // Devuelve 200 con el pedido actualizado
+    }
+
+    @GetMapping("/ventas-activas")
     public ResponseEntity<List<Pedido>> obtenerVentasActivas() {
-        List<Pedido> ventasActivas = pedidoServicio.obtenerPedidosPorEstados(List.of("pendiente", "en proceso", "en camino"));
+        List<Pedido> ventasActivas = pedidoServicio
+                .obtenerPedidosPorEstados(List.of("pendiente", "en proceso", "en camino"));
         return ResponseEntity.ok(ventasActivas);
     }
 
@@ -41,7 +59,7 @@ public class PedidoControlador {
         List<Pedido> historialVentas = pedidoServicio.obtenerPedidosPorEstados(List.of("completado"));
         return ResponseEntity.ok(historialVentas);
     }
-    
+
     @PostMapping
     public Pedido guardar(@RequestBody Pedido pedido) {
         return pedidoServicio.guardar(pedido);
@@ -53,4 +71,3 @@ public class PedidoControlador {
     }
 
 }
-

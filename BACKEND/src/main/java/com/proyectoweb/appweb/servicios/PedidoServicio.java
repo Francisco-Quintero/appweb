@@ -76,4 +76,31 @@ public class PedidoServicio {
     public List<Pedido> obtenerPedidosPorEstados(List<String> estados) {
         return pedidoRepositorio.findByEstadoPedidoIn(estados);
     }
+
+    public Pedido asignarDomiciliario(Long idPedido, Long idDomiciliario) {
+        // Validar que el ID del domiciliario no sea null
+        if (idDomiciliario == null) {
+            throw new IllegalArgumentException("El ID del domiciliario no puede ser null");
+        }
+    
+        System.out.println("ID del domiciliario recibido: " + idDomiciliario);
+    
+        // Buscar el pedido por ID
+        Pedido pedido = pedidoRepositorio.findById(idPedido).orElse(null);
+        if (pedido == null) {
+            throw new RuntimeException("Pedido no encontrado con ID: " + idPedido);
+        }
+    
+        // Buscar el usuario por ID
+        Usuario usuario = usuarioRepositorio.findById(idDomiciliario).orElse(null);
+        if (usuario == null || !usuario.getRol().getNombre().equalsIgnoreCase("domiciliario")) {
+            throw new RuntimeException("El usuario no existe o no tiene el rol de domiciliario");
+        }
+    
+        // Asignar el domiciliario al pedido
+        pedido.setDomiciliario(usuario);
+    
+        // Guardar el pedido actualizado
+        return pedidoRepositorio.save(pedido);
+    }
 }

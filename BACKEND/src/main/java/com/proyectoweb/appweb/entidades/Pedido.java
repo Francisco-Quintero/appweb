@@ -46,6 +46,10 @@ public class Pedido {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_domiciliario", nullable = true)
+    private Usuario domiciliario; 
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DetallePedido> detalles; // Relación con los detalles del pedido

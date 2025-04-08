@@ -312,9 +312,10 @@ function configurarFormularioAsignarDomiciliario(estadoGlobal) {
             // Mostrar indicador de carga
             mostrarNotificacion('Asignando domiciliario...', 'info');
             
+            console.log(JSON.stringify({ idDomiciliario: parseInt(idDomiciliario) }));
             // Actualizar el pedido en el backend
             const response = await fetch(`http://localhost:26209/api/pedidos/${idPedido}/asignar-domiciliario`, {
-                method: 'PUT',
+                method: 'PUT',                                                      
                 headers: {
                     'Content-Type': 'application/json',
                 },
