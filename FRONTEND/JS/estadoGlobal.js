@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:26209/api'; // URL base de la API
+const API_URL = 'http://localhost:26209/api';
+ // URL base de la API
 const estadoGlobal = {
     usuarioLogueado: false,
     usuario: null,

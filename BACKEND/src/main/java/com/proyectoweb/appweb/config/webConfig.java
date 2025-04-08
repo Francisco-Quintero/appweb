@@ -11,21 +11,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class webConfig {
 
-    @Bean    public WebMvcConfigurer corsConfigurer() {
+    @Bean 
+    public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                .allowedOrigins(
-                    "http://127.0.0.1:5500", // Localhost para desarrollo
-                    "https://2493-204-157-232-55.ngrok-free.app",
-                    "http://192.168.1.38:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true); // Permitir credenciales
+                registry.addMapping("/**")
+                    .allowedOrigins(
+                        "http://127.0.0.1:5500", // Desarrollo local
+                        "http://192.168.1.38:3000", // Red local
+                        "https://2493-204-157-232-55.ngrok-free.app",
+                        "http://localhost:3000"// Ngrok
+                    )
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
             }
         };
     }
+    
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {

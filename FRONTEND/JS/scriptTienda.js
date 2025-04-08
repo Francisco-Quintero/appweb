@@ -7,6 +7,8 @@ import estadoGlobal from "./estadoGlobal.js"
 // Eliminamos la importación de lucide
 
 const BASE_URL = "http://localhost:26209/api" // URL base de la API
+
+const NGROK_URL = "https://2493-204-157-232-55.ngrok-free.app/api" // URL de ngrok (opcional)
 // Función para inicializar la tienda
 export async function inicializarTienda() {
     console.log("Inicializando tienda...")
