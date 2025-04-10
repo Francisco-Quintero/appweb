@@ -10,7 +10,6 @@ import com.proyectoweb.appweb.entidades.Inventario;
 import com.proyectoweb.appweb.entidades.Pedido;
 import com.proyectoweb.appweb.entidades.Producto;
 import com.proyectoweb.appweb.entidades.Usuario;
-import com.proyectoweb.appweb.repositorio.DetallePedidoRepositorio;
 import com.proyectoweb.appweb.repositorio.InventarioRepositorio;
 import com.proyectoweb.appweb.repositorio.PedidoRepositorio;
 import com.proyectoweb.appweb.repositorio.UsuarioRepositorio;
