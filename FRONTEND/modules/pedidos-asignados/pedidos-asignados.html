@@ -7,89 +7,61 @@
 </head>
 <body>
     <div class="pedidos-asignados-container">
-        <div class="module-header">
-            <h2>Pedidos Asignados</h2>
-            <p>Gestiona los pedidos que tienes asignados para entregar</p>
-        </div>
-        
+        <h2>Pedidos Asignados</h2>
         <div class="acciones-pedidos">
             <div class="filtros">
-                <select id="filtro-estado" class="filtro-select">
+                <select id="filtro-estado">
                     <option value="todos">Todos los estados</option>
                     <option value="pendiente">Pendiente</option>
                     <option value="en-camino">En camino</option>
                     <option value="entregado">Entregado</option>
                 </select>
-                <input type="date" id="filtro-fecha" class="filtro-fecha" />
-                <button id="btn-filtrar" class="btn btn-primario">
-                    <i data-lucide="filter"></i>
-                    <span>Filtrar</span>
-                </button>
+                <input type="date" id="filtro-fecha" />
+                <button id="btn-filtrar">Filtrar</button>
             </div>
         </div>
-        
-        <!-- Estado de carga -->
-        <div id="estado-carga" class="estado-carga">
-            <div class="spinner"></div>
-            <p>Cargando pedidos...</p>
-        </div>
-        
-        <div id="pedidos-activos" class="tabla-container">
-            <table id="tabla-pedidos">
-                <thead>
-                    <tr>
-                        <th>ID Pedido</th>
-                        <th>Cliente</th>
-                        <th>Dirección</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpo-tabla-pedidos">
-                    <!-- Los pedidos se cargarán aquí dinámicamente -->
-                </tbody>
-            </table>
-            
-            <!-- Mensaje cuando no hay pedidos -->
+        <div id="pedidos-activos">
+            <h3>Pedidos Activos</h3>
+            <div class="lista-pedidos">
+                <table id="tabla-pedidos">
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Cliente</th>
+                            <th>Dirección</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-tabla-pedidos">
+                        <!-- Los pedidos se cargarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
             <div id="sin-pedidos" class="sin-pedidos" style="display: none;">
-                <i data-lucide="package-x"></i>
                 <p>No hay pedidos asignados en este momento.</p>
             </div>
         </div>
     </div>
     
-    <!-- Modal de Detalles de Pedido -->
     <div id="modal-detalles-pedido" class="modal">
         <div class="modal-contenido">
-            <div class="modal-header">
-                <h3>Detalles del Pedido <span id="id-pedido-detalle"></span></h3>
-                <button class="cerrar-modal">
-                    <i data-lucide="x"></i>
-                </button>
+            <span class="cerrar-modal">&times;</span>
+            <h3>Detalles del Pedido <span id="id-pedido-detalle"></span></h3>
+            <div id="detalles-pedido">
+                <!-- Los detalles del pedido se cargarán aquí dinámicamente -->
             </div>
-            <div class="modal-body">
-                <div id="detalles-pedido" class="detalles-pedido">
-                    <!-- Los detalles del pedido se cargarán aquí dinámicamente -->
-                </div>
-                
-                <div class="mapa-container">
-                    <h4>Ubicación de Entrega</h4>
-                    <div id="mapa-entrega" class="mapa-entrega"></div>
-                </div>
-                
-                <div class="acciones-pedido">
-                    <select id="actualizar-estado" class="select-estado">
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en-camino">En camino</option>
-                        <option value="entregado">Entregado</option>
-                    </select>
-                    <button id="btn-actualizar-estado" class="btn btn-primario">
-                        <i data-lucide="save"></i>
-                        <span>Actualizar Estado</span>
-                    </button>
-                </div>
+            <div class="acciones-pedido">
+                <select id="actualizar-estado">
+                    <option value="pendiente">Pendiente</option>
+                    <option value="en-camino">En camino</option>
+                    <option value="entregado">Entregado</option>
+                </select>
+                <button id="btn-actualizar-estado">Actualizar Estado</button>
             </div>
         </div>
     </div>
+
+    <script src="/modules/pedidos-asignados/pedidos-asignados.js"></script>
 </body>
 </html>

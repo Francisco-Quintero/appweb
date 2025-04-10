@@ -8,138 +8,94 @@
 </head>
 <body>
     <div class="productos-container">
-        <div class="productos-header">
-            <h2><i data-lucide="package"></i> Gestión de Productos</h2>
-            <p class="productos-descripcion">Administra el catálogo de productos de tu inventario</p>
-        </div>
+        <h2>Gestión de Productos</h2>
         
         <div class="acciones-productos">
             <button id="btnAgregarProducto" class="btn btn-primario">
-                <i data-lucide="plus-circle"></i>
-                <span>Añadir Producto</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Añadir Producto
             </button>
             <div class="contenedor-busqueda">
-                <div class="input-icon">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="busquedaProducto" placeholder="Buscar producto...">
-                </div>
-                <button id="btnBuscar" class="btn btn-secundario">
-                    <i data-lucide="filter"></i>
-                    <span class="texto-btn">Filtrar</span>
+                <input type="text" id="busquedaProducto" placeholder="Buscar producto...">
+                <button id="btnBuscar" class="btn btn-icon btn-secundario">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
             </div>
         </div>
 
-        <div class="tabla-responsive">
-            <table class="tabla-productos">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Categoría</th>
-                        <th>Valor</th>
-                        <th>Unidad</th>
-                        <th>Imagen</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cuerpoTablaProductos">
-                    <!-- Los productos se cargarán aquí dinámicamente -->
-                </tbody>
-            </table>
-        </div>
+        <table class="tabla-productos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Valor Medida</th>
+                    <th>unidad Medida</th>
+                    <th>Imagen</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTablaProductos">
+                <!-- Los productos se cargarán aquí dinámicamente -->
+            </tbody>
+        </table>
 
         <div id="productos-empty" class="productos-empty" style="display: none;">
-            <div class="empty-state">
-                <i data-lucide="package-x"></i>
-                <p>No hay productos registrados</p>
-                <button id="btnAgregarProductoEmpty" class="btn btn-primario">
-                    <i data-lucide="plus-circle"></i>
-                    <span>Añadir Producto</span>
-                </button>
-            </div>
+            <p>No hay productos registrados</p>
         </div>
 
         <div id="modalProducto" class="modal">
             <div class="contenido-modal">
-                <div class="modal-header">
-                    <h3 id="tituloModal"><i data-lucide="package-plus"></i> Añadir Producto</h3>
-                    <button type="button" class="btn-cerrar" id="btnCerrarModal">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
+                <h3 id="tituloModal">Añadir Producto</h3>
                 <form id="formularioProducto">
                     <input type="hidden" id="idProducto">
                     
                     <!-- Nombre - Full width -->
                     <div class="grupo-formulario full-width">
                         <label for="nombreProducto">Nombre:</label>
-                        <div class="input-icon">
-                            <i data-lucide="tag"></i>
-                            <input type="text" id="nombreProducto" required>
-                        </div>
+                        <input type="text" id="nombreProducto" required>
                     </div>
         
                     <!-- Categoría -->
                     <div class="grupo-formulario">
                         <label for="categoriaProducto">Categoría:</label>
-                        <div class="input-icon">
-                            <i data-lucide="folder"></i>
-                            <input type="text" id="categoriaProducto" required>
-                        </div>
+                        <input type="text" id="categoriaProducto" required>
                     </div>
         
                     <!-- URL Imagen -->
                     <div class="grupo-formulario">
                         <label for="imagenProducto">URL de la imagen:</label>
-                        <div class="input-icon">
-                            <i data-lucide="image"></i>
-                            <input type="url" id="imagenProducto">
-                        </div>
+                        <input type="url" id="imagenProducto">
                     </div>
         
                     <!-- Medidas en campos más pequeños -->
                     <div class="grupo-formulario measure-field">
                         <label for="unidadMedida">Unidad de Medida:</label>
-                        <div class="input-icon">
-                            <i data-lucide="ruler"></i>
-                            <input type="text" id="unidadMedida" required>
-                        </div>
+                        <input type="text" id="unidadMedida" required>
                     </div>
         
                     <div class="grupo-formulario measure-field">
                         <label for="valorMedida">Valor de Medida:</label>
-                        <div class="input-icon">
-                            <i data-lucide="scale"></i>
-                            <input type="number" id="valorMedida" step="0.01" required>
-                        </div>
+                        <input type="number" id="valorMedida" step="0.01" required>
                     </div>
         
                     <!-- Descripción - Full width -->
                     <div class="grupo-formulario full-width">
                         <label for="descripcionProducto">Descripción:</label>
-                        <div class="input-icon textarea">
-                            <i data-lucide="file-text"></i>
-                            <textarea id="descripcionProducto" required></textarea>
-                        </div>
+                        <textarea id="descripcionProducto" required></textarea>
                     </div>
         
                     <!-- Botones de acción -->
                     <div class="acciones-formulario">
-                        <button type="button" class="btn btn-secundario" id="btnCancelar">
-                            <i data-lucide="x"></i>
-                            <span>Cancelar</span>
-                        </button>
-                        <button type="submit" class="btn btn-primario">
-                            <i data-lucide="save"></i>
-                            <span>Guardar</span>
-                        </button>
+                        <button type="button" class="btn btn-secundario" id="btnCancelar">Cancelar</button>
+                        <button type="submit" class="btn btn-primario">Guardar</button>
                     </div>
                 </form>
             </div>
         </div>
+        </div>
     </div>
-    <script type="module" src="modules/productos/productos.js"></script>
+    <script src="modules/productos/productos.js"></script>
 </body>
 </html>

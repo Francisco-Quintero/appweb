@@ -22,10 +22,9 @@ public class FacturaServicio {
     }
 
     public Factura guardar(Factura factura) {
-        // Calcular impuestos antes de guardar
-        factura.calcularImpuestos();
         return facturaRepositorio.save(factura);
     }
+
     public void eliminar(Long id) {
         facturaRepositorio.deleteById(id);
     }

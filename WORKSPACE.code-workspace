@@ -9,7 +9,6 @@
 	],
 	"settings": {
 		"java.compile.nullAnalysis.mode": "automatic",
-		"liveServer.settings.multiRootWorkspaceName": "FRONTEND",
-		"java.configuration.updateBuildConfiguration": "interactive"
+		"liveServer.settings.multiRootWorkspaceName": "FRONTEND"
 	}
 }

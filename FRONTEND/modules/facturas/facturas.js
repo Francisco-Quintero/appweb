@@ -1,158 +1,216 @@
-export async function initFacturas(estadoGlobal) {
-    console.log('Inicializando módulo de Facturas...');
+(function() {
+    console.log('Iniciando carga del módulo de Facturas');
 
-    // Verificar si las facturas ya están en el estado global
-    if (estadoGlobal.facturas.length === 0) {
-        console.log('Cargando datos de facturas desde la API...');
+    let facturas = [];
+    
+    async function cargarDatosDesdeAPI() {
         try {
-            const facturas = await cargarDatosDesdeAPI();
-            estadoGlobal.facturas = facturas;
+            const response = await fetch('http://localhost:26209/api/pagos');
+            if (!response.ok) {
+                throw new Error(`Error al obtener datos: ${response.statusText}`);
+            }
+            facturas = await response.json();
+            console.log('Datos de factura cargados desde la API:', facturas);
         } catch (error) {
-            console.error('Error al cargar los datos de facturas:', error);
-            return; // Detener la inicialización si ocurre un error
+            console.error('Error al cargar datos desde la API:', error);
         }
-    } else {
-        console.log('Usando datos de facturas almacenados en el estado global');
     }
 
-    // Renderizar las facturas
-    renderizarFacturas(estadoGlobal);
 
-    // Configurar eventos del módulo
-    configurarEventListeners(estadoGlobal);
-
-    console.log('Módulo de Facturas cargado completamente');
-}
-
-// Cargar datos de facturas desde la API
-async function cargarDatosDesdeAPI() {
-    try {
-        const response = await fetch('http://localhost:26209/api/facturas');
-        if (!response.ok) {
-            throw new Error(`Error al obtener datos: ${response.statusText}`);
+    function renderizarFacturas(facturasFiltradas = null) {
+        const facturasContainer = document.getElementById('lista-facturas');
+        const facturasEmpty = document.getElementById('facturas-empty');
+        
+        if (!facturasContainer || !facturasEmpty) {
+            console.error('No se encontraron los elementos necesarios para renderizar facturas');
+            return;
         }
-        const facturas = await response.json();
-        console.log('Datos de facturas cargados desde la API:', facturas);
-        return facturas;
-    } catch (error) {
-        console.error('Error al cargar datos desde la API:', error);
-        throw error;
-    }
-}
 
-// Renderizar las facturas
-function renderizarFacturas(estadoGlobal, facturasFiltradas = null) {
-    const facturasContainer = document.getElementById('lista-facturas');
-    const facturasEmpty = document.getElementById('facturas-empty');
+        const facturasAMostrar = facturasFiltradas || facturas;
 
-    if (!facturasContainer || !facturasEmpty) {
-        console.error('No se encontraron los elementos necesarios para renderizar facturas');
-        return;
-    }
+        if (facturasAMostrar.length === 0) {
+            facturasContainer.style.display = 'none';
+            facturasEmpty.style.display = 'block';
+            return;
+        }
 
-    const facturasAMostrar = facturasFiltradas || estadoGlobal.facturas;
+        facturasContainer.style.display = 'block';
+        facturasEmpty.style.display = 'none';
 
-    if (facturasAMostrar.length === 0) {
-        facturasContainer.style.display = 'none';
-        facturasEmpty.style.display = 'block';
-        return;
-    }
-
-    facturasContainer.style.display = 'block';
-    facturasEmpty.style.display = 'none';
-
-    facturasContainer.innerHTML = facturasAMostrar.map(factura => {
-        return `
-            <div class="factura-item">
-                <div class="factura-header">
-                    <div class="factura-info">
-                        <h3>Factura #${factura.idFactura}</h3>
-                        <span class="factura-fecha">
-                            ${formatearFecha(factura.fechaEmision)}
-                        </span>
-                    </div>
-                    <div class="factura-estado ${factura.estadoFactura}">
-                        ${factura.estadoFactura}
-                    </div>
-                </div>
-                <div class="factura-detalles">
-                    <div class="factura-pedido">
-                        <strong>Pedido:</strong> ${factura.pedido.idPedido}
-                        <span class="estado-pedido ${factura.pedido.estadoPedido}">
-                            ${factura.pedido.estadoPedido}
-                        </span>
-                    </div>
-                    <div class="factura-pago">
-                        <strong>Método de pago:</strong> ${factura.pagos.metodoPago}
-                        <span class="estado-pago ${factura.pagos.estadoPago}">
-                            ${factura.pagos.estadoPago}
-                        </span>
-                    </div>
-                    <div class="factura-montos">
-                        <div>Envío: $${factura.pedido.costoEnvio}</div>
-                        <div class="factura-total">
-                            Total: $${factura.total}
+        facturasContainer.innerHTML = facturasAMostrar.map(pago => {
+            return `
+                <div class="factura-item">
+                    <div class="factura-header">
+                        <div class="factura-info">
+                            <h3>Factura #${pago.factura.id_factura}</h3>
+                            <span class="factura-fecha">
+                                ${formatearFecha(pago.factura.fecha_emision)}
+                            </span>
+                        </div>
+                        <div class="factura-estado ${pago.factura.estadoFactura}">
+                            ${pago.factura.estadoFactura}
                         </div>
                     </div>
-                </div>
-                ${factura.pagos.estadoPago === 'pendiente' ? `
-                    <div class="factura-acciones">
-                        <button class="pagar-button" data-id-factura="${factura.idFactura}">
-                            Pagar ahora
-                        </button>
+                    <div class="factura-detalles">
+                        <div class="factura-pedido">
+                            <strong>Pedido:</strong> ${pago.factura.pedido.idPedido}
+                            <span class="estado-pedido ${pago.factura.pedido.estadoPedido}">
+                                ${pago.factura.pedido.estadoPedido}
+                            </span>
+                        </div>
+                        <div class="factura-pago">
+                            <strong>Método de pago:</strong> ${pago.metodoPago}
+                            <span class="estado-pago ${pago.estadoPago}">
+                                ${pago.estadoPago}
+                            </span>
+                        </div>
+                        <div class="factura-montos">
+                            <div>Envío: $${pago.factura.pedido.costoEnvio}</div>
+                            <div class="factura-total">
+                                Total: $${pago.factura.total}
+                            </div>
+                        </div>
                     </div>
-                ` : ''}
-            </div>
-        `;
-    }).join('');
+                    ${pago.estadoPago === 'pendiente' ? `
+                        <div class="factura-acciones">
+                        <button class="pagar-button" onclick="mostrarSimulacionPago()">
+                                Pagar ahora
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
 
-    // Configurar eventos de los botones de pago
-    document.querySelectorAll('.pagar-button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const idFactura = e.target.getAttribute('data-id-factura');
-            mostrarSimulacionPago(idFactura);
+        // Agregar event listeners a los botones de pago
+        document.querySelectorAll('.btn-pagar').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idFactura = e.target.getAttribute('data-id-factura');
+                procesarPago(idFactura);
+            });
         });
-    });
-}
-
-// Formatear fecha
-function formatearFecha(fecha) {
-    try {
-        return new Date(fecha).toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch (error) {
-        console.error('Error al formatear fecha:', error);
-        return 'Fecha no válida';
     }
-}
 
-// Mostrar modal de simulación de pago
-function mostrarSimulacionPago(idFactura) {
-    console.log(`Simulando pago para la factura #${idFactura}`);
-    document.getElementById('simulacionPagoModal').style.display = 'block';
-}
+            // Mostrar modal de simulación de pago
+        function mostrarSimulacionPago() {
+            document.getElementById('simulacionPagoModal').style.display = 'block';
+        }
 
-// Configurar eventos del módulo
-function configurarEventListeners(estadoGlobal) {
-    document.getElementById('filtro-estado')?.addEventListener('change', () => filtrarFacturas(estadoGlobal));
-    document.getElementById('filtro-fecha')?.addEventListener('change', () => filtrarFacturas(estadoGlobal));
-    document.getElementById('btn-aplicar-filtros')?.addEventListener('click', () => filtrarFacturas(estadoGlobal));
-}
+        // Cerrar modal de simulación
+        function cerrarSimulacionPago() {
+            document.getElementById('simulacionPagoModal').style.display = 'none';
+        }
 
-// Filtrar facturas
-function filtrarFacturas(estadoGlobal) {
-    const estado = document.getElementById('filtro-estado')?.value || 'todos';
-    const fecha = document.getElementById('filtro-fecha')?.value || '';
+        // Manejar el formulario de simulación de pago
+        document.getElementById('formSimulacionPago').addEventListener('submit', (e) => {
+            e.preventDefault();
 
-    const facturasFiltradas = estadoGlobal.facturas.filter(factura => {
-        const cumpleEstado = estado === 'todos' || factura.factura.estadoFactura.toLowerCase() === estado;
-        const cumpleFecha = !fecha || new Date(factura.factura.fecha_emision).toLocaleDateString() === new Date(fecha).toLocaleDateString();
+            const nombreCliente = document.getElementById('nombreCliente').value;
+            const montoPago = parseFloat(document.getElementById('montoPago').value);
+            const metodoPago = document.getElementById('metodoPago').value;
 
-        return cumpleEstado && cumpleFecha;
-    });
+            // Simular la respuesta de la pasarela
+            const exito = Math.random() > 0.2; // 80% de probabilidades de éxito
 
-    renderizarFacturas(estadoGlobal, facturasFiltradas);
-}
+            if (exito) {
+                alert(`¡Pago realizado con éxito! \nCliente: ${nombreCliente}\nMonto: $${montoPago}\nMétodo: ${metodoPago}`);
+                cerrarSimulacionPago();
+            } else {
+                alert(`El pago ha fallado. Por favor, intente nuevamente.`);
+            }
+        });
+
+
+    function formatearFecha(fecha) {
+        try {
+            return new Date(fecha).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch (error) {
+            console.error('Error al formatear fecha:', error);
+            return 'Fecha no válida';
+        }
+    }
+
+    // async function procesarPago(idFactura) {
+    //     const factura = facturas.find(f => f.idFactura === idFactura);
+    //     if (!factura) return;
+
+    //     if (factura.pago.metodoPago === 'transferencia') {
+    //         try {
+    //             const response = await fetch('https://api.ejemplo.com/pse', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     idFactura: factura.idFactura,
+    //                     monto: factura.total,
+    //                     // Otros datos necesarios para PSE
+    //                 }),
+    //             });
+
+    //             if (response.ok) {
+    //                 const result = await response.json();
+    //                 // Redirigir al usuario a la página de pago de PSE
+    //                 window.location.href = result.urlPago;
+    //             } else {
+    //                 throw new Error('Error en la respuesta del servidor');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error al procesar el pago por PSE:', error);
+    //             alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+    //         }
+    //     } else if (factura.pago.metodoPago === 'efectivo') {
+    //         alert('El pago se realizará contra entrega en efectivo');
+    //     }
+
+    //     factura.pago.estadoPago = 'procesando';
+    //     guardarEnLocalStorage();
+    //     renderizarFacturas();
+    // }
+
+    function filtrarFacturas() {
+        const estado = document.getElementById('filtro-estado')?.value || 'todos';
+        const fecha = document.getElementById('filtro-fecha')?.value || '';
+
+        const facturasFiltradas = facturas.filter(factura => {
+            const cumpleEstado = estado === 'todos' || factura.estadoFactura.toLowerCase() === estado;
+            const cumpleFecha = !fecha || new Date(factura.fechaEmision).toLocaleDateString() === new Date(fecha).toLocaleDateString();
+
+            return cumpleEstado && cumpleFecha;
+        });
+
+        renderizarFacturas(facturasFiltradas);
+    }
+
+    function configurarEventListeners() {
+        document.getElementById('filtro-estado')?.addEventListener('change', filtrarFacturas);
+        document.getElementById('filtro-fecha')?.addEventListener('change', filtrarFacturas);
+        document.getElementById('btn-aplicar-filtros')?.addEventListener('click', filtrarFacturas);
+    }
+
+    async function initFacturas() {
+        console.log('Inicializando módulo de Facturas');
+        await cargarDatosDesdeAPI();
+        renderizarFacturas();
+        configurarEventListeners();
+        console.log('Módulo de Facturas cargado completamente');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFacturas);
+    } else {
+        initFacturas();
+    }
+
+
+    // Exponer funciones necesarias globalmente
+   // window.procesarPago = procesarPago;
+    window.filtrarFacturas = filtrarFacturas;
+    window.mostrarSimulacionPago = mostrarSimulacionPago;
+    window.cerrarSimulacionPago = cerrarSimulacionPago;
+
+})();

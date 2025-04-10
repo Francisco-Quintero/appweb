@@ -1,11 +1,11 @@
 package com.proyectoweb.appweb.servicios;
 
-import com.proyectoweb.appweb.entidades.Usuario;
-import com.proyectoweb.appweb.repositorio.UsuarioRepositorio;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import com.proyectoweb.appweb.entidades.Usuario;
+import com.proyectoweb.appweb.repositorio.UsuarioRepositorio;
 
 @Service
 public class UsuarioServicio {
@@ -29,19 +29,8 @@ public class UsuarioServicio {
         usuarioRepositorio.deleteById(id);
     }
 
-    public Usuario obtenerPorUserYPassword(String username, String password) {
-        System.out.println("Buscando usuario con username: " + username + " y password: " + password);
-        Usuario usuario = usuarioRepositorio.findByUsernameAndPassword(username, password).orElse(null);
-        if (usuario == null) {
-            System.out.println("Usuario no encontrado o credenciales incorrectas");
-        } else {
-            System.out.println("Usuario encontrado: " + usuario.getUsername());
-        }
-        return usuario;
-    }
-
-    public boolean existeUsername(String username) {
-        return usuarioRepositorio.findByUsername(username).isPresent();
+    public Usuario obtenerPorUserYPassword(String user, String password) {
+        return usuarioRepositorio.findByUserAndPassword(user, password);
     }
 
 }

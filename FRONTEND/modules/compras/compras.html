@@ -4,32 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Compras</title>
-    <link rel="stylesheet" href="/modules/compras/compras.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div id="modulo-compras" class="compras-container">
-        <div class="module-header">
-            <h2>Gestión de Compras</h2>
-            <p>Administra las compras a proveedores y actualiza el inventario</p>
-        </div>
+        <h2>Gestión de Compras</h2>
         
         <div class="acciones-compras">
             <button id="btnNuevaCompra" class="btn btn-primario">
-                <i data-lucide="plus-circle"></i>
-                <span>Nueva Compra</span>
+                <i data-lucide="plus"></i>
+                Nueva Compra
             </button>
-            <div class="search-container">
-                <input type="text" id="busquedaCompra" placeholder="Buscar compra..." class="filtro-busqueda">
-                <button id="btnBuscar" class="btn-buscar">
+            <div class="contenedor-busqueda">
+                <input type="text" id="busquedaCompra" placeholder="Buscar compra...">
+                <button id="btnBuscar">
                     <i data-lucide="search"></i>
                 </button>
             </div>
-        </div>
-
-        <!-- Estado de carga -->
-        <div id="estado-carga" class="estado-carga">
-            <div class="spinner"></div>
-            <p>Cargando compras...</p>
         </div>
 
         <div class="tabla-container">
@@ -51,17 +42,8 @@
         </div>
 
         <!-- Mensaje cuando no hay compras -->
-        <div id="compras-empty" class="sin-resultados" style="display: none;">
-            <i data-lucide="package-x"></i>
+        <div id="compras-empty" class="compras-empty" style="display: none;">
             <p>No hay compras registradas</p>
-            <button id="btnCrearPrimeraCompra" class="btn-secundario">Crear primera compra</button>
-        </div>
-
-        <!-- Mensaje de error -->
-        <div id="mensaje-error" class="mensaje-error" style="display: none;">
-            <i data-lucide="alert-circle"></i>
-            <p>Ha ocurrido un error al cargar las compras. Por favor, intenta nuevamente.</p>
-            <button id="btn-reintentar" class="btn-reintentar">Reintentar</button>
         </div>
 
         <!-- Modal de detalles -->
@@ -69,9 +51,7 @@
             <div class="contenido-modal">
                 <div class="modal-header">
                     <h3>Detalles de la Compra</h3>
-                    <button id="btnCerrarModal" class="btn-cerrar">
-                        <i data-lucide="x"></i>
-                    </button>
+                    <button id="btnCerrarModal" class="btn-cerrar">&times;</button>
                 </div>
                 <div id="detallesCompra" class="detalles-compra">
                     <!-- Los detalles se cargarán aquí dinámicamente -->
@@ -80,59 +60,44 @@
         </div>
 
         <!-- Modal de formulario -->
-        <div id="modalNuevaCompra" class="modal">
+        <div id="modalFormulario" class="modal">
             <div class="contenido-modal">
                 <div class="modal-header">
                     <h3>Nueva Compra</h3>
-                    <button id="btnCerrarFormulario" class="btn-cerrar">
-                        <i data-lucide="x"></i>
-                    </button>
+                    <button id="btnCerrarFormulario" class="btn-cerrar">&times;</button>
                 </div>
         
                 <form id="formularioCompra" class="formulario-compra">
                     <div class="form-grid">
                         <div class="campo">
                             <label for="proveedor">Proveedor:</label>
-                            <div class="input-icon-wrapper">
-                                <input type="text" id="proveedor" list="listaProveedores" placeholder="Buscar proveedor..." required>
-                                <i data-lucide="truck"></i>
-                                <datalist id="listaProveedores">
-                                    <!-- Las opciones se cargarán dinámicamente -->
-                                </datalist>
-                            </div>
+                            <input type="text" id="proveedor" list="listaProveedores" placeholder="Buscar proveedor..." required>
+                            <datalist id="listaProveedores">
+                                <!-- Las opciones se cargarán dinámicamente -->
+                            </datalist>
                         </div>
             
                         <div class="campo">
                             <label for="busquedaProducto">Buscar Producto:</label>
                             <div class="busqueda-container">
-                                <div class="input-icon-wrapper">
-                                    <input type="text" id="busquedaProducto" placeholder="Nombre del producto">
-                                    <i data-lucide="search"></i>
-                                </div>
+                                <input type="text" id="busquedaProducto" placeholder="Nombre del producto">
                                 <div id="resultadosBusqueda" class="resultados-busqueda"></div>
                             </div>
                         </div>
             
                         <div class="campo">
                             <label for="cantidad">Cantidad:</label>
-                            <div class="input-icon-wrapper">
-                                <input type="number" id="cantidad" min="1" required>
-                                <i data-lucide="hash"></i>
-                            </div>
+                            <input type="number" id="cantidad" min="1" required>
                         </div>
             
                         <div class="campo">
                             <label for="precioCompraTotal">Precio de Compra Total:</label>
-                            <div class="input-icon-wrapper">
-                                <input type="number" id="precioCompraTotal" min="0" step="0.01" required>
-                                <i data-lucide="dollar-sign"></i>
-                            </div>
+                            <input type="number" id="precioCompraTotal" min="0" step="0.01" required>
                         </div>
                     </div>
 
                     <button type="button" id="btnAgregarProducto" class="btn btn-primario">
-                        <i data-lucide="plus"></i>
-                        <span>Agregar Producto</span>
+                        Agregar Producto
                     </button>
             
                     <div class="tabla-container">
@@ -142,23 +107,14 @@
                                     <th>Cantidad</th>
                                     <th>Unidad</th>
                                     <th>Producto</th>
-                                    <th>Precio Compra</th>
+                                    <th>Precio Compra Total</th>
+                                    <th>Precio Unitario Final</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Los productos se cargarán aquí dinámicamente -->
                             </tbody>
-                            <tfoot>
-                                <tr id="productos-empty" class="productos-empty">
-                                    <td colspan="5">
-                                        <div class="empty-message">
-                                            <i data-lucide="package-plus"></i>
-                                            <p>Agrega productos a la compra</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
             
@@ -171,24 +127,18 @@
             
                         <div class="campo campo-completo">
                             <label for="observaciones">Observaciones:</label>
-                            <textarea id="observaciones" placeholder="Agrega notas o comentarios sobre esta compra"></textarea>
+                            <textarea id="observaciones"></textarea>
                         </div>
             
-                        <div class="form-actions">
-                            <button type="button" id="btnCancelarCompra" class="btn btn-secundario">
-                                <i data-lucide="x"></i>
-                                <span>Cancelar</span>
-                            </button>
-                            <button type="button" id="btnGuardarCompra" class="btn btn-primario">
-                                <i data-lucide="save"></i>
-                                <span>Guardar Compra</span>
-                            </button>
-                        </div>
+                        <button type="button" id="btnGuardarCompra" class="btn btn-primario btn-guardar">
+                            Guardar Compra
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <script src="/JS/datosGlobales.js"></script>
 </body>
 </html>
 

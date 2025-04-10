@@ -37,20 +37,22 @@
     </select>
     <iframe id="contenedorVista"></iframe>
 
-    <script type="module">
-        import estadoGlobal from './JS/estadoGlobal.js';
-
+    <script src="/JS/datosGlobales.js"></script>
+    <script>
         const selectorVista = document.getElementById('selectorVista');
         const contenedorVista = document.getElementById('contenedorVista');
 
-        async function cargarVista(url) {
+        function cargarVista(url) {
             contenedorVista.src = url;
-            contenedorVista.onload = async function () {
-                // Asegurarse de que los datos iniciales estén cargados
-                await estadoGlobal.cargarDatosIniciales();
-
-                // Inyectar estado global en el iframe
-                contenedorVista.contentWindow.estadoGlobal = estadoGlobal;
+            contenedorVista.onload = function() {
+                // Asegurarse de que los datos globales estén inicializados
+                const datosActuales = window.obtenerDatosGlobales();
+                
+                // Inyectar datos y funciones en el iframe
+                contenedorVista.contentWindow.datosGlobales = datosActuales;
+                contenedorVista.contentWindow.datosGlobalesInicial = window.datosGlobalesInicial;
+                contenedorVista.contentWindow.guardarDatosGlobales = window.guardarDatosGlobales;
+                contenedorVista.contentWindow.obtenerDatosGlobales = window.obtenerDatosGlobales;
 
                 // Notificar que los datos están disponibles
                 contenedorVista.contentWindow.dispatchEvent(new Event('datosGlobalesDisponibles'));
@@ -66,3 +68,4 @@
     </script>
 </body>
 </html>
+

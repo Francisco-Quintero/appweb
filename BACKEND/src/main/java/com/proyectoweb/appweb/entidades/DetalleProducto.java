@@ -12,28 +12,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pago")
+@Table(name = "detalle_producto")
 @Getter
 @Setter
-public class Pago {
+public class DetalleProducto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_pago")
-    private Long idPago;
+    @Column(name = "id_detalle")
+    private Long idDetalle;
 
-    @Column(name = "metodo_pago")
-    private String metodoPago;
+    @Column(name = "cantidad")
+    private int cantidad;
 
-    @Column(name = "estado_pago")
-    private String estadoPago;
+    @Column(name = "descuento")
+    private Double descuento;
 
+    @JoinColumn(name = "id_producto")
     @ManyToOne
-    @JoinColumn(name = "id_pedido")
-    private Pedido pedido;
-
-    @ManyToOne
-    @JoinColumn(name = "id_factura")
-    private Factura factura;
+    private Producto producto;
 }
 

@@ -1,11 +1,11 @@
 package com.proyectoweb.appweb.entidades;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -31,7 +31,8 @@ public class HistorialVenta {
     @Column(name = "pedidos_completados")
     private int pedidosCompletados;
 
-    @OneToMany(mappedBy = "historialVenta", cascade = CascadeType.ALL)
-    private List<Pedido> pedidos;
+    @OneToMany
+    @JoinColumn(name = "id_cliente")
+    private List<Cliente> clientes;
 }
 

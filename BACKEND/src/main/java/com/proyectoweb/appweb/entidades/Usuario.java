@@ -1,6 +1,13 @@
 package com.proyectoweb.appweb.entidades;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +15,6 @@ import lombok.Setter;
 @Table(name = "usuario")
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.JOINED) // Configuración para herencia
 public class Usuario {
 
     @Id
@@ -16,30 +22,17 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true)
-    private String username;
+    @Column(name = "username")
+    private String user;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
-    
-    // Relación con la tabla de roles
-    @ManyToOne
-    @JoinColumn(name = "id_rol", nullable = false)
-    private Rol rol;
 
-    // Atributos de Persona
-    @Column(name = "nombre", nullable = false)
-    private String nombre;
+    @Column(name = "rol")
+    private String rol;
 
-    @Column(name = "apellido", nullable = false)
-    private String apellido;
-
-    @Column(name = "telefono", nullable = false)
-    private String telefono;
-
-    @Column(name = "direccion", nullable = false)
-    private String direccion;
-
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @OneToOne
+    @JoinColumn(name = "id_persona")
+    private Persona persona;
 }
+

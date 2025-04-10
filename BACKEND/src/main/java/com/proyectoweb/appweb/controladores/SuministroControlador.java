@@ -8,7 +8,6 @@ import com.proyectoweb.appweb.entidades.Suministro;
 import com.proyectoweb.appweb.servicios.SuministroServicio;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/suministros")
@@ -18,11 +17,11 @@ public class SuministroControlador {
     private SuministroServicio suministroServicio;
 
     @PostMapping("/batch")
-    public ResponseEntity<List<Suministro>> guardarSuministros(@RequestBody Map<String, Object> request) {
-        List<Suministro> suministrosGuardados = suministroServicio.procesarSuministroBatch(request);
+    public ResponseEntity<List<Suministro>> guardarSuministros(@RequestBody List<Suministro> suministros) {
+        List<Suministro> suministrosGuardados = suministroServicio.guardarTodos(suministros);
         return ResponseEntity.status(HttpStatus.CREATED).body(suministrosGuardados);
     }
-    
+
     @GetMapping
     public List<Suministro> listarTodos() {
         return suministroServicio.listarTodos();
@@ -32,6 +31,7 @@ public class SuministroControlador {
     public Suministro obtenerPorId(@PathVariable Long id) {
         return suministroServicio.obtenerPorId(id);
     }
+
 
     @PostMapping
     public Suministro guardar(@RequestBody Suministro suministro) {
@@ -49,3 +49,4 @@ public class SuministroControlador {
         suministroServicio.eliminar(id);
     }
 }
+
