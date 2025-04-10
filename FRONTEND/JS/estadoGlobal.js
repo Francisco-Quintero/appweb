@@ -1,4 +1,4 @@
-export const API_URL = 'https://tiendevp.netlify.app/api';
+export const API_URL = 'http://localhost:26209/api';
  // URL base de la API
 const estadoGlobal = {
     usuarioLogueado: false,
