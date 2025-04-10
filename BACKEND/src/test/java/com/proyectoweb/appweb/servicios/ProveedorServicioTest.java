@@ -40,14 +40,14 @@ public class ProveedorServicioTest {
     @Test
     void testObtenerProveedorPorId() {
         Proveedor proveedor = new Proveedor();
-        proveedor.setId(1L);
+        proveedor.setIdProveedor(1L);
 
         when(proveedorRepositorio.findById(1L)).thenReturn(Optional.of(proveedor));
 
         Proveedor resultado = proveedorServicio.obtenerPorId(1L);
 
         assertNotNull(resultado);
-        assertEquals(1L, resultado.getId());
+        assertEquals(1L, resultado.getIdProveedor());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ProveedorServicioTest {
     @Test
     void testActualizarParcialProveedor() {
         Proveedor existente = new Proveedor();
-        existente.setId(1L);
+        existente.setIdProveedor(1L);
         existente.setNombreEmpresa("Original");
 
         Proveedor parcial = new Proveedor();

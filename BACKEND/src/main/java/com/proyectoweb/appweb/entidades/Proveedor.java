@@ -35,13 +35,4 @@ public class Proveedor {
     @Column(name = "frecuencia_abastecimiento")
     private Integer frecuenciaAbastecimiento;
 
-    public void setId(long l) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setId'");
-    }
-
-    public Long getId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getId'");
-    }
 }
