@@ -1,6 +1,8 @@
+import { API_URL } from "../../JS/estadoGlobal";
 console.log('Iniciando carga del módulo de Perfil Domiciliario');
 
 let domiciliarioActual = null;
+ // Cambia esto a la URL de tu API
 
 function cargarDatosDesdeLocalStorage() {
     try {
@@ -16,7 +18,7 @@ function cargarDatosDesdeLocalStorage() {
 
 async function iniciarSesionDomiciliario(credenciales) {
     try {
-        const response = await fetch('http://localhost:26209/api/usuarios/login', {
+        const response = await fetch(`${API_URL}/usuarios/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credenciales),

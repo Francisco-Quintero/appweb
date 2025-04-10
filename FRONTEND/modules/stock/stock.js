@@ -1,3 +1,4 @@
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initStock(estadoGlobal) {
     console.log('Inicializando módulo de stock...');
 
@@ -121,7 +122,7 @@ async function guardarInventario(e, estadoGlobal) {
     };
 
     try {
-        const response = await fetch(`http://localhost:26209/api/api/inventarios/${idInventario || ''}`, {
+        const response = await fetch(`${API_URL}/inventarios/${idInventario || ''}`, {
             method: idInventario ? "PUT" : "POST", // PUT para actualizar, POST para nuevo
             headers: {
                 "Content-Type": "application/json",

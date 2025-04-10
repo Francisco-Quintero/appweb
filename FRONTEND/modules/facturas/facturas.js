@@ -1,3 +1,4 @@
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initFacturas(estadoGlobal) {
     console.log('Inicializando módulo de Facturas...');
 
@@ -27,7 +28,7 @@ export async function initFacturas(estadoGlobal) {
 // Cargar datos de facturas desde la API
 async function cargarDatosDesdeAPI() {
     try {
-        const response = await fetch('http://localhost:26209/api/facturas');
+        const response = await fetch(`${API_URL}/facturas`);
         if (!response.ok) {
             throw new Error(`Error al obtener datos: ${response.statusText}`);
         }

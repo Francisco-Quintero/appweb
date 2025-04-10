@@ -1,3 +1,4 @@
+import { API_URL } from "../../JS/estadoGlobal"; // Cambia esto por la URL de tu API
 export async function initProveedores(estadoGlobal) {
     console.log('Inicializando módulo de proveedores...');
     
@@ -25,7 +26,7 @@ async function cargarProveedoresDesdeAPI(estadoGlobal) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout de 10 segundos
         
-        const response = await fetch('http://localhost:26209/api/proveedores', {
+        const response = await fetch(`${API_URL}/proveedores`, {
             signal: controller.signal
         });
         
@@ -170,8 +171,9 @@ async function eliminarProveedor(idProveedor, estadoGlobal) {
     try {
         // Mostrar indicador de carga
         mostrarNotificacion('Eliminando proveedor...', 'info');
-        
-        const response = await fetch(`http://localhost:26209/api/proveedores/${idProveedor}`, {
+
+
+        const response = await fetch(`${API_URL}/proveedores/${idProveedor}`, {
             method: 'DELETE',
         });
 
@@ -233,7 +235,6 @@ async function manejarEnvioFormulario(e, estadoGlobal) {
 
 // Función para guardar un proveedor en la API
 async function guardarProveedorEnAPI(proveedor, estadoGlobal) {
-    const API_URL = 'http://localhost:26209/api/proveedores';
     try {
         const method = proveedor.idProveedor ? 'PUT' : 'POST';
         const endpoint = proveedor.idProveedor ? `${API_URL}/${proveedor.idProveedor}` : API_URL;

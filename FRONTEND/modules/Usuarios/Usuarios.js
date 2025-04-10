@@ -1,3 +1,5 @@
+import { API_URL } from "../../JS/estadoGlobal";
+
 export async function initUsuarios(estadoGlobal) {
     console.log('Inicializando módulo de usuarios...');
 
@@ -210,7 +212,8 @@ async function registrarDomiciliario(nombre, email, password, estadoGlobal) {
     };
     console.log(JSON.stringify(nuevoDomiciliario));
     try {
-        const response = await fetch('http://localhost:26209/api/usuarios/registrar-domiciliario', {
+
+        const response = await fetch(`${API_URL}/usuarios/registrar-domiciliario`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

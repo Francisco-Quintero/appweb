@@ -1,3 +1,4 @@
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initProductos(estadoGlobal) {
     console.log('Inicializando módulo de productos...');
 
@@ -25,7 +26,7 @@ async function cargarProductosDesdeAPI(estadoGlobal) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout de 10 segundos
         
-        const response = await fetch('http://localhost:26209/api/productos', {
+        const response = await fetch(`${API_URL}/productos`, {
             signal: controller.signal
         });
         
@@ -146,7 +147,7 @@ async function eliminarProducto(idProducto, estadoGlobal) {
         // Mostrar indicador de carga
         mostrarNotificacion('Eliminando producto...', 'info');
         
-        const response = await fetch(`http://localhost:26209/api/productos/${idProducto}`, {
+        const response = await fetch(`${API_URL}/productos/${idProducto}`, {
             method: 'DELETE',
         });
 
@@ -256,7 +257,8 @@ function manejarEnvioFormulario(e, estadoGlobal) {
 async function guardarProductoEnAPI(producto, estadoGlobal) {
     try {
         const method = producto.idProducto ? 'PUT' : 'POST';
-        const endpoint = producto.idProducto ? `http://localhost:26209/api/productos/${producto.idProducto}` : 'http://localhost:26209/api/productos';
+
+        const endpoint = producto.idProducto ? `${API_URL}/productos/${producto.idProducto}` : `${API_URL}/productos`;
 
         const response = await fetch(endpoint, {
             method,

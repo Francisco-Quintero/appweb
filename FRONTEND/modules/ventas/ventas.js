@@ -1,3 +1,4 @@
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initVentas(estadoGlobal) {
     console.log('Inicializando módulo de ventas');
 
@@ -314,7 +315,7 @@ function configurarFormularioAsignarDomiciliario(estadoGlobal) {
             
             console.log(JSON.stringify({ idDomiciliario: parseInt(idDomiciliario) }));
             // Actualizar el pedido en el backend
-            const response = await fetch(`http://localhost:26209/api/pedidos/${idPedido}/asignar-domiciliario`, {
+            const response = await fetch(`${API_URL}/pedidos/${idPedido}/asignar-domiciliario`, {
                 method: 'PUT',                                                      
                 headers: {
                     'Content-Type': 'application/json',

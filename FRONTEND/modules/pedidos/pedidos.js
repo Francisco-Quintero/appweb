@@ -1,3 +1,5 @@
+import { API_URL } from "../../JS/estadoGlobal";// Cambia esto por la URL de tu API
+
 export async function initPedidos(estadoGlobal) {
     console.log('Inicializando módulo de Pedidos...');
 
@@ -27,7 +29,7 @@ export async function initPedidos(estadoGlobal) {
 // Cargar datos de pedidos desde la API
 async function cargarDatosDesdeAPI() {
     try {
-        const response = await fetch('http://localhost:26209/api/pedidos');
+        const response = await fetch(`${API_URL}/pedidos`);
         if (!response.ok) {
             throw new Error(`Error al obtener datos: ${response.statusText}`);
         }

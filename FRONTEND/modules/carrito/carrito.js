@@ -1,5 +1,5 @@
 import { renderizarCatalogo } from '../catalogo/catalogo.js';
-import { BASE_URL } from '../../JS/auth.js';
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initCarrito(estadoGlobal) {
     console.log('Inicializando módulo de carrito...');
 
@@ -232,7 +232,7 @@ async function generarPedido(estadoGlobal) {
     console.log('Pedido a enviar:', JSON.stringify(pedido, null, 2));
     try {
         // Enviar el pedido al backend
-        const response = await fetch('http://localhost:26209/api/pedidos', {
+        const response = await fetch(`${API_URL}/pedidos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json' // Este encabezado es obligatorio

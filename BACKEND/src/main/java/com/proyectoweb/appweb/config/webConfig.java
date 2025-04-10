@@ -20,7 +20,7 @@ public class webConfig {
                     .allowedOrigins(
                         "http://127.0.0.1:5500", // Desarrollo local
                         "http://192.168.1.38:3000", // Red local
-                        "https://2493-204-157-232-55.ngrok-free.app",
+                        "https://tiendevp.netlify.app",
                         "http://localhost:3000"// Ngrok
                     )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")

@@ -1,4 +1,6 @@
 // Inicializar el módulo de catálogo
+
+import { API_URL } from "../../JS/estadoGlobal";
 export async function initCatalogo(estadoGlobal) {
     console.log('Inicializando módulo de catálogo...');
 
@@ -43,18 +45,18 @@ function cargarDatosDesdeLocalStorage(estadoGlobal) {
 }
 
 // Cargar datos del inventario desde la API
-async function cargarDatosDesdeAPI() {
-    try {
-        const response = await fetch('http://localhost:26209/api/inventarios');
-        if (!response.ok) {
-            throw new Error('Error al cargar los datos desde la API');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error al cargar datos desde la API:', error);
-        return [];
-    }
-}
+// async function cargarDatosDesdeAPI() {
+//     try {
+//         const response = await fetch(`${API_URL}/inventarios`);
+//         if (!response.ok) {
+//             throw new Error('Error al cargar los datos desde la API');
+//         }
+//         return await response.json();
+//     } catch (error) {
+//         console.error('Error al cargar datos desde la API:', error);
+//         return [];
+//     }
+// }
 
 // Renderizar el catálogo
 export function renderizarCatalogo(estadoGlobal) {

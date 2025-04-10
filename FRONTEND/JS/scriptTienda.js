@@ -6,9 +6,8 @@ import { initFacturas } from "../modules/facturas/facturas.js"
 import estadoGlobal from "./estadoGlobal.js"
 // Eliminamos la importación de lucide
 
-const BASE_URL = "http://localhost:26209/api" // URL base de la API
+import { API_URL } from "../../JS/estadoGlobal";
 
-const NGROK_URL = "https://2493-204-157-232-55.ngrok-free.app/api" // URL de ngrok (opcional)
 // Función para inicializar la tienda
 export async function inicializarTienda() {
     console.log("Inicializando tienda...")
@@ -260,7 +259,7 @@ function configurarModalLogin() {
             setTimeout(async () => {
                 // Aquí se conectaría con el backend para autenticar
 
-                const response = await fetch(`${BASE_URL}/usuarios/login`, {
+                const response = await fetch(`${API_URL}/usuarios/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })

@@ -1,4 +1,6 @@
 // Inicializar el módulo de compras
+import { API_URL } from "../../JS/estadoGlobal";
+
 export async function initCompras(estadoGlobal) {
     console.log("Inicializando módulo de compras...")
   
@@ -74,7 +76,7 @@ export async function initCompras(estadoGlobal) {
     try {
       // Cargar proveedores si no están disponibles
       if (estadoGlobal.proveedores.length === 0) {
-        const responseProveedores = await fetch("http://localhost:26209/api/proveedores")
+        const responseProveedores = await fetch(`${API_URL}/Proveedores`)
         if (responseProveedores.ok) {
           const proveedores = await responseProveedores.json()
           estadoGlobal.actualizarProveedores(proveedores)
@@ -86,7 +88,7 @@ export async function initCompras(estadoGlobal) {
   
       // Cargar productos si no están disponibles
       if (estadoGlobal.productos.length === 0) {
-        const responseProductos = await fetch("http://localhost:26209/api/productos")
+        const responseProductos = await fetch(`${API_URL}/productos`)
         if (responseProductos.ok) {
           const productos = await responseProductos.json()
           estadoGlobal.actualizarProductos(productos)
@@ -98,7 +100,7 @@ export async function initCompras(estadoGlobal) {
   
       // Cargar inventario si no está disponible
       if (estadoGlobal.inventario.length === 0) {
-        const responseInventario = await fetch("http://localhost:26209/api/inventarios")
+        const responseInventario = await fetch(`${API_URL}/inventarios`)
         if (responseInventario.ok) {
           const inventario = await responseInventario.json()
           estadoGlobal.actualizarInventario(inventario)
@@ -116,7 +118,7 @@ export async function initCompras(estadoGlobal) {
   // Cargar compras desde la API
   async function cargarComprasDesdeAPI(estadoGlobal) {
     try {
-      const response = await fetch("http://localhost:26209/api/suministros")
+      const response = await fetch(`${API_URL}/suministros`)
       if (!response.ok) {
         throw new Error(`Error al cargar suministros: ${response.status} ${response.statusText}`)
       }
@@ -667,7 +669,7 @@ export async function initCompras(estadoGlobal) {
       console.log("Suministro a guardar:", suministro)
   
       // Enviar la compra al backend
-      const response = await fetch("http://localhost:26209/api/suministros/batch", {
+      const response = await fetch(`${API_URL}/suministros/batch`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
