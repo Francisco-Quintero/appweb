@@ -17,4 +17,10 @@ public class Rol {
 
     @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;
+
+    public Rol() {}
+
+    public Rol(Long id) {
+        this.id = id;
+    }
 }
