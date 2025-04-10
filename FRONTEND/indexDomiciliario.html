@@ -1,81 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Panel de Domiciliario</title>
-        <link rel="stylesheet" href="CSS/stylesDomiciliario.css">
-        <link rel="stylesheet" href="CSS/barraLateral.css">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Finlandica:ital,wght@0,400..700;1,400..700&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
-            </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Domiciliario</title>
+    <link rel="stylesheet" href="CSS/stylesDomiciliario.css">
+    <link rel="stylesheet" href="CSS/barraLateral.css">
+    <!-- Cambiamos la forma de cargar Lucide -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+   crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+   crossorigin=""></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Finlandica:ital,wght@0,400..700;1,400..700&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+</head>
 <body>
     <div class="dashboard">
-        <div class="sidebar">
+        <!-- Botón para mostrar/ocultar la barra lateral en móviles -->
+        <button id="sidebarToggle" class="sidebar-toggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="logo">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bike"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+                    <i data-lucide="bike"></i>
                     <span>Panel de Domiciliario</span>
                 </a>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item" data-module="pedidos-asignados">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
-                    Pedidos Asignados
+                <a href="#" class="nav-item active" data-module="pedidos-asignados">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Pedidos Asignados</span>
                 </a>
-                <a href="#" class="nav-item" data-module="gestion-pagos-entregas">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banknote"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
-                    Gestión de Pagos
+                <a href="#" class="nav-item" data-module="gestion-pagos">
+                    <i data-lucide="banknote"></i>
+                    <span>Gestión de Pagos</span>
                 </a>
                 <a href="#" class="nav-item" data-module="historial-entregas">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
-                    Historial de Entregas
+                    <i data-lucide="history"></i>
+                    <span>Historial de Entregas</span>
                 </a>
             </nav>
             <div class="sidebar-settings">
                 <div class="settings-header">Configuración</div>
-                <a href="#" class="nav-item" data-module="perfil-Domiciliario">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Mi Perfil
+                <a href="#" class="nav-item" data-module="perfil-domiciliario">
+                    <i data-lucide="user"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <a href="indexTienda.html" class="volver-tienda">
+                    <i data-lucide="store"></i>
+                    <span>Volver a la Tienda</span>
                 </a>
             </div>
         </div>
         <div class="main-content">
             <header class="main-header">
                 <h1 id="section-title">Panel de Domiciliario</h1>
-                <div class="user-menu">
-                    <button id="userMenuButton" class="user-menu-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-user-round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
+                <div class="header-actions">
+                    <button class="action-button" id="notificationsButton">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge">3</span>
                     </button>
-                    <div id="userDropdown" class="user-dropdown">
-                        <a href="#" class="dropdown-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-user-round"><path d="M18 20a6 6 0 0 0-12 0"/><circle cx="12" cy="10" r="4"/><circle cx="12" cy="12" r="10"/></svg>
-                            Mi Perfil
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                            Configuración
-                        </a>
-                        <hr class="dropdown-divider">
-                        <a href="#" class="dropdown-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                            Cerrar sesión
-                        </a>
+                    <div class="user-menu">
+                        <button id="userMenuButton" class="user-menu-button">
+                            <i data-lucide="user-circle"></i>
+                            <span class="username">Domiciliario</span>
+                        </button>
+                        <div id="userDropdown" class="user-dropdown">
+                            <div class="user-info">
+                                <i data-lucide="user"></i>
+                                <div>
+                                    <div class="user-name">Juan Pérez</div>
+                                    <div class="user-email">juan.perez@ejemplo.com</div>
+                                </div>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item" data-module="perfil-domiciliario">
+                                <i data-lucide="user-cog"></i>
+                                <span>Mi Perfil</span>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i data-lucide="settings"></i>
+                                <span>Configuración</span>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item" id="btnCerrarSesion">
+                                <i data-lucide="log-out"></i>
+                                <span>Cerrar sesión</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
             <main id="main-container" class="dashboard-content">
-                <!-- El contenido dinámico se cargará aquí -->
+                <!-- Indicador de carga -->
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Cargando...</p>
+                </div>
             </main>
+            <footer class="main-footer">
+                <p>&copy; 2025 Sistema de Domiciliarios. Todos los derechos reservados.</p>
+            </footer>
         </div>
     </div>
+
+    <!-- Notificaciones -->
+    <div id="notificationsPanel" class="notifications-panel">
+        <div class="notifications-header">
+            <h3>Notificaciones</h3>
+            <button id="closeNotifications">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon warning">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Nuevo pedido asignado</div>
+                    <div class="notification-message">Se te ha asignado un nuevo pedido para entregar.</div>
+                    <div class="notification-time">Hace 10 minutos</div>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon success">
+                    <i data-lucide="check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Entrega confirmada</div>
+                    <div class="notification-message">El pedido #1234 ha sido confirmado como entregado.</div>
+                    <div class="notification-time">Hace 2 horas</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon info">
+                    <i data-lucide="info"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Actualización de ruta</div>
+                    <div class="notification-message">Se ha actualizado la ruta para tus entregas de hoy.</div>
+                    <div class="notification-time">Ayer</div>
+                </div>
+            </div>
+        </div>
+        <div class="notifications-footer">
+            <a href="#" class="view-all">Ver todas las notificaciones</a>
+        </div>
+    </div>
+
     <script type="module" src="JS/scriptsDomiciliario.js"></script>
 </body>
 </html>

@@ -1,26 +1,43 @@
 package com.proyectoweb.appweb.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class webConfig {
 
-    @Bean
+    @Bean 
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
-            @SuppressWarnings("null")
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**") // Coincide con las rutas de tu API
-                        .allowedOrigins("http://127.0.0.1:5500","http://127.0.0.1:3000","http://192.168.1.36:3000/") // Frontend URL
-                        .allowedMethods("GET", "POST", "PUT", "DELETE") // Métodos permitidos
-                        .allowedHeaders("*") // Todos los encabezados
-                        .allowCredentials(true); // Permitir cookies o credenciales
+                registry.addMapping("/**")
+                    .allowedOrigins(
+                        "http://127.0.0.1:5500", // Desarrollo local
+                        "http://192.168.1.38:3000", // Red local
+                        "https://2493-204-157-232-55.ngrok-free.app",
+                        "http://localhost:3000"// Ngrok
+                    )
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
             }
         };
     }
-}
+    
 
+    @Bean
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(List.of(
+                org.springframework.http.MediaType.APPLICATION_JSON,
+                org.springframework.http.MediaType.valueOf("application/json;charset=UTF-8")
+        ));
+        return converter;
+    }
+}

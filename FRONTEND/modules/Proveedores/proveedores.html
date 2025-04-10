@@ -4,72 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Proveedores</title>
-
+    <link rel="stylesheet" href="/modules/Proveedores/proveedores.css">
 </head>
 <body>
     <div class="proveedores-container">
-        <h2>Gestión de Proveedores</h2>
+        <div class="proveedores-header">
+            <h2><i data-lucide="truck"></i> Gestión de Proveedores</h2>
+            <p class="proveedores-descripcion">Administra los proveedores de tu inventario</p>
+        </div>
         
         <div class="acciones-proveedores">
             <button id="btnAgregarProveedor" class="btn btn-primario">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Añadir Proveedor
+                <i data-lucide="user-plus"></i>
+                <span>Añadir Proveedor</span>
             </button>
             <div class="contenedor-busqueda">
-                <input type="text" id="busquedaProveedor" placeholder="Buscar proveedor...">
-                <button id="btnBuscar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <div class="input-icon">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="busquedaProveedor" placeholder="Buscar proveedor...">
+                </div>
+                <button id="btnBuscar" class="btn btn-secundario">
+                    <i data-lucide="filter"></i>
+                    <span class="texto-btn">Filtrar</span>
                 </button>
             </div>
         </div>
 
-        <table class="tabla-proveedores">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Empresa</th>
-                    <th>Contacto</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Compras Realizadas</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpoTablaProveedores">
-                <!-- Los proveedores se cargarán aquí dinámicamente -->
-            </tbody>
-        </table>
+        <div class="tabla-responsive">
+            <table class="tabla-proveedores">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Empresa</th>
+                        <th>Contacto</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Compras</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaProveedores">
+                    <!-- Los proveedores se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="proveedores-empty" class="proveedores-empty" style="display: none;">
+            <div class="empty-state">
+                <i data-lucide="users-x"></i>
+                <p>No hay proveedores registrados</p>
+                <button id="btnAgregarProveedorEmpty" class="btn btn-primario">
+                    <i data-lucide="user-plus"></i>
+                    <span>Añadir Proveedor</span>
+                </button>
+            </div>
+        </div>
 
         <div id="modalProveedor" class="modal">
             <div class="contenido-modal">
-                <h3 id="tituloModal">Añadir Proveedor</h3>
+                <div class="modal-header">
+                    <h3 id="tituloModal"><i data-lucide="user-plus"></i> Añadir Proveedor</h3>
+                    <button type="button" class="btn-cerrar" id="btnCerrarModal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
                 <form id="formularioProveedor">
                     <input type="hidden" id="idProveedor">
                     <div class="grupo-formulario">
                         <label for="nombreEmpresa">Nombre de la Empresa:</label>
-                        <input type="text" id="nombreEmpresa" required>
+                        <div class="input-icon">
+                            <i data-lucide="building"></i>
+                            <input type="text" id="nombreEmpresa" required>
+                        </div>
                     </div>
                     <div class="grupo-formulario">
                         <label for="nombreContacto">Nombre del Contacto:</label>
-                        <input type="text" id="nombreContacto" required>
+                        <div class="input-icon">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="nombreContacto" required>
+                        </div>
                     </div>
                     <div class="grupo-formulario">
                         <label for="correoProveedor">Correo:</label>
-                        <input type="email" id="correoProveedor" required>
+                        <div class="input-icon">
+                            <i data-lucide="mail"></i>
+                            <input type="email" id="correoProveedor" required>
+                        </div>
                     </div>
                     <div class="grupo-formulario">
                         <label for="telefonoProveedor">Teléfono:</label>
-                        <input type="tel" id="telefonoProveedor" required>
+                        <div class="input-icon">
+                            <i data-lucide="phone"></i>
+                            <input type="tel" id="telefonoProveedor" required>
+                        </div>
                     </div>
                     <div class="acciones-formulario">
-                        <button type="submit" class="btn btn-primario" id="btnGuardar">Guardar</button>
-                        <button type="button" class="btn btn-secundario" id="btnCancelar">Cancelar</button>
+                        <button type="button" class="btn btn-secundario" id="btnCancelar">
+                            <i data-lucide="x"></i>
+                            <span>Cancelar</span>
+                        </button>
+                        <button type="submit" class="btn btn-primario" id="btnGuardar">
+                            <i data-lucide="save"></i>
+                            <span>Guardar</span>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
+    <script type="module" src="/modules/Proveedores/proveedores.js"></script>
 </body>
 </html>
-
