@@ -21,6 +21,7 @@ public class webConfig {
                         "http://127.0.0.1:5500", // Desarrollo local
                         "http://192.168.1.38:3000", // Red local
                         "https://tiendevp.netlify.app",
+                        "https://pruebas-2026.netlify.app",
                         "http://localhost:3000",
                         "http://192.168.1.39:3000"// Ngrok
                     )
