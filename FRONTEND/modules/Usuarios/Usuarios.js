@@ -1,4 +1,4 @@
-import { API_URL } from "../../JS/estadoGlobal";
+// import { API_URL } from "../../JS/estadoGlobal";
 
 export async function initUsuarios(estadoGlobal) {
     console.log('Inicializando módulo de usuarios...');

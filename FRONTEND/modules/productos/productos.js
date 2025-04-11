@@ -1,4 +1,6 @@
-import { API_URL } from "../../JS/estadoGlobal";
+// import { API_URL } from "../../JS/estadoGlobal";
+import { websocketService } from "../../JS/webSocketService.js";
+
 export async function initProductos(estadoGlobal) {
     console.log('Inicializando módulo de productos...');
 
@@ -18,6 +20,17 @@ export async function initProductos(estadoGlobal) {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+
+    // Suscribirse a actualizaciones de WebSocket para productos
+    websocketService.subscribe("/topic/productos", (mensaje) => {
+        console.log("Actualización de productos recibida vía WebSocket:", mensaje);
+        // Actualizar el estado global con los nuevos datos
+        estadoGlobal.actualizarProductos(mensaje.datos);
+        // Renderizar los productos actualizados
+        renderizarProductos(estadoGlobal);
+        // Mostrar notificación
+        mostrarNotificacion("Lista de productos actualizada", "info");
+    });
 }
 
 // Función para cargar productos desde la API y actualizar el estado global
@@ -155,7 +168,7 @@ async function eliminarProducto(idProducto, estadoGlobal) {
 
         console.log(`Producto con ID ${idProducto} eliminado correctamente`);
 
-        // Actualizar el estado global
+        // Actualizar el estado global localmente (sin esperar WebSocket)
         estadoGlobal.productos = estadoGlobal.productos.filter(p => p.idProducto !== idProducto);
 
         // Notificar cambios en el estado global
@@ -166,6 +179,8 @@ async function eliminarProducto(idProducto, estadoGlobal) {
         
         // Mostrar notificación de éxito
         mostrarNotificacion('Producto eliminado correctamente', 'success');
+        
+        // El backend enviará la actualización vía WebSocket a todos los clientes
     } catch (error) {
         console.error('Error al eliminar producto:', error);
         mostrarNotificacion('Error al eliminar el producto', 'error');
@@ -236,7 +251,7 @@ function manejarEnvioFormulario(e, estadoGlobal) {
 
     // Crear el objeto producto con el formato correcto
     const producto = {
-        idProducto: idProducto,
+        idProducto: idProducto ? parseInt(idProducto) : null,
         nombre: nombre,
         descripcion: descripcion,
         precioUnitario: 2000, // Asumiendo un valor fijo por ahora
@@ -257,7 +272,6 @@ function manejarEnvioFormulario(e, estadoGlobal) {
 async function guardarProductoEnAPI(producto, estadoGlobal) {
     try {
         const method = producto.idProducto ? 'PUT' : 'POST';
-
         const endpoint = producto.idProducto ? `${API_URL}/productos/${producto.idProducto}` : `${API_URL}/productos`;
 
         const response = await fetch(endpoint, {
@@ -268,10 +282,21 @@ async function guardarProductoEnAPI(producto, estadoGlobal) {
 
         if (!response.ok) throw new Error(`Error al guardar producto: ${response.statusText}`);
 
-        console.log(`Producto ${producto.idProducto ? 'actualizado' : 'creado'} correctamente`);
+        // Obtener el producto actualizado/creado de la respuesta
+        const productoActualizado = await response.json();
+        console.log(`Producto ${producto.idProducto ? 'actualizado' : 'creado'} correctamente:`, productoActualizado);
 
-        // Recargar los productos desde la API
-        await cargarProductosDesdeAPI(estadoGlobal);
+        // Actualizar el estado global localmente (sin esperar WebSocket)
+        if (producto.idProducto) {
+            // Actualizar producto existente
+            const index = estadoGlobal.productos.findIndex(p => p.idProducto === producto.idProducto);
+            if (index !== -1) {
+                estadoGlobal.productos[index] = productoActualizado;
+            }
+        } else {
+            // Agregar nuevo producto
+            estadoGlobal.productos.push(productoActualizado);
+        }
         
         // Notificar cambios en el estado global
         estadoGlobal.notificar('productosActualizados', estadoGlobal.productos);
@@ -281,6 +306,8 @@ async function guardarProductoEnAPI(producto, estadoGlobal) {
         
         // Mostrar notificación de éxito
         mostrarNotificacion(`Producto ${producto.idProducto ? 'actualizado' : 'creado'} correctamente`, 'success');
+        
+        // El backend enviará la actualización vía WebSocket a todos los clientes
     } catch (error) {
         console.error('Error al guardar producto en la API:', error);
         mostrarNotificacion('Error al guardar el producto', 'error');
@@ -523,4 +550,18 @@ function configurarEventListeners(estadoGlobal) {
             }
         });
     }
+    
+    // Limpiar suscripciones WebSocket al desmontar el módulo
+    const limpiarSuscripciones = () => {
+        websocketService.unsubscribe("/topic/productos");
+    };
+    
+    // Limpiar al cambiar de módulo o cerrar la página
+    window.addEventListener('beforeunload', limpiarSuscripciones);
+    
+    // Almacenar la función de limpieza para que pueda ser llamada cuando se cambie de módulo
+    window.limpiarSuscripcionesProductos = limpiarSuscripciones;
 }
+
+// Exportar funciones que podrían ser útiles para otros módulos
+export { renderizarProductos, cargarProductosDesdeAPI, mostrarNotificacion };

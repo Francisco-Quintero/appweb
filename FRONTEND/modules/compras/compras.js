@@ -1,5 +1,5 @@
 // Inicializar el módulo de compras
-import { API_URL } from "../../JS/estadoGlobal";
+// import { API_URL } from "../../JS/estadoGlobal";
 
 export async function initCompras(estadoGlobal) {
     console.log("Inicializando módulo de compras...")
@@ -19,7 +19,7 @@ export async function initCompras(estadoGlobal) {
       }
   
       // Cargar compras desde la API
-      await cargarComprasDesdeAPI(estadoGlobal)
+     // await cargarComprasDesdeAPI(estadoGlobal)
   
       // Renderizar las compras
       renderizarCompras(estadoGlobal)
