@@ -1,0 +1,132 @@
+Date : 2025-05-23 23:44:58
+Directory : c:\Users\fquin\Documents\appweb\BACKEND
+Total : 76 files,  2275 codes, 104 comments, 757 blanks, all 3136 lines
+
+Languages
++-----------------+------------+------------+------------+------------+------------+
+| language        | files      | code       | comment    | blank      | total      |
++-----------------+------------+------------+------------+------------+------------+
+| Java            |         67 |      2,016 |         63 |        688 |      2,767 |
+| Markdown        |          4 |        147 |          0 |         26 |        173 |
+| Gradle          |          2 |         63 |          9 |         20 |         92 |
+| Batch           |          1 |         41 |         32 |         22 |         95 |
+| Java Properties |          1 |          7 |          0 |          1 |          8 |
+| JSON            |          1 |          1 |          0 |          0 |          1 |
++-----------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                     | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                        |         76 |      2,275 |        104 |        757 |      3,136 |
+| . (Files)                                                                                                                |          3 |        104 |         41 |         42 |        187 |
+| .VSCodeCounter                                                                                                           |          5 |        148 |          0 |         26 |        174 |
+| .VSCodeCounter\2025-05-23_23-43-44                                                                                       |          5 |        148 |          0 |         26 |        174 |
+| gradle                                                                                                                   |          1 |          7 |          0 |          1 |          8 |
+| gradle\wrapper                                                                                                           |          1 |          7 |          0 |          1 |          8 |
+| src                                                                                                                      |         67 |      2,016 |         63 |        688 |      2,767 |
+| src\jmh                                                                                                                  |          1 |         36 |          2 |          8 |         46 |
+| src\jmh\java                                                                                                             |          1 |         36 |          2 |          8 |         46 |
+| src\jmh\java\benchmark                                                                                                   |          1 |         36 |          2 |          8 |         46 |
+| src\main                                                                                                                 |         58 |      1,538 |         54 |        525 |      2,117 |
+| src\main\java                                                                                                            |         58 |      1,538 |         54 |        525 |      2,117 |
+| src\main\java\com                                                                                                        |         58 |      1,538 |         54 |        525 |      2,117 |
+| src\main\java\com\proyectoweb                                                                                            |         58 |      1,538 |         54 |        525 |      2,117 |
+| src\main\java\com\proyectoweb\appweb                                                                                     |         58 |      1,538 |         54 |        525 |      2,117 |
+| src\main\java\com\proyectoweb\appweb (Files)                                                                             |          1 |          9 |          0 |          5 |         14 |
+| src\main\java\com\proyectoweb\appweb\config                                                                              |          2 |         37 |          0 |          7 |         44 |
+| src\main\java\com\proyectoweb\appweb\controladores                                                                       |         14 |        484 |         16 |        144 |        644 |
+| src\main\java\com\proyectoweb\appweb\entidades                                                                           |         14 |        461 |          7 |        144 |        612 |
+| src\main\java\com\proyectoweb\appweb\repositorio                                                                         |         13 |         83 |          1 |         65 |        149 |
+| src\main\java\com\proyectoweb\appweb\servicios                                                                           |         14 |        464 |         30 |        160 |        654 |
+| src\test                                                                                                                 |          8 |        442 |          7 |        155 |        604 |
+| src\test\java                                                                                                            |          8 |        442 |          7 |        155 |        604 |
+| src\test\java\com                                                                                                        |          8 |        442 |          7 |        155 |        604 |
+| src\test\java\com\proyectoweb                                                                                            |          8 |        442 |          7 |        155 |        604 |
+| src\test\java\com\proyectoweb\appweb                                                                                     |          8 |        442 |          7 |        155 |        604 |
+| src\test\java\com\proyectoweb\appweb (Files)                                                                             |          3 |        141 |          7 |         41 |        189 |
+| src\test\java\com\proyectoweb\appweb\servicios                                                                           |          5 |        301 |          0 |        114 |        415 |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| filename                                                                                                                 | language        | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| c:\Users\fquin\Documents\appweb\BACKEND\.VSCodeCounter\2025-05-23_23-43-44\details.md                                    | Markdown        |         87 |          0 |          6 |         93 |
+| c:\Users\fquin\Documents\appweb\BACKEND\.VSCodeCounter\2025-05-23_23-43-44\diff-details.md                               | Markdown        |          9 |          0 |          6 |         15 |
+| c:\Users\fquin\Documents\appweb\BACKEND\.VSCodeCounter\2025-05-23_23-43-44\diff.md                                       | Markdown        |         12 |          0 |          7 |         19 |
+| c:\Users\fquin\Documents\appweb\BACKEND\.VSCodeCounter\2025-05-23_23-43-44\results.json                                  | JSON            |          1 |          0 |          0 |          1 |
+| c:\Users\fquin\Documents\appweb\BACKEND\.VSCodeCounter\2025-05-23_23-43-44\results.md                                    | Markdown        |         39 |          0 |          7 |         46 |
+| c:\Users\fquin\Documents\appweb\BACKEND\build.gradle                                                                     | Gradle          |         62 |          9 |         19 |         90 |
+| c:\Users\fquin\Documents\appweb\BACKEND\gradle\wrapper\gradle-wrapper.properties                                         | Java Properties |          7 |          0 |          1 |          8 |
+| c:\Users\fquin\Documents\appweb\BACKEND\gradlew.bat                                                                      | Batch           |         41 |         32 |         22 |         95 |
+| c:\Users\fquin\Documents\appweb\BACKEND\settings.gradle                                                                  | Gradle          |          1 |          0 |          1 |          2 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\jmh\java\benchmark\ProductoServicioBenchmark.java                            | Java            |         36 |          2 |          8 |         46 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\AppwebApplication.java                      | Java            |          9 |          0 |          5 |         14 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\config\WebSocketConfig.java                 | Java            |          0 |          0 |          1 |          1 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\config\webConfig.java                       | Java            |         37 |          0 |          6 |         43 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\DetallePedidoControlador.java | Java            |         33 |          0 |         11 |         44 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\DomiciliarioControlador.java  | Java            |         33 |          0 |         11 |         44 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\EnvioControlador.java         | Java            |         33 |          0 |         11 |         44 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\EstadoGlobalController.java   | Java            |          0 |          0 |          1 |          1 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\FacturaControlador.java       | Java            |         28 |          0 |         10 |         38 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\InventarioControlador.java    | Java            |         40 |          0 |         11 |         51 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\PagoControlador.java          | Java            |         33 |          0 |         11 |         44 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\PedidoControlador.java        | Java            |         57 |          1 |         16 |         74 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\PersonaControlador.java       | Java            |         28 |          0 |         10 |         38 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\ProductoControlador.java      | Java            |         33 |          4 |         12 |         49 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\ProveedorControlador.java     | Java            |         43 |          0 |         11 |         54 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\SuministroControlador.java    | Java            |         41 |          0 |         10 |         51 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\UsuarioControlador.java       | Java            |         82 |         11 |         18 |        111 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\controladores\WebSocketControlador.java     | Java            |          0 |          0 |          1 |          1 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\DetallePedido.java                | Java            |         26 |          0 |          8 |         34 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Domiciliario.java                 | Java            |         26 |          0 |          7 |         33 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Envio.java                        | Java            |         31 |          0 |         10 |         41 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Factura.java                      | Java            |         58 |          3 |         17 |         78 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\HistorialVenta.java               | Java            |         29 |          0 |          9 |         38 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Inventario.java                   | Java            |         28 |          0 |          8 |         36 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Pago.java                         | Java            |         41 |          2 |         13 |         56 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Pedido.java                       | Java            |         47 |          0 |         14 |         61 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Persona.java                      | Java            |         27 |          0 |          8 |         35 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Producto.java                     | Java            |         33 |          0 |         13 |         46 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Proveedor.java                    | Java            |         29 |          0 |          9 |         38 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Rol.java                          | Java            |         20 |          0 |          7 |         27 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Suministro.java                   | Java            |         34 |          0 |         10 |         44 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\entidades\Usuario.java                      | Java            |         32 |          2 |         11 |         45 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\DetallePedidoRepositorio.java   | Java            |          5 |          0 |          6 |         11 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\DomiciliarioRepositorio.java    | Java            |          5 |          0 |          5 |         10 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\EnvioRepositorio.java           | Java            |          5 |          0 |          4 |          9 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\FacturaRepositorio.java         | Java            |          5 |          0 |          5 |         10 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\InventarioRepositorio.java      | Java            |          9 |          0 |          5 |         14 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\PagoRepositorio.java            | Java            |          5 |          0 |          4 |          9 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\PedidoRepositorio.java          | Java            |          9 |          0 |          7 |         16 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\PersonaRepositorio.java         | Java            |          5 |          0 |          4 |          9 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\ProductoRepositorio.java        | Java            |          5 |          0 |          3 |          8 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\ProveedorRepositorio.java       | Java            |          5 |          0 |          5 |         10 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\RolRepositorio.java             | Java            |          7 |          0 |          3 |         10 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\SuministroRepositorio.java      | Java            |          5 |          0 |          5 |         10 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\repositorio\UsuarioRepositorio.java         | Java            |         13 |          1 |          9 |         23 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\DetallePedidoServicio.java        | Java            |         23 |          0 |         13 |         36 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\DomiciliarioServicio.java         | Java            |         23 |          0 |         10 |         33 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\EnvioServicio.java                | Java            |         23 |          0 |         10 |         33 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\EstadoGlobalServicio.java         | Java            |          0 |          0 |          1 |          1 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\FacturaServicio.java              | Java            |         24 |          1 |          8 |         33 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\InventarioServicio.java           | Java            |         33 |          3 |         11 |         47 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\PagoServicio.java                 | Java            |         23 |          0 |          9 |         32 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\PedidoServicio.java               | Java            |         69 |         11 |         25 |        105 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\PersonaServicio.java              | Java            |         23 |          0 |         10 |         33 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\ProductoServicio.java             | Java            |         39 |          0 |         13 |         52 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\ProveedorServicio.java            | Java            |         43 |          2 |         11 |         56 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\RolServicio.java                  | Java            |         13 |          0 |          4 |         17 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\SuministroServicio.java           | Java            |         92 |         13 |         24 |        129 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\main\java\com\proyectoweb\appweb\servicios\UsuarioServicio.java              | Java            |         36 |          0 |         11 |         47 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\AppwebApplicationTests.java                 | Java            |          9 |          0 |          5 |         14 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\ProductoServicioIT.java                     | Java            |         74 |          0 |         20 |         94 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\UsuarioServicioIT.java                      | Java            |         58 |          7 |         16 |         81 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\servicios\DomiciliarioServicioTest.java     | Java            |         66 |          0 |         25 |         91 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\servicios\PedidoServicioTest.java           | Java            |         66 |          0 |         26 |         92 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\servicios\ProductoServicioTest.java         | Java            |         74 |          0 |         25 |         99 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\servicios\ProveedorServicioTest.java        | Java            |         64 |          0 |         26 |         90 |
+| c:\Users\fquin\Documents\appweb\BACKEND\src\test\java\com\proyectoweb\appweb\servicios\UsuarioServicioTest.java          | Java            |         31 |          0 |         12 |         43 |
+| Total                                                                                                                    |                 |      2,275 |        104 |        757 |      3,136 |
++--------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
