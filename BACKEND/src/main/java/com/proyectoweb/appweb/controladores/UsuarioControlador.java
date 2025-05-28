@@ -10,6 +10,7 @@ import com.proyectoweb.appweb.entidades.Usuario;
 import com.proyectoweb.appweb.servicios.RolServicio;
 import com.proyectoweb.appweb.servicios.UsuarioServicio;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,16 +50,46 @@ public class UsuarioControlador {
     }
 
     // Login simple
+    // @PostMapping("/login")
+    // public ResponseEntity<?> autenticar(@RequestBody Usuario credenciales) {
+    //     Usuario usuario = usuarioServicio.obtenerPorUserYPassword(credenciales.getUsername(),
+    //             credenciales.getPassword());
+    //     if (usuario != null) {
+    //         return ResponseEntity.ok(usuario); // Retorna el usuario autenticado
+    //     }
+    //     // Retorna un mensaje de error con el código 401
+    //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //             .body(Map.of("error", "Credenciales inválidas"));
+    // }
+
     @PostMapping("/login")
-    public ResponseEntity<?> autenticar(@RequestBody Usuario credenciales) {
-        Usuario usuario = usuarioServicio.obtenerPorUserYPassword(credenciales.getUsername(),
+    public ResponseEntity<Map<String, Object>> autenticar(@RequestBody Usuario credenciales) {
+        Usuario usuario = usuarioServicio.obtenerPorUserYPassword(
+                credenciales.getUsername(),
                 credenciales.getPassword());
+
         if (usuario != null) {
-            return ResponseEntity.ok(usuario); // Retorna el usuario autenticado
+            // Crear respuesta estructurada
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("user", usuario);
+            response.put("redirect", obtenerRedireccionPorRol(usuario.getRol().getNombre()));
+
+            return ResponseEntity.ok(response);
         }
-        // Retorna un mensaje de error con el código 401
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", "Credenciales inválidas"));
+                .body(Map.of(
+                        "success", false,
+                        "error", "Credenciales inválidas"));
+    }
+
+    private String obtenerRedireccionPorRol(String rol) {
+        return switch (rol.toLowerCase()) {
+            case "administrador" -> "/admin";
+            case "domiciliario" -> "/delivery";
+            default -> "/"; // Cliente
+        };
     }
 
     @PostMapping("/registro")

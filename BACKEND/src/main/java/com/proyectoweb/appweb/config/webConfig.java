@@ -22,7 +22,7 @@ public class webConfig {
                         "http://192.168.1.38:3000", // Red local
                         "https://tiendevp.netlify.app",
                         "http://localhost:3000",
-                        "http://192.168.1.39:3000"// Ngrok
+                        "http://localhost:5500"// Ngrok
                     )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                     .allowedHeaders("*")
