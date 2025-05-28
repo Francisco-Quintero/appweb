@@ -1,4 +1,4 @@
-import { API_URL } from "../../JS/estadoGlobal";// Cambia esto por la URL de tu API
+// import { API_URL } from "../../JS/estadoGlobal";// Cambia esto por la URL de tu API
 
 export async function initPedidos(estadoGlobal) {
     console.log('Inicializando módulo de Pedidos...');

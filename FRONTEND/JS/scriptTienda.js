@@ -3,10 +3,12 @@ import { initCatalogo } from "../modules/catalogo/catalogo.js"
 import { initCarrito } from "../modules/carrito/carrito.js"
 import { initPedidos } from "../modules/pedidos/pedidos.js"
 import { initFacturas } from "../modules/facturas/facturas.js"
+
+
 import estadoGlobal from "./estadoGlobal.js"
 // Eliminamos la importación de lucide
 
-import { API_URL } from "../../JS/estadoGlobal";
+// import { API_URL } from "../../JS/estadoGlobal";
 
 // Función para inicializar la tienda
 export async function inicializarTienda() {

@@ -1,6 +1,4 @@
 // Inicializar el módulo de catálogo
-
-import { API_URL } from "../../JS/estadoGlobal";
 export async function initCatalogo(estadoGlobal) {
     console.log('Inicializando módulo de catálogo...');
 

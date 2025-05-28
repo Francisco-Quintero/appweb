@@ -1,136 +1,193 @@
-export const API_URL = 'http://localhost:26209/api';
- // URL base de la API
+import apiService from './apiService.js';
+import websocketService from './webSocketService.js';
+
+
+export const API_URL = 'http://localhost:26209/api'; // URL de la API
+/**
+ * Estado global de la aplicación
+ */
 const estadoGlobal = {
-    usuarioLogueado: false,
-    usuario: null,
-    carrito: [],
+    // Datos
     inventario: [],
     productos: [],
-    pedidos: [],
-    historialVentas: [],
     proveedores: [],
     suministros: [],
+    pedidos: [],
     usuarios: [],
-    ventasActivas: [],
-
-    // Indicador de carga de datos
-    datosCargados: false,
-    cargaDatosPromesa: null,
-
-    // Observadores para notificar cambios
+    carrito: [],
+    
+    // Estado de usuario
+    usuarioLogueado: false,
+    
+    // Observadores
     observadores: {},
+    
+    /**
+     * Carga los datos iniciales necesarios
+     */
+    cargarDatosIniciales: async function() {
+        try {
+            console.log("Cargando datos iniciales...");
+            
+            // Cargar productos
+            const productos = await apiService.get('productos');
+            this.actualizarProductos(productos);
+            
+            // Cargar inventario
+            const inventario = await apiService.get('inventarios');
+            this.actualizarInventario(inventario);
+            
+            // Cargar proveedores
+            const proveedores = await apiService.get('proveedores');
+            this.actualizarProveedores(proveedores);
 
-    // Método para registrar observadores
-    registrarObservador(evento, callback) {
+            //cargar suministros
+            const suministros = await apiService.get('suministros');
+            this.actualizarSuministros(suministros);
+            
+            // Registrar callbacks de WebSocket para actualizaciones
+            this.registrarCallbacksWebSocket();
+            
+            console.log("Datos iniciales cargados correctamente");
+            return true;
+        } catch (error) {
+            console.error("Error al cargar datos iniciales:", error);
+            throw error;
+        }
+    },
+    
+    /**
+     * Registra callbacks para actualizaciones vía WebSocket
+     */
+    registrarCallbacksWebSocket: function() {
+        // Actualización de inventario
+        websocketService.registrarCallback('inventario', (datos) => {
+            console.log("Actualización de inventario recibida vía WebSocket:", datos);
+            this.actualizarInventario(datos);
+        });
+        
+        // Actualización de productos
+        websocketService.registrarCallback('productos', (datos) => {
+            console.log("Actualización de productos recibida vía WebSocket:", datos);
+            this.actualizarProductos(datos);
+        });
+        
+        // Actualización de pedidos
+        websocketService.registrarCallback('pedidos', (datos) => {
+            console.log("Actualización de pedidos recibida vía WebSocket:", datos);
+            this.actualizarPedidos(datos);
+        });
+    },
+    
+    /**
+     * Actualiza el inventario
+     * @param {Array} inventario - Nuevo inventario
+     */
+    actualizarInventario: function(inventario) {
+        this.inventario = inventario;
+        this.notificarObservadores('inventarioActualizado', inventario);
+    },
+    
+    /**
+     * Actualiza los productos
+     * @param {Array} productos - Nuevos productos
+     */
+    actualizarProductos: function(productos) {
+        this.productos = productos;
+        this.notificarObservadores('productosActualizados', productos);
+    },
+    
+    /**
+     * Actualiza los proveedores
+     * @param {Array} proveedores - Nuevos proveedores
+     */
+    actualizarProveedores: function(proveedores) {
+        this.proveedores = proveedores;
+        this.notificarObservadores('proveedoresActualizados', proveedores);
+    },
+    
+    /**
+     * Actualiza los suministros
+     * @param {Array} suministros - Nuevos suministros
+     */
+    actualizarSuministros: function(suministros) {
+        this.suministros = suministros;
+        this.notificarObservadores('suministrosActualizados', suministros);
+    },
+    
+    /**
+     * Actualiza los pedidos
+     * @param {Array} pedidos - Nuevos pedidos
+     */
+    actualizarPedidos: function(pedidos) {
+        this.pedidos = pedidos;
+        this.notificarObservadores('pedidosActualizados', pedidos);
+    },
+    
+    /**
+     * Actualiza los usuarios
+     * @param {Array} usuarios - Nuevos usuarios
+     */
+    actualizarUsuarios: function(usuarios) {
+        this.usuarios = usuarios;
+        this.notificarObservadores('usuariosActualizados', usuarios);
+    },
+    
+    /**
+     * Establece el estado de usuario logueado
+     * @param {boolean} estado - Estado de login
+     */
+    setUsuarioLogueado: function(estado) {
+        this.usuarioLogueado = estado;
+        this.notificarObservadores('usuarioLogueadoActualizado', estado);
+    },
+    
+    /**
+     * Verifica si el usuario está logueado
+     * @returns {boolean} - Estado de login
+     */
+    isUsuarioLogueado: function() {
+        return this.usuarioLogueado;
+    },
+    
+    /**
+     * Registra un observador para un evento específico
+     * @param {string} evento - Nombre del evento
+     * @param {function} callback - Función a llamar cuando ocurra el evento
+     */
+    registrarObservador: function(evento, callback) {
         if (!this.observadores[evento]) {
             this.observadores[evento] = [];
         }
         this.observadores[evento].push(callback);
     },
-
-    // Método para notificar observadores
-    notificar(evento, datos) {
+    
+    /**
+     * Elimina un observador
+     * @param {string} evento - Nombre del evento
+     * @param {function} callback - Función a eliminar
+     */
+    eliminarObservador: function(evento, callback) {
         if (this.observadores[evento]) {
-            this.observadores[evento].forEach(callback => callback(datos));
+            this.observadores[evento] = this.observadores[evento].filter(cb => cb !== callback);
         }
     },
-
-    // Métodos para actualizar datos y notificar cambios
-    setUsuarioLogueado(logueado, usuario = null) {
-        this.usuarioLogueado = logueado;
-        this.usuario = usuario;
-        this.notificar('usuarioLogueado', { logueado, usuario });
-    },
-
-    actualizarInventario(nuevoInventario) {
-        this.inventario = nuevoInventario;
-        this.notificar('inventarioActualizado', nuevoInventario);
-    },
-
-    actualizarProductos(nuevosProductos) {
-        this.productos = nuevosProductos;
-        this.notificar('productosActualizados', nuevosProductos);
-    },
-
-    actualizarPedidos(nuevosPedidos) {
-        this.pedidos = nuevosPedidos;
-        this.notificar('pedidosActualizados', nuevosPedidos);
-    },
-
-    actualizarHistorialVentas(nuevoHistorial) {
-        this.historialVentas = nuevoHistorial;
-        this.notificar('historialVentasActualizado', nuevoHistorial);
-    },
-
-    actualizarProveedores(nuevosProveedores) {
-        this.proveedores = nuevosProveedores;
-        this.notificar('proveedoresActualizados', nuevosProveedores);
-    },
-
-    actualizarSuministros(nuevosSuministros) {
-        this.suministros = nuevosSuministros;
-        this.notificar('suministrosActualizados', nuevosSuministros);
-    },
-
-    actualizarUsuarios(nuevosUsuarios) {
-        this.usuarios = nuevosUsuarios;
-        this.notificar('usuariosActualizados', nuevosUsuarios);
-    },
-
-    actualizarVentasActivas(nuevasVentas) {
-        this.ventasActivas = nuevasVentas;
-        this.notificar('ventasActivasActualizadas', nuevasVentas);
-    },
-    actualizarFacturas(nuevasFacturas) {
-        this.facturas = nuevasFacturas;
-        this.notificar('facturasActualizadas', nuevasFacturas);
-    },
-    isUsuarioLogueado() {
-        return this.usuarioLogueado;
-    },
-    getUsuario() {
-        return this.usuario;
-    },
-
-    // Función para cargar datos iniciales desde la API
-    async cargarDatosIniciales() {
-        // Si los datos ya están cargados, devolver la promesa existente
-        if (this.datosCargados) {
-            console.log('Datos ya cargados, devolviendo la promesa existente.');
-            return this.cargaDatosPromesa;
+    
+    /**
+     * Notifica a todos los observadores de un evento
+     * @param {string} evento - Nombre del evento
+     * @param {any} datos - Datos a pasar a los observadores
+     */
+    notificarObservadores: function(evento, datos) {
+        if (this.observadores[evento]) {
+            this.observadores[evento].forEach(callback => {
+                try {
+                    callback(datos);
+                } catch (error) {
+                    console.error(`Error en observador de ${evento}:`, error);
+                }
+            });
         }
-
-        // Si no están cargados, iniciar la carga y guardar la promesa
-        this.cargaDatosPromesa = (async () => {
-            try {
-                
-                const [inventario, pedidos, facturas, proveedores, usuarios, suministros, productos] = await Promise.all([
-                    fetch(`${API_URL}/inventarios`).then(res => res.json()),
-                    fetch(`${API_URL}/pedidos`).then(res => res.json()),
-                    fetch(`${API_URL}/facturas`).then(res => res.json()),
-                    fetch(`${API_URL}/proveedores`).then(res => res.json()),
-                    fetch(`${API_URL}/usuarios`).then(res => res.json()),
-                    fetch(`${API_URL}/suministros`).then(res => res.json()),
-                    fetch(`${API_URL}/productos`).then(res => res.json())
-                ]);
-
-                this.actualizarInventario(inventario);
-                this.actualizarPedidos(pedidos);
-                this.actualizarProductos(productos); 
-                this.actualizarFacturas(facturas);
-                this.actualizarProveedores(proveedores);
-                this.actualizarUsuarios(usuarios);
-                this.actualizarSuministros(suministros);
-
-                this.datosCargados = true; // Marcar como cargados
-                console.log('Datos iniciales cargados desde la API');
-            } catch (error) {
-                console.error('Error al cargar datos iniciales desde la API:', error);
-                throw error;
-            }
-        })();
-
-        return this.cargaDatosPromesa;
     }
 };
 

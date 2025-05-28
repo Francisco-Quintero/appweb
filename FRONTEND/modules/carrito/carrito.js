@@ -1,5 +1,5 @@
 import { renderizarCatalogo } from '../catalogo/catalogo.js';
-import { API_URL } from "../../JS/estadoGlobal";
+// import { API_URL } from "../../JS/estadoGlobal";
 export async function initCarrito(estadoGlobal) {
     console.log('Inicializando módulo de carrito...');
 
